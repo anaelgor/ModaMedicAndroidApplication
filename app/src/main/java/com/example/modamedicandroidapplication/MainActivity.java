@@ -1,8 +1,12 @@
 package com.example.modamedicandroidapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 
+/*
+Home page screen
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
