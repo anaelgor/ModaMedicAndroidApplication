@@ -1,7 +1,8 @@
-package com.example.modamedicandroidapplication;
+package com.example.modamedicandroidapplication.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,12 +10,21 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+
+import com.example.modamedicandroidapplication.R;
+
+import java.util.Calendar;
+
+import Model.NotificationOfMichal;
 
 /*
 Home page screen
  */
 public class MainActivity extends AppCompatActivity {
     private String CHANNEL_ID = "Main Notifications Channel";
+    AlarmManager alarmManager = null;
+
 
 
     @Override
@@ -25,6 +35,32 @@ public class MainActivity extends AppCompatActivity {
         String title = "Come answer Your daily Questions !";
         notifications_init();
         notifications(MainActivity.class,title,text);
+        michalnotif();
+    }
+
+    private void michalnotif() {
+        alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(getApplicationContext(), NotificationOfMichal.class);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.SECOND,+20);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 22);
+        calendar.set(Calendar.MINUTE, 24);
+
+// setRepeating() lets you specify a precise custom interval--in this case,
+// 20 minutes.
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+        //todo: check why this is not working https://developer.android.com/training/scheduling/alarms#java
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    1000 * 60 * 1, pendingIntent);
+           // alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5*1000, 1000, pendingIntent);
+        }
+
     }
 
     private void notifications_init() {
