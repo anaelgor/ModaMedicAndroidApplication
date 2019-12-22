@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,34 +31,37 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String text = "יאללה כנס יא טמבל";
-        notifications_init();
+       String text = "יאללה כנס יא טמבל";
+       notifications_init();
         notifications(MainActivity.class,text);
         michalnotif();
     }
 
     private void michalnotif() {
-        alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
+        //alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
+        alarmManager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
 
-        Intent intent = new Intent(getApplicationContext(), NotificationOfMichal.class);
+
+        Intent intent = new Intent(MainActivity.this, NotificationOfMichal.class);
 //
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.SECOND,+20);
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 22);
-        calendar.set(Calendar.MINUTE, 24);
+        calendar.add(Calendar.SECOND,+8);
+        System.out.println("TIME:" + calendar.getTime());
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(System.currentTimeMillis());
+//        calendar.set(Calendar.HOUR_OF_DAY, 22);
+//        calendar.set(Calendar.MINUTE, 24);
 
 // setRepeating() lets you specify a precise custom interval--in this case,
 // 20 minutes.
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         //todo: check why this is not working https://developer.android.com/training/scheduling/alarms#java
-        if (alarmManager != null) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    1000 * 60 * 1, pendingIntent);
+//        if (alarmManager != null) {
+       alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),1000 * 60, pendingIntent);
            // alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5*1000, 1000, pendingIntent);
-        }
+    //      alarmManager.setExact(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+//}
 
     }
 
