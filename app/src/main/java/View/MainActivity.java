@@ -1,4 +1,4 @@
-package com.example.modamedicandroidapplication.View;
+package View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +10,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 
 import com.example.modamedicandroidapplication.R;
 
