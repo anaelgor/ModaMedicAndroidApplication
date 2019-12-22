@@ -32,9 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         String text = "יאללה כנס יא טמבל";
-        String title = "Come answer Your daily Questions !";
         notifications_init();
-        notifications(MainActivity.class,title,text);
+        notifications(MainActivity.class,text);
         michalnotif();
     }
 
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     /*
     this method should send daily notification to user
      */
-    private void notifications(Class activity_class, String title, String text) {
+    private void notifications(Class activity_class, String text) {
         Intent intent = new Intent(getApplicationContext(), activity_class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,intent, 0);
@@ -95,10 +94,10 @@ public class MainActivity extends AppCompatActivity {
         Notification notification = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             notification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(title)
+                    .setContentTitle(getApplicationContext().getString(R.string.app_name))
                     .setContentText(text)
                     .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.sym_action_chat, "Chat", pendingIntent)
+                    .addAction(android.R.drawable.sym_action_chat, getApplicationContext().getString(R.string.notification_action), pendingIntent)
                     .setSmallIcon(android.R.drawable.sym_def_app_icon)
                     .setChannelId(CHANNEL_ID)
 
