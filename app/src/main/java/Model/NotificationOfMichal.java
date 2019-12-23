@@ -9,7 +9,7 @@ import android.content.Intent;
 import androidx.core.app.NotificationCompat;
 
 import com.example.modamedicandroidapplication.R;
-import com.example.modamedicandroidapplication.View.MainActivity;
+import View.MainActivity;
 
 public class NotificationOfMichal extends BroadcastReceiver {
 
