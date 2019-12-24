@@ -11,9 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <receiver android:name="Model.NotificationOfMichal" android:enabled="true">
+        <receiver android:name="Model.PeriodicNotification" android:enabled="true">
             <intent-filter>
-                <action android:name="Model.NotificationOfMichal.Action"/>
+                <action android:name="Model.PeriodicNotification.Action"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="Model.DailyNotification" android:enabled="true">
+            <intent-filter>
+                <action android:name="Model.DailyNotification.Action"/>
             </intent-filter>
         </receiver>
         <activity android:name="View.MainActivity">

@@ -3,26 +3,24 @@ package View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import com.example.modamedicandroidapplication.R;
 
 import java.util.Calendar;
 
-import Model.NotificationOfMichal;
+import Model.DailyNotification;
+import Model.PeriodicNotification;
 
 /*
 Home page screen
  */
 public class MainActivity extends AppCompatActivity {
-    private String CHANNEL_ID = "Main Notifications Channel";
+    //todo: this should be moved to controoler
     AlarmManager alarmManager = null;
 
 
@@ -31,85 +29,37 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       String text = "יאללה כנס יא טמבל";
-       notifications_init();
-        notifications(MainActivity.class,text);
-        michalnotif();
+        setNotifcations();
     }
 
-    private void michalnotif() {
-        //alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
-        alarmManager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
+    //todo: move this to controller. also check what happen if user open the app again,
+    // probably this should be implemented from getInstance
+    private void setNotifcations() {
+        if (alarmManager == null)
+            alarmManager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
 
-
-        Intent intent = new Intent(MainActivity.this, NotificationOfMichal.class);
-//
+        //Daily notification - one in 16:00 and one in 19:00
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND,+8);
-        System.out.println("TIME:" + calendar.getTime());
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-//        calendar.set(Calendar.HOUR_OF_DAY, 22);
-//        calendar.set(Calendar.MINUTE, 24);
+        calendar.set(Calendar.HOUR,16);
+        calendar.set(Calendar.MINUTE,0);
+        Calendar calendar2 = Calendar.getInstance();
 
-// setRepeating() lets you specify a precise custom interval--in this case,
-// 20 minutes.
+        calendar2.set(Calendar.HOUR,19);
+        calendar2.set(Calendar.MINUTE,0);
 
+        setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
+        setRepeatingNotification(DailyNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
+
+        //Periodic notification
+        setRepeatingNotification(PeriodicNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
+
+    }
+
+    private void setRepeatingNotification(Class notification_class, long time, long interval) {
+        Intent intent = new Intent(MainActivity.this,notification_class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        //todo: check why this is not working https://developer.android.com/training/scheduling/alarms#java
-//        if (alarmManager != null) {
-       alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),1000 * 60, pendingIntent);
-           // alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5*1000, 1000, pendingIntent);
-    //      alarmManager.setExact(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
-//}
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time,interval, pendingIntent);
 
     }
 
-    private void notifications_init() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            // Create the NotificationChannel
-            CharSequence name = "Basic Notifications";
-            String description = "This Channel is for Notifications of the basic notification category. User sees this in the system settings.";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = (NotificationManager) getSystemService(
-                    NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(mChannel);
-        }
-
-    }
-
-    /*
-    this method should send daily notification to user
-     */
-    private void notifications(Class activity_class, String text) {
-        Intent intent = new Intent(getApplicationContext(), activity_class);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,intent, 0);
-
-
-
-        Notification notification = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(getApplicationContext().getString(R.string.app_name))
-                    .setContentText(text)
-                    .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.sym_action_chat, getApplicationContext().getString(R.string.notification_action), pendingIntent)
-                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                    .setChannelId(CHANNEL_ID)
-
-                    .build();
-        }
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        notificationManager.notify(1, notification);
-
-    }
 }
