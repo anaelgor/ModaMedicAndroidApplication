@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -20,6 +22,7 @@ import com.example.modamedicandroidapplication.R;
 
 import java.util.Calendar;
 
+import Controller.AppController;
 import Model.NotificationOfMichal;
 import Model.Permissions;
 
@@ -29,6 +32,11 @@ Home page screen
 public class MainActivity extends AppCompatActivity {
     private String CHANNEL_ID = "Main Notifications Channel";
     AlarmManager alarmManager = null;
+
+
+    public Activity getContext(){
+        return this;
+    }
 
 
     @Override
@@ -48,11 +56,28 @@ public class MainActivity extends AppCompatActivity {
         }
         //end permissions requests
 
-        String text = "יאללה כנס יא טמבל";
-        notifications_init();
-        notifications(MainActivity.class,text);
-        michalnotif();
+        AppController app = AppController.getController(this);
+        Thread t_sensorData = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppController app = AppController.getController(getContext());
+                app.ExtractSensorData();
+            }
+        });
+        t_sensorData.start();
+        System.out.println();
+
+
+
+//        String text = "יאללה כנס יא טמבל";
+//        notifications_init();
+//        notifications(MainActivity.class,text);
+//        michalnotif();
     }
+
+
+
+
 
     private void michalnotif() {
         alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
