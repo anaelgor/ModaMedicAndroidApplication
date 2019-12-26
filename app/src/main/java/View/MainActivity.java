@@ -69,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//        String text = "יאללה כנס יא טמבל";
-//        notifications_init();
-//        notifications(MainActivity.class,text);
-//        michalnotif();
+        String text = "יאללה כנס יא טמבל";
+        notifications_init();
+        notifications(MainActivity.class,text);
+        michalnotif();
     }
 
 
