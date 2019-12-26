@@ -2,6 +2,7 @@ package Controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.LocationManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
@@ -9,6 +10,7 @@ import com.google.android.gms.fitness.FitnessOptions;
 
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
+import Model.GPS;
 import Model.StepsGoogleFit;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
@@ -60,7 +62,12 @@ public class AppController {
                     fitnessOptions);
         }
 
-
+        //Weather
+        GPS gps = new GPS();
+        String json = gps.getLocationJSON();
+        if (json == null){
+            System.out.println("Did not found location");
+        }
 
 
     }
