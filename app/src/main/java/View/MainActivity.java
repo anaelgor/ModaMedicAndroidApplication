@@ -32,11 +32,7 @@ Home page screen
 public class MainActivity extends AppCompatActivity {
     private String CHANNEL_ID = "Main Notifications Channel";
     AlarmManager alarmManager = null;
-
-
-    public Activity getContext(){
-        return this;
-    }
+    LocationManager locationManager;
 
 
     @Override
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         Thread t_sensorData = new Thread(new Runnable() {
             @Override
             public void run() {
-                AppController app = AppController.getController(getContext());
+                AppController app = AppController.getController((Activity) getApplicationContext());
                 app.ExtractSensorData();
             }
         });
