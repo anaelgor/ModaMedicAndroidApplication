@@ -41,6 +41,7 @@ public class GPS implements LocationListener {
             String params = "lat=" + lat + "&lon=" + lon + "&units=metric" + "&appid=";
             String api_key = "1386e5ee723d21215441dba004fea3de";
             final String all = start + params + api_key;
+            Log.i("Input string", "GOT INPUT FOR WEATHER API: " + all);
 
             String result = null;
             result = getHTML(all);
@@ -58,6 +59,7 @@ public class GPS implements LocationListener {
 //            System.out.println("Sunset Time:" + res);
         }
         catch (Exception e){
+            e.printStackTrace();
             Log.e("Location unavailable","***********CANT FIND LOCATION**********");
         }
 
