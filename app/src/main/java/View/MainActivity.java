@@ -34,11 +34,17 @@ public class MainActivity extends AppCompatActivity {
     AlarmManager alarmManager = null;
     LocationManager locationManager;
 
+    public Activity getContext(){
+        return this;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
 
         /**
          * PERMMISIONS REQUEST
@@ -56,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         Thread t_sensorData = new Thread(new Runnable() {
             @Override
             public void run() {
-                AppController app = AppController.getController((Activity) getApplicationContext());
+                AppController app = AppController.getController(getContext());
                 app.ExtractSensorData();
             }
         });
