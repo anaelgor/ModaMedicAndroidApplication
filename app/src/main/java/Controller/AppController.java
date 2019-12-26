@@ -7,21 +7,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 
+import Model.CaloriesGoogleFit;
+import Model.DistanceGoogleFit;
 import Model.StepsGoogleFit;
 
+import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
+import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
 
 public class AppController {
 
     private static AppController appController;
     private StepsGoogleFit stepsGoogleFit;
+    private DistanceGoogleFit distanceGoogleFit;
+    private CaloriesGoogleFit caloriesGoogleFit;
     private Activity activity;
 
 
     private AppController(Activity activity) {
         this.activity = activity;
         this.stepsGoogleFit = new StepsGoogleFit();
-
+        this.distanceGoogleFit = new DistanceGoogleFit();
+        this.caloriesGoogleFit = new CaloriesGoogleFit();
     }
 
     public static AppController getController(Activity activity){
@@ -35,12 +42,22 @@ public class AppController {
 
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
+                        .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
             int steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-            System.out.println(steps);
+            float distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            float calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+        }
+        else{
+            GoogleSignIn.requestPermissions(
+                    this.activity, // your activity
+                    1,
+                    GoogleSignIn.getLastSignedInAccount(this.activity),
+                    fitnessOptions);
         }
 
 
