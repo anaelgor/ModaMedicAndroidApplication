@@ -9,8 +9,14 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
+import com.google.android.gms.fitness.FitnessOptions;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
 
 public class Permissions {
 
@@ -27,6 +33,21 @@ public class Permissions {
         Log.i("PERMISSIONS", "************PERMISSIONS LIST*************");
 
         ActivityCompat.requestPermissions(app, permissions, ALL_PERMISSIONS);
+
+        GoogleSignInOptionsExtension fitnessOptions =
+                FitnessOptions.builder()
+                        .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
+                        .build();
+
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(app), fitnessOptions)) {
+            //todo: catch this GoogleSignIn object, pass this to thread with Datatype, Field and more.
+            GoogleSignIn.requestPermissions(
+                    app, // your activity
+                    1,
+                    GoogleSignIn.getLastSignedInAccount(app),
+                    fitnessOptions);
+        }
+
         Log.i("PERMISSIONS", "************PERMISSIONS REQUESTED*************");
     }
 
