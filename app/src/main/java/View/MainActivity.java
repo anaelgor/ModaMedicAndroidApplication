@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.example.modamedicandroidapplication.R;
 import java.util.Calendar;
 
 import Controller.AppController;
+import Model.GPS;
 import Model.NotificationOfMichal;
 import Model.Permissions;
 
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private String CHANNEL_ID = "Main Notifications Channel";
     AlarmManager alarmManager = null;
     LocationManager locationManager;
+    LocationListener locationListener;
 
     public Activity getContext(){
         return this;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new GPS();
 
 
         /**
