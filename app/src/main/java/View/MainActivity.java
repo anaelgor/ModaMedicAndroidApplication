@@ -1,12 +1,20 @@
 package View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +28,9 @@ import Model.DailyNotification;
 import Model.PeriodicNotification;
 
 import static View.BindingValues.LOGGED_USERNAME;
+import Controller.AppController;
+import Model.GPS;
+import Model.Permissions;
 
 /*
 Home page screen
@@ -27,15 +38,46 @@ Home page screen
 public class MainActivity extends AppCompatActivity {
     //todo: this should be moved to controoler
     AlarmManager alarmManager = null;
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     private String username;
     private String password;
+    public Activity getContext(){
+        return this;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setNotifcations();
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new GPS();
+
+
+        /**
+         * PERMMISIONS REQUEST
+         * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
+         */
+        Permissions permissions = new Permissions(this);
+        try {
+            permissions.requestPermissions();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        //end permissions requests
+
+        AppController app = AppController.getController(this);
+        Thread t_sensorData = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppController app = AppController.getController(getContext());
+                app.ExtractSensorData();
+            }
+        });
+        t_sensorData.start();
     }
 
     //todo: move this to controller. also check what happen if user open the app again,
