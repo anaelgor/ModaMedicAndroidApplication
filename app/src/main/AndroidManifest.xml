@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.modamedicandroidapplication">
 
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,6 +19,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name="View.HomePageActivity"
+            android:parentActivityName="View.MainActivity">
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="View.MainActivity" />
+        </activity>
+
+        <receiver
+            android:name="Model.PeriodicNotification"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="Model.PeriodicNotification.Action" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="Model.DailyNotification"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="Model.DailyNotification.Action" />
+            </intent-filter>
+        </receiver>
 
         <activity android:name="View.MainActivity">
             <intent-filter>

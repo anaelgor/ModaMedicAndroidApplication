@@ -7,8 +7,6 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,25 +16,33 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
 
 import java.util.Calendar;
 
+import Model.DailyNotification;
+import Model.PeriodicNotification;
+
+import static View.BindingValues.LOGGED_USERNAME;
 import Controller.AppController;
 import Model.GPS;
-import Model.NotificationOfMichal;
 import Model.Permissions;
 
 /*
 Home page screen
  */
 public class MainActivity extends AppCompatActivity {
-    private String CHANNEL_ID = "Main Notifications Channel";
+    //todo: this should be moved to controoler
     AlarmManager alarmManager = null;
     LocationManager locationManager;
     LocationListener locationListener;
 
+    private String username;
+    private String password;
     public Activity getContext(){
         return this;
     }
@@ -46,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setNotifcations();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new GPS();
 
@@ -71,90 +78,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         t_sensorData.start();
-        System.out.println();
-
-
-
-        String text = "יאללה כנס יא טמבל";
-        notifications_init();
-        notifications(MainActivity.class,text);
-        michalnotif();
     }
 
+    //todo: move this to controller. also check what happen if user open the app again,
+    // probably this should be implemented from getInstance. this should be written from
+    // HomePageActivity, because only there we have the logged in user.
+    private void setNotifcations() {
+        if (alarmManager == null)
+            alarmManager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
 
-
-
-
-    private void michalnotif() {
-        alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
-
-        Intent intent = new Intent(getApplicationContext(), NotificationOfMichal.class);
-//
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.SECOND,+20);
+        //Daily notification - one in 16:00 and one in 19:00
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 22);
-        calendar.set(Calendar.MINUTE, 24);
+        calendar.set(Calendar.HOUR,16);
+        calendar.set(Calendar.MINUTE,0);
+        Calendar calendar2 = Calendar.getInstance();
 
-// setRepeating() lets you specify a precise custom interval--in this case,
-// 20 minutes.
+        calendar2.set(Calendar.HOUR,19);
+        calendar2.set(Calendar.MINUTE,0);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-        //todo: check why this is not working https://developer.android.com/training/scheduling/alarms#java
-        if (alarmManager != null) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    1000 * 60 * 1, pendingIntent);
-           // alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5*1000, 1000, pendingIntent);
-        }
+        setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
+        setRepeatingNotification(DailyNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
+
+        //Periodic notification
+        setRepeatingNotification(PeriodicNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
 
     }
 
-    private void notifications_init() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            // Create the NotificationChannel
-            CharSequence name = "Basic Notifications";
-            String description = "This Channel is for Notifications of the basic notification category. User sees this in the system settings.";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = (NotificationManager) getSystemService(
-                    NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(mChannel);
-        }
+    private void setRepeatingNotification(Class notification_class, long time, long interval) {
+        Intent intent = new Intent(MainActivity.this,notification_class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time,interval, pendingIntent);
 
     }
 
-    /*
-    this method should send daily notification to user
-     */
-    private void notifications(Class activity_class, String text) {
-        Intent intent = new Intent(getApplicationContext(), activity_class);
+    //todo: implements this
+    public void loginFunction(View view) {
+        Log.i("Main Page","Login button clicked");
+        EditText username_textfield = findViewById(R.id.username_textfield);
+        EditText password_textfield = findViewById(R.id.password_textfield);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,intent, 0);
+        this.username = username_textfield.getText().toString();
+        this.password = password_textfield.getText().toString();
 
-
-
-        Notification notification = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(getApplicationContext().getString(R.string.app_name))
-                    .setContentText(text)
-                    .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.sym_action_chat, getApplicationContext().getString(R.string.notification_action), pendingIntent)
-                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                    .setChannelId(CHANNEL_ID)
-
-                    .build();
+        //todo: change this the user REAL name from db. "a" and "a" only for checks
+        Log.i("Main Page", "User " + username + " with password " + password + " logged in");
+        if (username.equals("a") && password.equals("a")) {
+            Intent intent = new Intent(this, HomePageActivity.class);
+            intent.putExtra(BindingValues.LOGGED_USERNAME, username);
+            startActivity(intent);
         }
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    }
+    //todo: implements this
 
-        notificationManager.notify(1, notification);
+    public void forgetPasswordFunction(View view) {
+        Log.i("Main Page","Forgot password button clicked");
 
     }
 }

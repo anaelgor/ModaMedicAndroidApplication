@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">ModaMedicAndroidApplication</string>
-    <string name="notificationText">Walla new notification</string>
-    <string name="notification_action">Go Answer!</string>
+    <string name="app_name">ModaMedic</string>
+    <string name="daily_questionnaire_notification">לא ענית עדיין על השאלון היומי, פנה לנו איזה דקה?</string>
+    <string name="periodic_questionnaire_notification_pref">כבר מלא זמן שלא ענית על שאלון </string>
+    <string name="periodic_questionnaire_notification_suffix">. ואנחנו רוצים לדעת מה קורה איתך. אולי תיכנס עכשיו?</string>
+    <string name="notification_action">יאללה נכנס!</string>
+    <string name="login">התחבר</string>
+    <string name="daily_questionnaire">שאלון יומי</string>
+    <string name="good_evening">ערב טוב</string>
+
+
 </resources>
