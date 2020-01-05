@@ -38,8 +38,6 @@ Home page screen
 public class MainActivity extends AppCompatActivity {
     //todo: this should be moved to controoler
     AlarmManager alarmManager = null;
-    LocationManager locationManager;
-    LocationListener locationListener;
 
     private String username;
     private String password;
@@ -53,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setNotifcations();
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new GPS();
 
 
         /**

@@ -2,6 +2,7 @@ package Controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.LocationListener;
 import android.location.LocationManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -24,6 +25,8 @@ public class AppController {
     private DistanceGoogleFit distanceGoogleFit;
     private CaloriesGoogleFit caloriesGoogleFit;
     private Activity activity;
+    private LocationManager locationManager;
+    private LocationListener gpsLocationListener;
 
 
     private AppController(Activity activity) {
@@ -31,6 +34,9 @@ public class AppController {
         this.stepsGoogleFit = new StepsGoogleFit();
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
+        //TODO: need to ask for permission before this command
+        this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        this.gpsLocationListener = new GPS(locationManager, activity);
     }
 
     public static AppController getController(Activity activity){
@@ -63,8 +69,7 @@ public class AppController {
         }
 
         //Weather
-        GPS gps = new GPS();
-        String json = gps.getLocationJSON();
+        String json =((GPS)gpsLocationListener).getLocationJSON();
         if (json == null){
             System.out.println("Did not found location");
         }
