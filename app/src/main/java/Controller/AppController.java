@@ -1,13 +1,18 @@
 package Controller;
 
 import android.app.Activity;
+import android.content.Context;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.util.JsonReader;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -34,6 +39,8 @@ public class AppController {
     private DistanceGoogleFit distanceGoogleFit;
     private CaloriesGoogleFit caloriesGoogleFit;
     private Activity activity;
+    private LocationManager locationManager;
+    private LocationListener gpsLocationListener;
 
 
     private AppController(Activity activity) {
@@ -41,6 +48,9 @@ public class AppController {
         this.stepsGoogleFit = new StepsGoogleFit();
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
+        //TODO: need to ask for permission before this command
+        this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        this.gpsLocationListener = new GPS(locationManager, activity);
     }
 
     public static AppController getController(Activity activity){
@@ -73,8 +83,7 @@ public class AppController {
         }
 
         //Weather
-        GPS gps = new GPS();
-        String json = gps.getLocationJSON();
+        String json =((GPS)gpsLocationListener).getLocationJSON();
         if (json == null){
             System.out.println("Did not found location");
         }
@@ -82,104 +91,118 @@ public class AppController {
 
     }
 
-    public Questionnaire getQuestionnaire(org.json.simple.JSONObject jsonObject) {
-
+    public Questionnaire getQuestionnaire(String questionnaire_name) {
+        JSONObject jsonObject = getQuestionnaireFromDB(questionnaire_name);
         JSONParser parser = new JSONParser();
+        //todo: remove this and get it from server
+        String daily_from_server = "{\n" +
+                "    \"error\": false,\n" +
+                "    \"message\": null,\n" +
+                "    \"data\": [\n" +
+                "        {\n" +
+                "            \"_id\": \"5e148d34e4652b6457c2c034\",\n" +
+                "            \"QuestionnaireID\": 0,\n" +
+                "            \"QuestionnaireText\": \"Daily\",\n" +
+                "            \"Questions\": [\n" +
+                "                {\n" +
+                "                    \"Answers\": [\n" +
+                "                        {\n" +
+                "                            \"answerID\": 0,\n" +
+                "                            \"answerText\": \"0\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 1,\n" +
+                "                            \"answerText\": \"1\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 2,\n" +
+                "                            \"answerText\": \"2\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 3,\n" +
+                "                            \"answerText\": \"3\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 4,\n" +
+                "                            \"answerText\": \"4\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 5,\n" +
+                "                            \"answerText\": \"5\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 6,\n" +
+                "                            \"answerText\": \"6\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 7,\n" +
+                "                            \"answerText\": \"7\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 8,\n" +
+                "                            \"answerText\": \"8\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 9,\n" +
+                "                            \"answerText\": \"9\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 10,\n" +
+                "                            \"answerText\": \"10\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"QuestionID\": 0,\n" +
+                "                    \"QuestionText\": \"מהי רמת הכאב הנוכחית שלך?\",\n" +
+                "                    \"Type\": \"VAS\",\n" +
+                "                    \"Best\": \"אין כאב בכלל\",\n" +
+                "                    \"Worst\": \"כאב בלתי נסבל\"\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"Answers\": [\n" +
+                "                        {\n" +
+                "                            \"answerID\": 0,\n" +
+                "                            \"answerText\": \"לא נטלתי\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 1,\n" +
+                "                            \"answerText\": \"בסיסית\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 2,\n" +
+                "                            \"answerText\": \"מתקדמת\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"answerID\": 3,\n" +
+                "                            \"answerText\": \"נרקוטית\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"QuestionID\": 1,\n" +
+                "                    \"QuestionText\": \"איזה סוג תרופה נטלת היום?\",\n" +
+                "                    \"Type\": \"multi\"\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
         try {
-            Object obj = parser.parse("\n" +
-                    "        {\n" +
-                    "            \"_id\": \"5e0f41875a17c9f806166050\",\n" +
-                    "            \"QuestionnaireText\": \"Daily\",\n" +
-                    "            \"Questions\": [\n" +
-                    "                {\n" +
-                    "                    \"Answers\": [\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"0\",\n" +
-                    "                            \"answerID\": 0\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"1\",\n" +
-                    "                            \"answerID\": 1\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"2\",\n" +
-                    "                            \"answerID\": 2\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"3\",\n" +
-                    "                            \"answerID\": 3\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"4\",\n" +
-                    "                            \"answerID\": 4\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"5\",\n" +
-                    "                            \"answerID\": 5\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"6\",\n" +
-                    "                            \"answerID\": 6\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"7\",\n" +
-                    "                            \"answerID\": 7\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"8\",\n" +
-                    "                            \"answerID\": 8\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"9\",\n" +
-                    "                            \"answerID\": 9\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"10\",\n" +
-                    "                            \"answerID\": 10\n" +
-                    "                        }\n" +
-                    "                    ],\n" +
-                    "                    \"QuestionID\": 0,\n" +
-                    "                    \"Type\": \"VAS\",\n" +
-                    "                    \"QuestionText\": \"מהי רמת הכאב הנוכחית שלך?\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                    \"Answers\": [\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"בסיסית\",\n" +
-                    "                            \"answerID\": 0\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"מתקדמת\",\n" +
-                    "                            \"answerID\": 1\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"נרקוטית\",\n" +
-                    "                            \"answerID\": 2\n" +
-                    "                        },\n" +
-                    "                        {\n" +
-                    "                            \"answerText\": \"לא נטלתי\",\n" +
-                    "                            \"answerID\": 3\n" +
-                    "                        }\n" +
-                    "                    ],\n" +
-                    "                    \"QuestionID\": 1,\n" +
-                    "                    \"Type\": \"multi\",\n" +
-                    "                    \"QuestionText\": \"איזה סוג תרופה נטלת היום?\"\n" +
-                    "                }\n" +
-                    "            ],\n" +
-                    "            \"QuestionnaireID\": 0\n" +
-                    "        }\n" +
-                    "   ");
-            jsonObject = (org.json.simple.JSONObject) obj;
+            Object obj = parser.parse(daily_from_server);
+            jsonObject = (JSONObject) obj;
             System.out.println(jsonObject.toString());
             Log.i("AppController",jsonObject.toString());
-
-          //  Questionnaire dailyQuestionnaire = QuestionnaireManager.createQuestionnaireFromJSON(jsonObject);
-            //todo: continue from here. parse the object into this. change types of jsonObject in all classes.
-            //todo: don't forget to work only with phone for now.
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        JSONArray jssonArray = (JSONArray) jsonObject.get("data");
+        if (jssonArray != null      ) {
+            jsonObject = (JSONObject) jssonArray.get(0);
+        }
+
+        return QuestionnaireManager.createQuestionnaireFromJSON(jsonObject);
+    }
+
+    private JSONObject getQuestionnaireFromDB(String questionnaire_name) {
+        //todo: implement this with anael code of rest requests
         return null;
     }
 

@@ -38,8 +38,6 @@ Home page screen
 public class MainActivity extends AppCompatActivity {
     //todo: this should be moved to controoler
     AlarmManager alarmManager = null;
-    LocationManager locationManager;
-    LocationListener locationListener;
 
     private String username;
     private String password;
@@ -53,31 +51,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setNotifcations();
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new GPS();
 
 
         /**
          * PERMMISIONS REQUEST
          * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
          */
-        Permissions permissions = new Permissions(this);
-        try {
-            permissions.requestPermissions();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        //end permissions requests
-
-        AppController app = AppController.getController(this);
-        Thread t_sensorData = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AppController app = AppController.getController(getContext());
-                app.ExtractSensorData();
-            }
-        });
-        t_sensorData.start();
+//        Permissions permissions = new Permissions(this);
+//        try {
+//            permissions.requestPermissions();
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        //end permissions requests
+//
+//        AppController app = AppController.getController(this);
+//        Thread t_sensorData = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                AppController app = AppController.getController(getContext());
+//                app.ExtractSensorData();
+//            }
+//        });
+//        t_sensorData.start();
     }
 
     //todo: move this to controller. also check what happen if user open the app again,

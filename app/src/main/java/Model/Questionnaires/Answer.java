@@ -1,22 +1,25 @@
 package Model.Questionnaires;
 
-class Answer {
+import java.io.Serializable;
 
-    private String answerID;
+public class Answer implements Serializable {
+
+    private long answerID;
     private String answerText;
     private int answerValue;
 
-    public Answer(String answerID, String answerText) {
+    public Answer(long answerID, String answerText) {
         this.answerID = answerID;
         this.answerText = answerText;
-        this.answerValue = Integer.parseInt(answerID);
+        this.answerValue = (int) answerID;
     }
 
-    public String getAnswerID() {
+
+    public long getAnswerID() {
         return answerID;
     }
 
-    public void setAnswerID(String answerID) {
+    public void setAnswerID(long answerID) {
         this.answerID = answerID;
     }
 

@@ -5,8 +5,13 @@
     <string name="periodic_questionnaire_notification_suffix">. ואנחנו רוצים לדעת מה קורה איתך. אולי תיכנס עכשיו?</string>
     <string name="notification_action">יאללה נכנס!</string>
     <string name="login">התחבר</string>
+    <string name="questionnaire">שאלון</string>
     <string name="daily_questionnaire">שאלון יומי</string>
     <string name="good_evening">ערב טוב</string>
+    <string name="thanks">תודה</string>
+    <string name="sent_succesfully">התשובות נשלחו בהצלחה</string>
+
+
 
 
 </resources>
