@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
@@ -11,7 +12,9 @@ import com.google.android.gms.fitness.FitnessOptions;
 
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
+import Model.Exceptions.ServerFalse;
 import Model.GPS;
+import Model.HttpRequests;
 import Model.StepsGoogleFit;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
@@ -27,6 +30,7 @@ public class AppController {
     private Activity activity;
     private LocationManager locationManager;
     private LocationListener gpsLocationListener;
+    private HttpRequests httpRequests;
 
 
     private AppController(Activity activity) {
@@ -37,6 +41,7 @@ public class AppController {
         //TODO: need to ask for permission before this command
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new GPS(locationManager, activity);
+        this.httpRequests = new HttpRequests();
     }
 
     public static AppController getController(Activity activity){
@@ -46,7 +51,10 @@ public class AppController {
         return appController;
     }
 
-    public void ExtractSensorData(){
+    public void SendSensorData(){
+        int steps = 0;
+        float distance = 0;
+        float calories = 0;
 
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
@@ -56,9 +64,9 @@ public class AppController {
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
-            int steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-            float distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-            float calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
         }
         else{
             GoogleSignIn.requestPermissions(
@@ -74,7 +82,17 @@ public class AppController {
             System.out.println("Did not found location");
         }
 
+        try {
+            // send data to server
+            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), "metrics/steps");
+            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), "metrics/calories");
+            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), "metrics/distance");
 
+        } catch (ServerFalse serverFalse) {
+            Log.e("ServerFalse", "bug in sending metrics");
+            //TODO: pop up error message to the user
+            serverFalse.printStackTrace();
+        }
     }
 
 }

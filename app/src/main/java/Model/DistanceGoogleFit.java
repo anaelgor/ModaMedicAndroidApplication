@@ -11,8 +11,8 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.Field.FIELD_DISTANCE;
@@ -49,5 +49,17 @@ public class DistanceGoogleFit {
 
         return dist;
 
+    }
+
+    public JSONObject makeBodyJson(float distance, String userID){
+        userID = "111111111";
+        JSONObject json = new JSONObject();
+        try {
+            json.put("UserID", userID);
+            json.put("Distance", distance);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }

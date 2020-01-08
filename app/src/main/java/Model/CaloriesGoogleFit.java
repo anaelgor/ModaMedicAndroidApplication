@@ -11,13 +11,11 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
-import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.Field.FIELD_CALORIES;
-import static com.google.android.gms.fitness.data.Field.FIELD_DISTANCE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class CaloriesGoogleFit {
@@ -52,5 +50,17 @@ public class CaloriesGoogleFit {
 
 
         return calories;
+    }
+
+    public JSONObject makeBodyJson(float calories, String userID){
+        userID = "111111111";
+        JSONObject json = new JSONObject();
+        try {
+            json.put("UserID", userID);
+            json.put("Calories", calories);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }

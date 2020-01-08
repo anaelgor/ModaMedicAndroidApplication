@@ -8,16 +8,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
-import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
 import static com.google.android.gms.fitness.data.Field.FIELD_STEPS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -52,6 +49,18 @@ public class StepsGoogleFit {
 
         Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
         return steps;
+    }
+
+    public JSONObject makeBodyJson(int steps, String userID){
+        userID = "111111111";
+        JSONObject json = new JSONObject();
+        try {
+            json.put("UserID", userID);
+            json.put("Steps", steps);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 
 }
