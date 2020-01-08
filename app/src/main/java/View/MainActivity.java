@@ -44,27 +44,27 @@ public class MainActivity extends AppCompatActivity {
         setNotifcations();
 
 
-//        /**
-//         * PERMMISIONS REQUEST
-//         * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
-//         */
-//        Permissions permissions = new Permissions(this);
-//        try {
-//            permissions.requestPermissions();
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        //end permissions requests
-//
-//        AppController app = AppController.getController(this);
-//        Thread t_sensorData = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                AppController app = AppController.getController(getContext());
-//                app.SendSensorData();
-//            }
-//        });
-//        t_sensorData.start();
+       /**
+        * PERMMISIONS REQUEST
+        * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
+        */
+       Permissions permissions = new Permissions(this);
+       try {
+           permissions.requestPermissions();
+       } catch (PackageManager.NameNotFoundException e) {
+           e.printStackTrace();
+       }
+       //end permissions requests
+
+       AppController app = AppController.getController(this);
+       Thread t_sensorData = new Thread(new Runnable() {
+           @Override
+           public void run() {
+               AppController app = AppController.getController(getContext());
+               app.SendSensorData();
+           }
+       });
+       t_sensorData.start();
     }
 
     //todo: move this to controller. also check what happen if user open the app again,
