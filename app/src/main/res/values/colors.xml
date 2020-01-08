@@ -4,5 +4,25 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#00574B</color>
     <color name="colorButtons">#7AC6EE</color>
+    <color name="colorVAS0">#b7e4f9</color>
+    <color name="colorVAS1">#00baec</color>
+    <color name="colorVAS2">#00add4</color>
+    <color name="colorVAS3">#62ba99</color>
+    <color name="colorVAS4">#dcd042</color>
+    <color name="colorVAS5">#ffca07</color>
+    <color name="colorVAS6">#ffa31d</color>
+    <color name="colorVAS7">#ff8624</color>
+    <color name="colorVAS8">#ff6826</color>
+    <color name="colorVAS9">#ff4320</color>
+    <color name="colorVAS10">#d91a06</color>
+    <color name="colorRegularAnswer">#cccccc</color>
+
+
+
+
+
+
+
+
 
 </resources>
