@@ -1,20 +1,23 @@
 package Model.Questionnaires;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Questionnaire {
+public class Questionnaire implements Serializable {
 
     private String mongoID;
-    private String QuestionaireID;
+    private long QuestionaireID;
     private String title;
     private List<Question> questions;
 
-    public Questionnaire(String mongoID, String questionaireID, String title, List<Question> questions) {
+    public Questionnaire(String mongoID, long questionaireID, String title, List<Question> questions) {
         this.mongoID = mongoID;
         QuestionaireID = questionaireID;
         this.title = title;
         this.questions = questions;
     }
+
+    public Questionnaire() {}
 
     public String getMongoID() {
         return mongoID;
@@ -24,11 +27,11 @@ public class Questionnaire {
         this.mongoID = mongoID;
     }
 
-    public String getQuestionaireID() {
+    public long getQuestionaireID() {
         return QuestionaireID;
     }
 
-    public void setQuestionaireID(String questionaireID) {
+    public void setQuestionaireID(long questionaireID) {
         QuestionaireID = questionaireID;
     }
 

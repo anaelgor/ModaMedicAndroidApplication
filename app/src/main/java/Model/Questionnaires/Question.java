@@ -1,25 +1,42 @@
 package Model.Questionnaires;
 
+import java.io.Serializable;
 import java.util.List;
 
-class Question {
+public class Question implements Serializable {
 
-    enum Type {
+    public enum Type {
         VAS,
         SINGLE,
         MULTI
     }
 
     private Type type;
-    private String questionID;
+    private long questionID;
     private String questionText;
     private List<Answer> answers;
+    private String best;
+    private String worst;
+    private List<Long> alone;
 
-    public Question(String type, String questionID, String questionText, List<Answer> answers) {
+    public Question(String type, long questionID, String questionText, List<Answer> answers) {
         this.type = getCorrectType(type);
         this.questionID = questionID;
         this.questionText = questionText;
         this.answers = answers;
+        this.best = null;
+        this.worst = null;
+        this.alone = null;
+    }
+
+    public Question(){}
+
+    public List<Long> getAlone() {
+        return alone;
+    }
+
+    public void setAlone(List<Long> alone) {
+        this.alone = alone;
     }
 
     private Type getCorrectType(String type) {
@@ -38,15 +55,32 @@ class Question {
         return type;
     }
 
+
+    public String getBest() {
+        return best;
+    }
+
+    public void setBest(String best) {
+        this.best = best;
+    }
+
+    public String getWorst() {
+        return worst;
+    }
+
+    public void setWorst(String worst) {
+        this.worst = worst;
+    }
+
     public void setType(String type) {
         this.type = getCorrectType(type);
     }
 
-    public String getQuestionID() {
+    public long getQuestionID() {
         return questionID;
     }
 
-    public void setQuestionID(String questionID) {
+    public void setQuestionID(long questionID) {
         this.questionID = questionID;
     }
 
