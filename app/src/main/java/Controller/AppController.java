@@ -69,6 +69,7 @@ public class AppController {
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
+            sleepGoogleFit.readSleepData(this.activity, fitnessOptions);
             steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
@@ -87,16 +88,15 @@ public class AppController {
             System.out.println("Did not found location");
         }
 
-        sleepGoogleFit.readSleepData(this.activity, fitnessOptions);
 
 
         try {
             // send data to server
+            Log.i("SendMetrics", "******* Sending metrics to server ******");
             httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), "metrics/steps");
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), "metrics/calories");
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), "metrics/distance");
 
-            Log.i("SendMetrics", "******* metrics had been sent successfully ******");
 
         } catch (ServerFalse serverFalse) {
             Log.e("ServerFalse", "bug in sending metrics");
@@ -104,5 +104,6 @@ public class AppController {
             serverFalse.printStackTrace();
         }
     }
-
 }
+
+

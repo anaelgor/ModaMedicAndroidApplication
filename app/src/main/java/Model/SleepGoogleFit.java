@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
@@ -25,6 +27,8 @@ import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
@@ -51,7 +55,6 @@ public class SleepGoogleFit {
     private static JSONObject sleepPost;
     public static final String TAG = "SleepData";
     private static Boolean hasSleep = false;
-    private static Boolean hasSteps = false;
 
 
 
@@ -60,24 +63,32 @@ public class SleepGoogleFit {
     /**
      * Asynchronous task to read the sleep data. When the task succeeds, it will print out the data.
      */
-    public Task<DataReadResponse> readSleepData(Context context, GoogleSignInOptionsExtension fitnessOptions)  {
+    public Task<DataReadResponse> readSleepData(Context context, GoogleSignInOptionsExtension fitnessOptions) {
         DataReadRequest readRequest = querySleepData();
 
         GoogleSignInAccount googleSignInAccount =
                 GoogleSignIn.getAccountForExtension(context, fitnessOptions);
 
-        Task<DataReadResponse> response = Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context))
-                                .readData(readRequest);
-        DataReadResponse totalSet = null;
-        try {
-            totalSet = Tasks.await(response, 30, SECONDS);
-            makeSleepSegments(totalSet);
-        } catch (Exception e) {
-            Log.i("Steps extraction error:", e.toString());
-            e.printStackTrace();
-        }
-        return response;
-
+        return Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context))
+                .readData(readRequest)
+                .addOnSuccessListener(
+                        new OnSuccessListener<DataReadResponse>() {
+                            @Override
+                            public void onSuccess(DataReadResponse dataReadResult) {
+                                try {
+                                    makeSleepSegments(dataReadResult);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e(TAG, "There was a problem reading the data.", e);
+                                    }
+                                });
     }
 
     /** Returns a {@link DataReadRequest} for all sleep count changes in the past day. */
@@ -85,7 +96,7 @@ public class SleepGoogleFit {
         // [START build_read_data_request]
         // Setting a start and end date using a range of 1 day before this moment.
         long endTime = System.currentTimeMillis();
-        long startTime = endTime-86400000;
+        long startTime = endTime-86400000 * 7;
 
         java.text.DateFormat dateFormat = getDateInstance();
         Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
@@ -94,7 +105,6 @@ public class SleepGoogleFit {
         // [END build_read_data_request]
 
         return new DataReadRequest.Builder()
-                //.aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
                 .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .bucketByTime(1, TimeUnit.MINUTES)
@@ -106,6 +116,12 @@ public class SleepGoogleFit {
         // [START parse_read_data_result]
         // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
         // as buckets containing DataSets, instead of just DataSets.
+
+        long lightSleepTotal = 0;
+        long deepSleepTotal = 0;
+        long awakeTotal = 0;
+
+
         DateFormat dateFormat = getTimeInstance();
         if (dataReadResult.getBuckets().size() > 0) {
             sleepSegments=new LinkedList<>();
@@ -139,12 +155,21 @@ public class SleepGoogleFit {
                                         switch (lastSleepStep){
                                             case 109:
                                                 segment.put("Type", "Light");
+
+                                                lightSleepTotal += (end - start);
+
                                                 break;
                                             case 110:
                                                 segment.put("Type", "Deep");
+
+                                                deepSleepTotal += (end - start);
+
                                                 break;
                                             case 112:
                                                 segment.put("Type", "Awake");
+
+                                                awakeTotal += (end - start);
+
                                                 break;
                                         }
                                         segment.put("StartTime",start);
@@ -179,12 +204,15 @@ public class SleepGoogleFit {
                 switch (lastSleepStep){
                     case 109:
                         segment.put("Type", "Light");
+                        lightSleepTotal += (end - start);
                         break;
                     case 110:
                         segment.put("Type", "Deep");
+                        deepSleepTotal += (end - start);
                         break;
                     case 112:
                         segment.put("Type", "Awake");
+                        awakeTotal += (end - start);
                         break;
                 }
                 segment.put("StartTime",start);
@@ -207,6 +235,23 @@ public class SleepGoogleFit {
             sleepPost.put("Sleep",sleepSegmentss);
 
         }
+
+        int lightSleepSeconds = (int) (lightSleepTotal / 1000) % 60 ;
+        int lightSleepMinutes = (int) ((lightSleepTotal / (1000*60)) % 60);
+        int lightSleepHours   = (int) ((lightSleepTotal / (1000*60*60)) % 24);
+
+        int deepSleepSeconds = (int) (deepSleepTotal / 1000) % 60 ;
+        int deepSleepMinutes = (int) ((deepSleepTotal / (1000*60)) % 60);
+        int deepSleepHours   = (int) ((deepSleepTotal / (1000*60*60)) % 24);
+
+        int awakeSeconds = (int) (awakeTotal / 1000) % 60 ;
+        int awakeMinutes = (int) ((awakeTotal / (1000*60)) % 60);
+        int awakeHours   = (int) ((awakeTotal / (1000*60*60)) % 24);
+
+        Log.i(TAG, "Total light sleep time:" + lightSleepHours + ":" + lightSleepMinutes + ":" + lightSleepSeconds);
+        Log.i(TAG, "Total deep sleep time:" + deepSleepHours + ":" + deepSleepMinutes + ":" + deepSleepSeconds);
+        Log.i(TAG, "Total awake time:" + awakeHours + ":" + awakeMinutes + ":" + awakeSeconds);
+
     }
 
     public static class Tuple<X, Y> {
