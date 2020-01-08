@@ -61,6 +61,7 @@ public class GPS implements LocationListener {
             result.append(line);
         }
         rd.close();
+        conn.disconnect();
         return result.toString();
     }
 

@@ -1,7 +1,5 @@
 package Model;
 
-import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -13,9 +11,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
+import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
 
 public class Permissions {
@@ -37,6 +34,8 @@ public class Permissions {
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
                         .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
                         .build();
 
         if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(app), fitnessOptions)) {

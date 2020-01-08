@@ -88,6 +88,8 @@ public class AppController {
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), "metrics/calories");
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), "metrics/distance");
 
+            Log.i("SendMetrics", "******* metrics had been sent successfully ******");
+
         } catch (ServerFalse serverFalse) {
             Log.e("ServerFalse", "bug in sending metrics");
             //TODO: pop up error message to the user
