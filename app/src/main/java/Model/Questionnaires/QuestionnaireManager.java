@@ -1,9 +1,9 @@
 package Model.Questionnaires;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,20 +16,26 @@ import static java.nio.file.Paths.get;
 public class QuestionnaireManager {
 
     public static Questionnaire createQuestionnaireFromJSON(JSONObject jsonObject) {
-        String title = (String) jsonObject.get("QuestionnaireText");
-        String mongo_id = (String) jsonObject.get("_id");
-        long questionnaire_id = (Long) jsonObject.get("QuestionnaireID");
-        JSONArray questionsJSON = (JSONArray) jsonObject.get("Questions");
-        List<Question> questionsList =  parseQuestionsFromJSONArray(questionsJSON);
-        Questionnaire result = new Questionnaire();
-        result.setMongoID(mongo_id);
-        result.setQuestionaireID(questionnaire_id);
-        result.setTitle(title);
-        result.setQuestions(questionsList);
-        return result;
+        String title = null;
+        try {
+            title = (String) jsonObject.get("QuestionnaireText");
+            String mongo_id = (String) jsonObject.get("_id");
+            long questionnaire_id = new Long((Integer)jsonObject.get("QuestionnaireID"));
+            JSONArray questionsJSON = (JSONArray) jsonObject.get("Questions");
+            List<Question> questionsList =  parseQuestionsFromJSONArray(questionsJSON);
+            Questionnaire result = new Questionnaire();
+            result.setMongoID(mongo_id);
+            result.setQuestionaireID(questionnaire_id);
+            result.setTitle(title);
+            result.setQuestions(questionsList);
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
     }
-
-
 
 
     public static JSONObject jsonObject(Questionnaire questionnaire) {
@@ -41,40 +47,50 @@ public class QuestionnaireManager {
 
     private static List<Question> parseQuestionsFromJSONArray(JSONArray questionsJSON) {
         List<Question> questions = new ArrayList<>();
-        for (Object o: questionsJSON) {
-            if (o instanceof JSONObject) {
-                Question question = parseQuestionFromJsonObject((JSONObject)o);
-                questions.add(question);
+        for (int i=0; i<questionsJSON.length(); i++) {
+            Question question = null;
+            try {
+                question = parseQuestionFromJsonObject(questionsJSON.getJSONObject(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            questions.add(question);
         }
         return questions;
     }
 
     private static Question parseQuestionFromJsonObject(JSONObject jsonObject) {
-        long Question_id = (Long) jsonObject.get("QuestionID");
-        String type =  (String) jsonObject.get("Type");
-        String text = (String) jsonObject.get("QuestionText");
-        JSONArray answersJSON = (JSONArray) jsonObject.get("Answers");
-        List<Answer> answersList =  parseAnswersFromJSONArray(answersJSON);
-        Question question = new Question();
-        question.setQuestionID(Question_id);
-        question.setQuestionText(text);
-        question.setType(type);
-        question.setAnswers(answersList);
-        //for specific questions type
-        if (type.toUpperCase().equals("VAS")) {
-            String best = (String) jsonObject.get("Best");
-            String worst = (String) jsonObject.get("Worst");
-            question.setBest(best);
-            question.setWorst(worst);
-        }
-        else if (type.toUpperCase().equals("MULTI")) {
-            JSONArray jsonArray = (JSONArray) jsonObject.get("Alone");
-            List<Long> alone  = new ArrayList<>();
-            for (int i=0; i<jsonArray.size(); i++) {
-                alone.add((Long) jsonArray.get(i));
+        long Question_id = 0;
+        Question question = null;
+        try {
+            Question_id = new Long((Integer)jsonObject.get("QuestionID"));
+            String type =  (String) jsonObject.get("Type");
+            String text = (String) jsonObject.get("QuestionText");
+            JSONArray answersJSON = (JSONArray) jsonObject.get("Answers");
+            List<Answer> answersList =  parseAnswersFromJSONArray(answersJSON);
+            question = new Question();
+            question.setQuestionID(Question_id);
+            question.setQuestionText(text);
+            question.setType(type);
+            question.setAnswers(answersList);
+            //for specific questions type
+            if (type.toUpperCase().equals("VAS")) {
+                String best = (String) jsonObject.get("Best");
+                String worst = (String) jsonObject.get("Worst");
+                question.setBest(best);
+                question.setWorst(worst);
             }
-            question.setAlone(alone);
+            else if (type.toUpperCase().equals("MULTI")) {
+                JSONArray jsonArray = (JSONArray) jsonObject.get("Alone");
+                List<Long> alone  = new ArrayList<>();
+                for (int i=0; i<jsonArray.length(); i++) {
+                    alone.add((new Long((Integer)jsonArray.get(i))));
+                }
+                question.setAlone(alone);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return question;
@@ -82,19 +98,28 @@ public class QuestionnaireManager {
 
     private static List<Answer> parseAnswersFromJSONArray(JSONArray answersJSON) {
         List<Answer> answers = new ArrayList<>();
-        for (Object o: answersJSON) {
-            if (o instanceof JSONObject) {
-                Answer answer = parseAnswerFromJsonObject((JSONObject)o);
-                answers.add(answer);
+        for (int i=0; i<answersJSON.length(); i++) {
+            Answer answer = null;
+            try {
+                answer = parseAnswerFromJsonObject((answersJSON.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            answers.add(answer);
         }
         return answers;
     }
 
     private static Answer parseAnswerFromJsonObject(JSONObject jsonObject) {
-        long ansID = (Long) jsonObject.get("answerID");
-        String text = (String) jsonObject.get("answerText");
-        return new Answer(ansID,text);
+        long ansID = 0;
+        try {
+            ansID = new Long((Integer) jsonObject.get("answerID"));
+            String text = (String) jsonObject.get("answerText");
+            return new Answer(ansID,text);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

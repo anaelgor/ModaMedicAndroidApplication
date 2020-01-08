@@ -36,7 +36,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.android.gms:play-services-fitness:18.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation("com.squareup.okhttp3:okhttp:4.3.0")
 
 }

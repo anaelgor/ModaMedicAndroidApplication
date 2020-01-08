@@ -22,7 +22,7 @@ public class HttpRequests {//TODO: make this singleton after testing
     //public static final String urlPrefix = "http://10.0.2.2:3000/";
     //public static final String urlPrefix = "http://localhost:3000/";
 
-    public static final String urlPrefix = "http://192.168.1.29:3000/"; // suddenly worked
+    public static final String urlPrefix = "http://192.168.1.20:3000/"; // suddenly worked
 
 
     public void sendPostRequest(JSONObject jsonPost, String url) throws ServerFalse {
