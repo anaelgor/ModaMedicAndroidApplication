@@ -17,17 +17,23 @@ import com.example.modamedicandroidapplication.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Controller.AppController;
+import Model.Questionnaires.Questionnaire;
+
 /*
 Home page screen
  */
 public class HomePageActivity extends AppCompatActivity {
     List<String> questionnaires;
     String username;
+    AppController appController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
+        appController = AppController.getController(this);
+
 
         questionnaires = getAllQuestionnaires("");
         Intent intent = getIntent();
@@ -78,19 +84,21 @@ public class HomePageActivity extends AppCompatActivity {
         params.setMargins(10,10, 10, 10);
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
-
-
-
     }
 
     //todo: implement this
     private void openQuestionnaireActivity(String questionnaire_name) {
+        //todo: get Questionnaire json from db
         Log.i("Home Page","questionnaire " + questionnaire_name + " has been opened");
+        Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_name);
+        Intent intent = new Intent(this, QuestionnaireActivity.class);
+        intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
+        startActivity(intent);
 
 
     }
 
-    //todo: implement this with db
+    //todo: implement this with db and controller
     private List<String> getAllQuestionnaires(String username) {
         List<String> res = new ArrayList<>();
         res.add("SF-12");

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.JsonReader;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -11,12 +12,27 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
 import Model.Exceptions.ServerFalse;
 import Model.GPS;
 import Model.HttpRequests;
 import Model.SleepGoogleFit;
+import Model.Questionnaires.AnswersManager;
+import Model.Questionnaires.Questionnaire;
+import Model.Questionnaires.QuestionnaireManager;
 import Model.StepsGoogleFit;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
@@ -87,8 +103,6 @@ public class AppController {
             System.out.println("Did not found location");
         }
 
-
-
         try {
             // send data to server
             Log.i("SendMetrics", "******* Sending metrics to server ******");
@@ -98,12 +112,51 @@ public class AppController {
             //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), "metrics/sleep");
 
 
+
         } catch (ServerFalse serverFalse) {
             Log.e("ServerFalse", "bug in sending metrics");
             //TODO: pop up error message to the user
             serverFalse.printStackTrace();
         }
     }
+
+    public Questionnaire getQuestionnaire(String questionnaire_name) {
+        JSONObject jsonObject = getQuestionnaireFromDB("questionnaires/daily_questionnaire");
+
+        try {
+            // jsonObject = new JSONObject(daily_from_server);
+            System.out.println(jsonObject.toString());
+            Log.i("AppController", jsonObject.toString());
+            JSONArray jssonArray = (JSONArray) jsonObject.get("data");
+            jsonObject = (JSONObject) jssonArray.get(0);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return QuestionnaireManager.createQuestionnaireFromJSON(jsonObject);
+    }
+
+    private JSONObject getQuestionnaireFromDB(String questionnaire_name) {
+        try {
+            return httpRequests.sendGetRequest(questionnaire_name);
+        } catch (ServerFalse serverFalse) {
+            serverFalse.printStackTrace();
+        }
+        return null;
+    }
+
+    public void sendAnswersToServer(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID) {
+        org.json.JSONObject request = AnswersManager.createJsonAnswersOfQuestsionnaire(questionsAndAnswers,questionnaireID);
+        try {
+            //todo: not hard coded!!!!!!!!!! anael
+            httpRequests.sendPostRequest(request,"answers/"+"daily_answers");
+            Log.i("AppControler","sent to server");
+
+        } catch (ServerFalse serverFalse) {
+            serverFalse.printStackTrace();
+            Log.i("AppControler","problem in sending questionaire to server "+serverFalse.getLocalizedMessage());
+        }
+    }
 }
-
-
