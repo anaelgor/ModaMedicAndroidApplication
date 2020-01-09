@@ -167,10 +167,13 @@ public class QuestionnaireActivity extends AppCompatActivity {
         LinearLayout  layout =  findViewById(R.id.lin_layout);
         final Map<Long, Integer> VAS_Colors = getColorsOfVAS();
 
-        TextView worstTV= new TextView(this);
-        worstTV.setText(questionnaire.getQuestions().get(i).getWorst());
-        setLabelsOfBestWorstConfiguration(worstTV);
-        layout.addView(worstTV);
+
+
+        TextView best = new TextView(this);
+        best.setText(questionnaire.getQuestions().get(i).getBest());
+        setLabelsOfBestWorstConfiguration(best);
+        layout.addView(best);
+
 
         for (Answer ans : this.questionnaire.getQuestions().get(i).getAnswers()) {
             String text = ans.getAnswerText();
@@ -215,11 +218,10 @@ public class QuestionnaireActivity extends AppCompatActivity {
             layout.addView(ans_Button);
         }
 
-
-        TextView best = new TextView(this);
-        best.setText(questionnaire.getQuestions().get(i).getBest());
-        setLabelsOfBestWorstConfiguration(best);
-        layout.addView(best);
+        TextView worstTV= new TextView(this);
+        worstTV.setText(questionnaire.getQuestions().get(i).getWorst());
+        setLabelsOfBestWorstConfiguration(worstTV);
+        layout.addView(worstTV);
 
 
 
