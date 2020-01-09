@@ -6,12 +6,14 @@ import androidx.core.content.res.ResourcesCompat;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.autofill.AutofillValue;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
     private void showTitle() {
         TextView title = findViewById(R.id.questionnaire_title);
         title.setText(this.getString(R.string.questionnaire) + " " + questionnaire.getTitle());
+        title.setTextSize(20);
     }
 
     private void showQuestion(final long ii) {
@@ -62,7 +65,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
         String ques_TEXT = questionnaire.getQuestions().get(i).getQuestionText();
         TextView question_TV = new TextView(this);
         question_TV.setText(ques_TEXT);
-        question_TV.setTextSize(20);
+        question_TV.setTextSize(30);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
@@ -71,7 +74,9 @@ public class QuestionnaireActivity extends AppCompatActivity {
         layout.addView(question_TV);
         BuildQuestionByType(questionnaire.getQuestions().get(i).getType(), i);
         FloatingActionButton nextButton = findViewById(R.id.nextButton);
+        setLocationOfButtonInRelativeLayout(nextButton);
         if (i<questionnaire.getQuestions().size()-1){ // not last question
+            setColorOfNextButton(nextButton);
             nextButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -89,6 +94,8 @@ public class QuestionnaireActivity extends AppCompatActivity {
         }
         else { //last question in questionnaire
             nextButton.setImageResource(android.R.drawable.ic_menu_send);
+            setColorOfNextButton(nextButton);
+
             nextButton.setOnClickListener(new View.OnClickListener() {
 
                 @SuppressLint("RestrictedApi")
@@ -118,6 +125,18 @@ public class QuestionnaireActivity extends AppCompatActivity {
         }
 
 
+    }
+    //todo: understand why this doesn't works
+    private void setColorOfNextButton(FloatingActionButton nextButton) {
+        int color = ResourcesCompat.getColor(getResources(),R.color.colorButtons, null);
+        nextButton.setBackgroundColor(color);
+    }
+
+    private void setLocationOfButtonInRelativeLayout(FloatingActionButton nextButton) {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10, new Double(getHeightOfScreen()*0.85).intValue(), 0, 0);
+        nextButton.setLayoutParams(params);
     }
 
     private void sendAnswersToServer() {
@@ -171,7 +190,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
 
                 private void chose(long chosenAnswerID, long questionID) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(),R.color.colorAccent, null);
+                    int color = ResourcesCompat.getColor(getResources(),R.color.colorChosenAnswer, null);
 
                     if (!questionsAnswers.containsKey(questionID)) {
                         List<Long> tmp_list = new ArrayList<>();
@@ -241,7 +260,8 @@ public class QuestionnaireActivity extends AppCompatActivity {
             final long finalQuestionID = currentQuestionID;
             final int reg_color = ResourcesCompat.getColor(getResources(),R.color.colorRegularAnswer, null);
             ans_Button.setBackgroundColor(reg_color);
-            setButtonConfiguration(ans_Button);
+            setButtonConfigurationForSingleAndMulti(ans_Button);
+
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -250,7 +270,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
 
                 private void chose(long chosenAnswerID, long questionID) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(),R.color.colorAccent, null);
+                    int color = ResourcesCompat.getColor(getResources(),R.color.colorChosenAnswer, null);
 
                     if (!questionsAnswers.containsKey(questionID)) {
                         List<Long> tmp_list = new ArrayList<>();
@@ -294,7 +314,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
             final long finalQuestionID = currentQuestionID;
             final int reg_color = ResourcesCompat.getColor(getResources(),R.color.colorRegularAnswer, null);
             ans_Button.setBackgroundColor(reg_color);
-            setButtonConfiguration(ans_Button);
+            setButtonConfigurationForSingleAndMulti(ans_Button);
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -303,7 +323,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
 
                 private void chose(long chosenAnswerID, long questionID, View v) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(),R.color.colorAccent, null);
+                    int color = ResourcesCompat.getColor(getResources(),R.color.colorChosenAnswer, null);
                     List<Long> alone =  questionnaire.getQuestions().get(i).getAlone();
                     if (!questionsAnswers.containsKey(questionID)) { //first answer
                         List<Long> tmp_list = new ArrayList<>();
@@ -378,6 +398,31 @@ public class QuestionnaireActivity extends AppCompatActivity {
         params.height = (int) (px*0.25);
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
+    }
+
+    /*
+    now is implemented only by single, let's see later if we need it on multi
+     */
+    private void setButtonConfigurationForSingleAndMulti(Button b) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10, 10, 10, 10);
+        int width = getWidthOfScreen();
+        b.setWidth(width);
+        b.setGravity(Gravity.CENTER);
+        b.setLayoutParams(params);
+    }
+    private int getWidthOfScreen() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        return width;
+    }
+
+    private int getHeightOfScreen() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
     }
 
     private void setLabelsOfBestWorstConfiguration(TextView t) {
