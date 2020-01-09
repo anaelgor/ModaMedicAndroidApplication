@@ -35,6 +35,10 @@ import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireManager;
 import Model.StepsGoogleFit;
 
+import static Controller.Urls.urlPostCalories;
+import static Controller.Urls.urlPostDistance;
+import static Controller.Urls.urlPostSleep;
+import static Controller.Urls.urlPostSteps;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
@@ -106,11 +110,10 @@ public class AppController {
         try {
             // send data to server
             Log.i("SendMetrics", "******* Sending metrics to server ******");
-            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), "metrics/steps");
-            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), "metrics/calories");
-            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), "metrics/distance");
-            //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), "metrics/sleep");
-
+            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), urlPostSteps);
+            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), urlPostCalories);
+            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), urlPostDistance);
+            //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), urlPostSleep);
 
 
         } catch (ServerFalse serverFalse) {
