@@ -16,6 +16,7 @@ import com.example.modamedicandroidapplication.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import Controller.AppController;
 import Model.Questionnaires.Questionnaire;
@@ -24,7 +25,7 @@ import Model.Questionnaires.Questionnaire;
 Home page screen
  */
 public class HomePageActivity extends AppCompatActivity {
-    List<String> questionnaires;
+    Map<Long,String> questionnaires; //key: questID, value: questionnaire Text
     String username;
     AppController appController;
 
@@ -35,10 +36,11 @@ public class HomePageActivity extends AppCompatActivity {
         appController = AppController.getController(this);
 
 
-        questionnaires = getAllQuestionnaires("");
+        questionnaires = getAllQuestionnaires(username);
         Intent intent = getIntent();
         username = intent.getStringExtra(BindingValues.LOGGED_USERNAME);
         TextView good_eve = findViewById(R.id.good_evening_textView);
+        //todo: change the good eve to something dynamic
         good_eve.setText(this.getString(R.string.good_evening)+" "+username);
         createAllButtons();
 
@@ -47,28 +49,29 @@ public class HomePageActivity extends AppCompatActivity {
     private void createAllButtons() {
         LinearLayout  layout =  findViewById(R.id.lin_layout);
 
-
-
-        Button daily_questionnaire_button = new Button(this);
-        daily_questionnaire_button.setText(this.getString(R.string.daily_questionnaire));
-        setButtonConfiguration(daily_questionnaire_button);
-        daily_questionnaire_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openQuestionnaireActivity("daily");
-            }
-        });
-        layout.addView(daily_questionnaire_button);
+//
+//
+//        Button daily_questionnaire_button = new Button(this);
+//        daily_questionnaire_button.setText(this.getString(R.string.daily_questionnaire));
+//        setButtonConfiguration(daily_questionnaire_button);
+//        daily_questionnaire_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openQuestionnaireActivity("daily");
+//            }
+//        });
+//        layout.addView(daily_questionnaire_button);
 
         Button[] questionnaire_buttons = new Button[questionnaires.size()];
         for (int i=0; i<questionnaire_buttons.length; i++) {
             questionnaire_buttons[i] = new Button(this);
-            questionnaire_buttons[i].setText(questionnaires.get(i));
             final int finalI = i;
+            final Long QuestionnaireID = new Long(finalI);
+            questionnaire_buttons[i].setText(questionnaires.get(QuestionnaireID));
             questionnaire_buttons[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openQuestionnaireActivity(questionnaires.get(finalI));
+                    openQuestionnaireActivity(questionnaires.get(QuestionnaireID),QuestionnaireID);
                 }
             });
             setButtonConfiguration(questionnaire_buttons[i]);
@@ -87,10 +90,10 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     //todo: implement this
-    private void openQuestionnaireActivity(String questionnaire_name) {
+    private void openQuestionnaireActivity(String questionnaire_name, Long questionnaire_id) {
         //todo: get Questionnaire json from db
         Log.i("Home Page","questionnaire " + questionnaire_name + " has been opened");
-        Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_name);
+        Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
         Intent intent = new Intent(this, QuestionnaireActivity.class);
         intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
         startActivity(intent);
@@ -99,11 +102,10 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     //todo: implement this with db and controller
-    private List<String> getAllQuestionnaires(String username) {
-        List<String> res = new ArrayList<>();
-        res.add("SF-12");
-        res.add("SF-36");
-        return res;
+    private Map<Long,String> getAllQuestionnaires(String username) {
+        AppController appController = AppController.getController(this);
+        Map<Long, String> questionnaires  = appController.getUserQuestionnaires(username);
+        return questionnaires;
     }
 
 

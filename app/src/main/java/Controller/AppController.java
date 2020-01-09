@@ -123,15 +123,13 @@ public class AppController {
         }
     }
 
-    public Questionnaire getQuestionnaire(String questionnaire_name) {
-        JSONObject jsonObject = getQuestionnaireFromDB("questionnaires/daily_questionnaire");
+    public Questionnaire getQuestionnaire(Long questionnaire_id) {
+        JSONObject jsonObject = getQuestionnaireFromDB(Urls.urlGetQuestionnaireByID+questionnaire_id);
 
         try {
-            // jsonObject = new JSONObject(daily_from_server);
             System.out.println(jsonObject.toString());
             Log.i("AppController", jsonObject.toString());
-            JSONArray jssonArray = (JSONArray) jsonObject.get("data");
-            jsonObject = (JSONObject) jssonArray.get(0);
+            jsonObject = (JSONObject) jsonObject.get("data");
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -153,13 +151,35 @@ public class AppController {
     public void sendAnswersToServer(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID) {
         org.json.JSONObject request = AnswersManager.createJsonAnswersOfQuestsionnaire(questionsAndAnswers,questionnaireID);
         try {
-            //todo: not hard coded!!!!!!!!!! anael
-            httpRequests.sendPostRequest(request,"answers/"+"daily_answers");
+            httpRequests.sendPostRequest(request,Urls.urlSendAnswersOfQuestionnaireByID+questionnaireID);
             Log.i("AppControler","sent to server");
 
         } catch (ServerFalse serverFalse) {
             serverFalse.printStackTrace();
             Log.i("AppControler","problem in sending questionaire to server "+serverFalse.getLocalizedMessage());
         }
+    }
+
+    public Map<Long, String> getUserQuestionnaires(String username) {
+        JSONObject user_questionnaires = null;
+        Map<Long,String> result = new HashMap<>();
+        //todo: add token
+        try {
+            username="111111111";
+            user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires+username);
+            JSONArray array = user_questionnaires.getJSONArray("data");
+            for (int i=0; i<array.length(); i++) {
+                Long id = new Long( (Integer)array.getJSONObject(i).get("QuestionnaireID"));
+                String text = (String)array.getJSONObject(i).get("QuestionnaireText");
+                result.put(id,text);
+            }
+        } catch (ServerFalse serverFalse) {
+            serverFalse.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("xx");
+        return result;
     }
 }
