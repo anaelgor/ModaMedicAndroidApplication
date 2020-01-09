@@ -56,7 +56,9 @@ public class SleepGoogleFit {
     public static final String TAG = "SleepData";
     private static Boolean hasSleep = false;
 
-
+    private static long lightSleepTotal = 0;
+    private static long deepSleepTotal = 0;
+    private static long awakeTotal = 0;
 
 
 
@@ -117,11 +119,6 @@ public class SleepGoogleFit {
         // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
         // as buckets containing DataSets, instead of just DataSets.
 
-        long lightSleepTotal = 0;
-        long deepSleepTotal = 0;
-        long awakeTotal = 0;
-
-
         DateFormat dateFormat = getTimeInstance();
         if (dataReadResult.getBuckets().size() > 0) {
             sleepSegments=new LinkedList<>();
@@ -133,7 +130,6 @@ public class SleepGoogleFit {
             long start=0;
             long end=0;
             boolean find=false;
-
 
 
             for (Bucket bucket : dataReadResult.getBuckets()) {
@@ -252,6 +248,19 @@ public class SleepGoogleFit {
         Log.i(TAG, "Total deep sleep time:" + deepSleepHours + ":" + deepSleepMinutes + ":" + deepSleepSeconds);
         Log.i(TAG, "Total awake time:" + awakeHours + ":" + awakeMinutes + ":" + awakeSeconds);
 
+    }
+
+    public JSONObject makeJsonBody(String userID){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("UserName", userID);
+            json.put("LightSleep",lightSleepTotal);
+            json.put("DeepSleep", deepSleepTotal);
+            json.put("Awake", awakeTotal);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 
     public static class Tuple<X, Y> {

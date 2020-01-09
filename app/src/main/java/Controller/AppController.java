@@ -42,7 +42,6 @@ public class AppController {
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
         this.sleepGoogleFit = new SleepGoogleFit();
-        //TODO: need to ask for permission before this command
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new GPS(locationManager, activity);
         this.httpRequests = new HttpRequests();
@@ -96,6 +95,7 @@ public class AppController {
             httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), "metrics/steps");
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), "metrics/calories");
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), "metrics/distance");
+            //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), "metrics/sleep");
 
 
         } catch (ServerFalse serverFalse) {
