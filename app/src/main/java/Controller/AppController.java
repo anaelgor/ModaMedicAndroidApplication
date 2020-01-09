@@ -165,7 +165,8 @@ public class AppController {
         Map<Long,String> result = new HashMap<>();
         //todo: add token
         try {
-            user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires);
+            username="111111111";
+            user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires+username);
             JSONArray array = user_questionnaires.getJSONArray("data");
             for (int i=0; i<array.length(); i++) {
                 Long id = new Long( (Integer)array.getJSONObject(i).get("QuestionnaireID"));

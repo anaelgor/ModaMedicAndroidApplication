@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         //todo: change this the user REAL name from db. "a" and "a" only for checks
         Log.i("Main Page", "User " + username + " with password " + password + " logged in");
         if (username.equals("a") && password.equals("a")) {
+            username = "111111111";
             Intent intent = new Intent(this, HomePageActivity.class);
             intent.putExtra(BindingValues.LOGGED_USERNAME, username);
             startActivity(intent);
