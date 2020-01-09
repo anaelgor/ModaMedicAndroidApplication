@@ -56,8 +56,7 @@ public class CaloriesGoogleFit {
         userID = "111111111";
         JSONObject json = new JSONObject();
         try {
-            json.put("UserID", userID);
-            json.put("Calories", calories);
+            json.put("Data", calories);
         } catch (JSONException e) {
             e.printStackTrace();
         }

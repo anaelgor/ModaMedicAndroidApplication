@@ -55,8 +55,7 @@ public class DistanceGoogleFit {
         userID = "111111111";
         JSONObject json = new JSONObject();
         try {
-            json.put("UserID", userID);
-            json.put("Distance", distance);
+            json.put("Data", distance);
         } catch (JSONException e) {
             e.printStackTrace();
         }
