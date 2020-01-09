@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
+import com.google.android.gms.fitness.data.DataType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,7 @@ import Model.DistanceGoogleFit;
 import Model.Exceptions.ServerFalse;
 import Model.GPS;
 import Model.HttpRequests;
+import Model.SleepGoogleFit;
 import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireManager;
@@ -43,6 +45,7 @@ public class AppController {
     private StepsGoogleFit stepsGoogleFit;
     private DistanceGoogleFit distanceGoogleFit;
     private CaloriesGoogleFit caloriesGoogleFit;
+    private SleepGoogleFit sleepGoogleFit;
     private Activity activity;
     private LocationManager locationManager;
     private LocationListener gpsLocationListener;
@@ -54,7 +57,7 @@ public class AppController {
         this.stepsGoogleFit = new StepsGoogleFit();
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
-        //TODO: need to ask for permission before this command
+        this.sleepGoogleFit = new SleepGoogleFit();
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new GPS(locationManager, activity);
         this.httpRequests = new HttpRequests();
@@ -77,9 +80,11 @@ public class AppController {
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
+                        .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
+            sleepGoogleFit.readSleepData(this.activity, fitnessOptions);
             steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
@@ -104,6 +109,7 @@ public class AppController {
             httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), "metrics/steps");
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), "metrics/calories");
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), "metrics/distance");
+            //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), "metrics/sleep");
 
 
 
@@ -112,112 +118,19 @@ public class AppController {
             //TODO: pop up error message to the user
             serverFalse.printStackTrace();
         }
-
     }
 
     public Questionnaire getQuestionnaire(String questionnaire_name) {
         JSONObject jsonObject = getQuestionnaireFromDB("questionnaires/daily_questionnaire");
-        //todo: remove this and get it from server
-//        String daily_from_server = "{\n" +
-//                "    \"error\": false,\n" +
-//                "    \"message\": null,\n" +
-//                "    \"data\": [\n" +
-//                "        {\n" +
-//                "            \"_id\": \"5e15f343d90bac1bdb0326cf\",\n" +
-//                "            \"QuestionnaireID\": 0,\n" +
-//                "            \"QuestionnaireText\": \"Daily\",\n" +
-//                "            \"Questions\": [\n" +
-//                "                {\n" +
-//                "                    \"Answers\": [\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 0,\n" +
-//                "                            \"answerText\": \"0\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 1,\n" +
-//                "                            \"answerText\": \"1\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 2,\n" +
-//                "                            \"answerText\": \"2\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 3,\n" +
-//                "                            \"answerText\": \"3\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 4,\n" +
-//                "                            \"answerText\": \"4\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 5,\n" +
-//                "                            \"answerText\": \"5\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 6,\n" +
-//                "                            \"answerText\": \"6\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 7,\n" +
-//                "                            \"answerText\": \"7\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 8,\n" +
-//                "                            \"answerText\": \"8\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 9,\n" +
-//                "                            \"answerText\": \"9\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 10,\n" +
-//                "                            \"answerText\": \"10\"\n" +
-//                "                        }\n" +
-//                "                    ],\n" +
-//                "                    \"QuestionID\": 0,\n" +
-//                "                    \"QuestionText\": \"מהי רמת הכאב הנוכחית שלך?\",\n" +
-//                "                    \"Type\": \"VAS\",\n" +
-//                "                    \"Best\": \"אין כאב בכלל\",\n" +
-//                "                    \"Worst\": \"כאב בלתי נסבל\"\n" +
-//                "                },\n" +
-//                "                {\n" +
-//                "                    \"Answers\": [\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 0,\n" +
-//                "                            \"answerText\": \"לא נטלתי\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 1,\n" +
-//                "                            \"answerText\": \"בסיסית\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 2,\n" +
-//                "                            \"answerText\": \"מתקדמת\"\n" +
-//                "                        },\n" +
-//                "                        {\n" +
-//                "                            \"answerID\": 3,\n" +
-//                "                            \"answerText\": \"נרקוטית\"\n" +
-//                "                        }\n" +
-//                "                    ],\n" +
-//                "                    \"QuestionID\": 1,\n" +
-//                "                    \"QuestionText\": \"איזה סוג תרופה נטלת היום?\",\n" +
-//                "                    \"Type\": \"multi\",\n" +
-//                "                    \"Alone\": [\n" +
-//                "                        0\n" +
-//                "                    ]\n" +
-//                "                }\n" +
-//                "            ]\n" +
-//                "        }\n" +
-//                "    ]\n" +
-//                "}";
+
         try {
-           // jsonObject = new JSONObject(daily_from_server);
+            // jsonObject = new JSONObject(daily_from_server);
             System.out.println(jsonObject.toString());
             Log.i("AppController", jsonObject.toString());
             JSONArray jssonArray = (JSONArray) jsonObject.get("data");
             jsonObject = (JSONObject) jssonArray.get(0);
         }
-         catch (JSONException e) {
+        catch (JSONException e) {
             e.printStackTrace();
         }
 

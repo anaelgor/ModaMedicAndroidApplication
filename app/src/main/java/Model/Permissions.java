@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 
+import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
@@ -36,6 +37,7 @@ public class Permissions {
                         .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_ACTIVITY_SEGMENT,FitnessOptions.ACCESS_READ)
                         .build();
 
         if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(app), fitnessOptions)) {
