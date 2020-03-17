@@ -22,13 +22,12 @@ public class HttpRequests {//TODO: make this singleton after testing
     //public static final String urlPrefix = "http://10.0.2.2:3000/";
     //public static final String urlPrefix = "http://localhost:3000/";
 
-    public static final String urlPrefix = "http://132.73.202.75:3000/"; // suddenly worked
 
 
     public void sendPostRequest(JSONObject jsonPost, String url) throws ServerFalse {
         sendRequestHttp = new SendRequestHttp();
         try {
-            JSONObject jo = sendRequestHttp.execute("POST", urlPrefix + url, jsonPost.toString()).get();
+            JSONObject jo = sendRequestHttp.execute("POST", Constants.urlPrefix + url, jsonPost.toString()).get();
             sendRequestHttp.checkExeption();
 
         }catch (ExecutionException | InterruptedException e) {
@@ -39,7 +38,7 @@ public class HttpRequests {//TODO: make this singleton after testing
     public JSONObject sendGetRequest(String url) throws ServerFalse {
         sendRequestHttp = new SendRequestHttp();
         try {
-            JSONObject jo = sendRequestHttp.execute("GET", urlPrefix + url).get();
+            JSONObject jo = sendRequestHttp.execute("GET", Constants.urlPrefix + url).get();
             sendRequestHttp.checkExeption();
             return jo;
         }catch (ExecutionException | InterruptedException e) {
