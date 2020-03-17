@@ -56,6 +56,7 @@ public class StepsGoogleFit {
         JSONObject json = new JSONObject();
         try {
             json.put("Data", steps);
+            json.put("ValidateTime", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }

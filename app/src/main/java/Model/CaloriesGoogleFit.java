@@ -57,6 +57,7 @@ public class CaloriesGoogleFit {
         JSONObject json = new JSONObject();
         try {
             json.put("Data", calories);
+            json.put("ValidateTime", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }

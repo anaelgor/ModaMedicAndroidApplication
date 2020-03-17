@@ -56,6 +56,7 @@ public class DistanceGoogleFit {
         JSONObject json = new JSONObject();
         try {
             json.put("Data", distance);
+            json.put("ValidateTime", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }

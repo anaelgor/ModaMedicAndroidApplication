@@ -1,15 +1,8 @@
 package Model;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 
@@ -17,8 +10,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessOptions;
-import com.google.android.gms.fitness.HistoryClient;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -26,26 +17,21 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 import static java.text.DateFormat.getTimeInstance;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class SleepGoogleFit {
     public SleepGoogleFit() {
@@ -98,7 +84,7 @@ public class SleepGoogleFit {
         // [START build_read_data_request]
         // Setting a start and end date using a range of 1 day before this moment.
         long endTime = System.currentTimeMillis();
-        long startTime = endTime-86400000 * 7;
+        long startTime = endTime-86400000;
 
         java.text.DateFormat dateFormat = getDateInstance();
         Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
@@ -254,6 +240,7 @@ public class SleepGoogleFit {
         JSONObject json = new JSONObject();
         try {
             json.put("UserName", userID);
+            json.put("ValidateTime", System.currentTimeMillis());
             json.put("LightSleep",lightSleepTotal);
             json.put("DeepSleep", deepSleepTotal);
             json.put("Awake", awakeTotal);
