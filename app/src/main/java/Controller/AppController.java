@@ -118,7 +118,15 @@ public class AppController {
 
         try {
             //wait until we have all data (async tasks)
-            while (sleepGoogleFitSecondTry.getJson() == null || activitiesGoogleFit.getJson() == null);
+            long startTime = System.currentTimeMillis();
+
+            while (sleepGoogleFitSecondTry.getJson() == null || activitiesGoogleFit.getJson() == null)
+            {
+                //fix time issue to avoid endless loop
+                long currTime = System.currentTimeMillis();
+                if (currTime - startTime >= 3000)
+                    break;
+            }
             // send data to server
             Log.i("SendMetrics", "******* Sending metrics to server ******");
 
