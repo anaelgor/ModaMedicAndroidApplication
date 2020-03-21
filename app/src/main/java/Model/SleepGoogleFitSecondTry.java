@@ -31,6 +31,7 @@ public class SleepGoogleFitSecondTry {
 
     private List sleepDataArray;
     private long totalSleepTime;
+    private JSONObject json;
 
     public SleepGoogleFitSecondTry() {
         sleepDataArray = new ArrayList();
@@ -38,7 +39,7 @@ public class SleepGoogleFitSecondTry {
 
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public List extractSleepData(Context context){
+    public void extractSleepData(Context context){
 
         long endTime = System.currentTimeMillis();
         long startTime = endTime-86400000;
@@ -93,7 +94,7 @@ public class SleepGoogleFitSecondTry {
 
                         long start = point.getStartTime(TimeUnit.MILLISECONDS);
                         long end = point.getEndTime(TimeUnit.MILLISECONDS);
-                        Log.d("AppName",
+                        Log.d("ModaMedicApplication",
                                 String.format("\t* %s between %d and %d", sleepStage, start, end));
 
                         JSONObject json = new JSONObject();
@@ -101,29 +102,41 @@ public class SleepGoogleFitSecondTry {
                             json.put("StartTime", start);
                             json.put("EndTime", end);
                             json.put("State", sleepStage);
+                            this.sleepDataArray.add(json);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                        this.sleepDataArray.add(json);
 
                     }
                 }
             }
+            // create a json for sending data to server
+            makeBodyJson();
+        })
+        .addOnFailureListener(response -> {
+            Log.e("ModaMedic",
+                    String.format(response.getMessage()));
         });
 
-        return sleepDataArray;
     }
 
-    public JSONObject makeBodyJson(){
+    public void makeBodyJson(){ //add userID
         JSONObject json = new JSONObject();
-
+        String userID = "1111111111";
         try {
+            json.put("UserID", userID);
             json.put("Sleep", sleepDataArray);
+            json.put("ValidateTime", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        return json;
+        this.json = json;
     }
+
+    public JSONObject getJson(){
+        return this.json;
+    }
+
 }

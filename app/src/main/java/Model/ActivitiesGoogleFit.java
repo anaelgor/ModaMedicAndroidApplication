@@ -28,16 +28,17 @@ import java.util.stream.Collectors;
 public class ActivitiesGoogleFit {
 
     private List activityArray;
+    private JSONObject json;
 
     public ActivitiesGoogleFit() {
         activityArray = new ArrayList();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public List extractActivityData(Context context){
+    public void extractActivityData(Context context){
 
         long endTime = System.currentTimeMillis();
-        long startTime = endTime-86400000*2;
+        long startTime = endTime-86400000;
 
         // Note: The android.permission.ACTIVITY_RECOGNITION permission is
         // required to read DataType.TYPE_ACTIVITY_SEGMENT
@@ -54,9 +55,8 @@ public class ActivitiesGoogleFit {
                 .readSession(request);
 
         task.addOnSuccessListener(response -> {
-            // Filter the resulting list of sessions to just those that are sleep.
+
             List<Session> sleepSessions = response.getSessions().stream()
-                    //.filter(s -> s.getActivity().equals(FitnessActivities.SLEEP))
                     .collect(Collectors.toList());
 
             for (Session session : sleepSessions) {
@@ -69,17 +69,24 @@ public class ActivitiesGoogleFit {
                 List<DataSet> dataSets = response.getDataSet(session);
                 for (DataSet dataSet : dataSets) {
                     for (DataPoint point : dataSet.getDataPoints()) {
-                        String sleepStage = point.getValue(Field.FIELD_ACTIVITY).asActivity();
+                        String activity = point.getValue(Field.FIELD_ACTIVITY).asActivity();
                         long start = point.getStartTime(TimeUnit.MILLISECONDS);
                         long end = point.getEndTime(TimeUnit.MILLISECONDS);
                         Log.d("AppName",
-                                String.format("\t* %s between %d and %d", sleepStage, start, end));
+                                String.format("\t* %s between %d and %d", activity, start, end));
+
+                        //ignore sleeping data
+                        if (activity.equals("sleep.deep") || activity.equals("sleep.light"))
+                            continue;
 
                         JSONObject json = new JSONObject();
                         try {
                             json.put("StartTime", start);
                             json.put("EndTime", end);
-                            json.put("State", sleepStage);
+                            json.put("State", activity);
+
+                            activityArray.add(json);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -87,9 +94,25 @@ public class ActivitiesGoogleFit {
                     }
                 }
             }
+            makeBodyJson();
         });
+    }
 
-        return activityArray;
+    public void makeBodyJson(){
+        JSONObject json = new JSONObject();
+        String userID = "1111111111";
+        try {
+            json.put("UserID", userID);
+            json.put("Activity", activityArray);
+            json.put("ValidateTime", System.currentTimeMillis());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        this.json = json;
+    }
+
+    public JSONObject getJson(){
+        return this.json;
     }
 
 }

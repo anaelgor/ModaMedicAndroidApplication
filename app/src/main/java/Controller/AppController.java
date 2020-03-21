@@ -96,13 +96,11 @@ public class AppController {
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
-            List sleepDataArrayList = sleepGoogleFitSecondTry.extractSleepData(this.activity);
-            List activityArrayList = activitiesGoogleFit.extractActivityData(this.activity);
-
-////            sleepGoogleFit.readSleepData(this.activity, fitnessOptions);
-//            steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-//            distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-//            calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            sleepGoogleFitSecondTry.extractSleepData(this.activity);
+            activitiesGoogleFit.extractActivityData(this.activity);
+            steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
         }
         else{
             GoogleSignIn.requestPermissions(
@@ -118,20 +116,24 @@ public class AppController {
             System.out.println("Did not found location");
         }
 
-//        try {
-//            // send data to server
-//            Log.i("SendMetrics", "******* Sending metrics to server ******");
-//            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), urlPostSteps);
-//            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), urlPostCalories);
-//            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), urlPostDistance);
-//            //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), urlPostSleep);
-//
-//
-//        } catch (ServerFalse serverFalse) {
-//            Log.e("ServerFalse", "bug in sending metrics");
-//            //TODO: pop up error message to the user
-//            serverFalse.printStackTrace();
-//        }
+        try {
+            //wait until we have all data (async tasks)
+            while (sleepGoogleFitSecondTry.getJson() == null || activitiesGoogleFit.getJson() == null);
+            // send data to server
+            Log.i("SendMetrics", "******* Sending metrics to server ******");
+
+            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), Urls.urlPostSteps);
+            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), Urls.urlPostCalories);
+            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), Urls.urlPostDistance);
+            //TODO: enable it when the server will supports those
+            //httpRequests.sendPostRequest(sleepGoogleFitSecondTry.getJson(), Urls.urlPostSleep);
+            //httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
+
+        } catch (ServerFalse serverFalse) {
+            Log.e("ServerFalse", "bug in sending metrics");
+            //TODO: pop up error message to the user
+            serverFalse.printStackTrace();
+        }
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {
