@@ -11,5 +11,6 @@ public final class Urls {
     public static final String urlGetUserQuestionnaires = "users/getUserQuestionnaire/";
     public static final String urlGetQuestionnaireByID = "questionnaires/getQuestionnaire/"; //add id as param
     public static final String urlSendAnswersOfQuestionnaireByID = "answers/sendAnswers/"; //add id as param
+    public static final String urlPostAccelerometer = "metrics/accelerometer";
 
 }

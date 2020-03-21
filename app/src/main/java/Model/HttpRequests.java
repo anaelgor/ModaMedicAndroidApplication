@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import Model.Exceptions.ServerFalse;
@@ -109,7 +110,7 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
                 .build();
 
         Response response = client.newCall(request).execute();
-        return new JSONObject(response.body().string());
+        return new JSONObject(Objects.requireNonNull(response.body()).toString());
 
     }
 
