@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.util.JsonReader;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
@@ -16,29 +18,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Model.ActivitiesGoogleFit;
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
 import Model.Exceptions.ServerFalse;
 import Model.GPS;
 import Model.HttpRequests;
-import Model.SleepGoogleFit;
 import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireManager;
+import Model.SleepGoogleFit;
+import Model.SleepGoogleFitSecondTry;
 import Model.StepsGoogleFit;
 
-import static Controller.Urls.urlPostCalories;
-import static Controller.Urls.urlPostDistance;
-import static Controller.Urls.urlPostSleep;
-import static Controller.Urls.urlPostSteps;
+import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
@@ -56,6 +53,10 @@ public class AppController {
     private HttpRequests httpRequests;
 
 
+    //my try
+    private SleepGoogleFitSecondTry sleepGoogleFitSecondTry;
+    private ActivitiesGoogleFit activitiesGoogleFit;
+
     private AppController(Activity activity) {
         this.activity = activity;
         this.stepsGoogleFit = new StepsGoogleFit();
@@ -65,6 +66,11 @@ public class AppController {
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new GPS(locationManager, activity);
         this.httpRequests = new HttpRequests();
+
+        //my try
+        this.sleepGoogleFitSecondTry = new SleepGoogleFitSecondTry();
+        this.activitiesGoogleFit = new ActivitiesGoogleFit();
+
     }
 
     public static AppController getController(Activity activity){
@@ -74,6 +80,7 @@ public class AppController {
         return appController;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void SendSensorData(){
         int steps = 0;
         float distance = 0;
@@ -85,10 +92,12 @@ public class AppController {
                         .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
                         .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
+                        .addDataType(TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
-            sleepGoogleFit.readSleepData(this.activity, fitnessOptions);
+            sleepGoogleFitSecondTry.extractSleepData(this.activity);
+            activitiesGoogleFit.extractActivityData(this.activity);
             steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
@@ -108,13 +117,26 @@ public class AppController {
         }
 
         try {
+            //wait until we have all data (async tasks)
+            long startTime = System.currentTimeMillis();
+
+            while (sleepGoogleFitSecondTry.getJson() == null || activitiesGoogleFit.getJson() == null)
+            {
+                //fix time issue to avoid endless loop
+                long currTime = System.currentTimeMillis();
+                if (currTime - startTime >= 3000)
+                    break;
+            }
             // send data to server
             Log.i("SendMetrics", "******* Sending metrics to server ******");
-            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), urlPostSteps);
-            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), urlPostCalories);
-            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), urlPostDistance);
-            //httpRequests.sendPostRequest(sleepGoogleFit.makeJsonBody(""), urlPostSleep);
 
+            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), Urls.urlPostSteps);
+            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), Urls.urlPostCalories);
+            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), Urls.urlPostDistance);
+            httpRequests.sendPostRequest(sleepGoogleFitSecondTry.getJson(), Urls.urlPostSleep);
+            sleepGoogleFitSecondTry.clearJson();
+            httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
+            activitiesGoogleFit.clearJson();
 
         } catch (ServerFalse serverFalse) {
             Log.e("ServerFalse", "bug in sending metrics");
