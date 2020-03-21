@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import Model.Exceptions.ServerFalse;
+import Model.Exceptions.ServerFalseException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,25 +26,25 @@ public class HttpRequests {//TODO: make this singleton after testing
 
 
 
-    public void sendPostRequest(JSONObject jsonPost, String url) throws ServerFalse {
+    public void sendPostRequest(JSONObject jsonPost, String url) throws ServerFalseException {
         sendRequestHttp = new SendRequestHttp();
         try {
             JSONObject jo = sendRequestHttp.execute("POST", Constants.urlPrefix + url, jsonPost.toString()).get();
             sendRequestHttp.checkExeption();
 
         }catch (ExecutionException | InterruptedException e) {
-            throw new ServerFalse("Problem in the application, try again");
+            throw new ServerFalseException("Problem in the application, try again");
         }
     }
 
-    public JSONObject sendGetRequest(String url) throws ServerFalse {
+    public JSONObject sendGetRequest(String url) throws ServerFalseException {
         sendRequestHttp = new SendRequestHttp();
         try {
             JSONObject jo = sendRequestHttp.execute("GET", Constants.urlPrefix + url).get();
             sendRequestHttp.checkExeption();
             return jo;
         }catch (ExecutionException | InterruptedException e) {
-            throw new ServerFalse("Problem in the application, try again");
+            throw new ServerFalseException("Problem in the application, try again");
         }
     }
 }
@@ -52,7 +52,7 @@ public class HttpRequests {//TODO: make this singleton after testing
 class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
     private static final String TAG = "SendRequestHttp";
-    private ServerFalse exception;
+    private ServerFalseException exception;
     private final OkHttpClient client;
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -77,21 +77,21 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
                 }
 
                 if (response.getBoolean("error")) {
-                    exception = new ServerFalse(response.getString("message"));
+                    exception = new ServerFalseException(response.getString("message"));
                 } else {
                     ans = response;
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
-                exception = new ServerFalse("Problem in connection to server");
+                exception = new ServerFalseException("Problem in connection to server");
             } catch (JSONException e) {
-                exception = new ServerFalse("Problem in the application, try again");
+                exception = new ServerFalseException("Problem in the application, try again");
             }
             return ans;
         } catch (Exception e) {
             //e.printStackTrace();
-            exception = new ServerFalse("Problem in connection to server");
+            exception = new ServerFalseException("Problem in connection to server");
             return null;
         }
     }
@@ -139,7 +139,7 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
     }
 
-    public void checkExeption() throws ServerFalse {
+    public void checkExeption() throws ServerFalseException {
         if (exception != null)
             throw exception;
     }

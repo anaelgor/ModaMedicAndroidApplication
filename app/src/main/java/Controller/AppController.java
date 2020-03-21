@@ -25,7 +25,7 @@ import java.util.Map;
 import Model.ActivitiesGoogleFit;
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
-import Model.Exceptions.ServerFalse;
+import Model.Exceptions.ServerFalseException;
 import Model.GPS;
 import Model.HttpRequests;
 import Model.Questionnaires.AnswersManager;
@@ -152,10 +152,10 @@ public class AppController {
                 e.printStackTrace();
             }
 
-        } catch (ServerFalse serverFalse) {
-            Log.e("ServerFalse", "bug in sending metrics");
+        } catch (ServerFalseException serverFalseException) {
+            Log.e("ServerFalseException", "bug in sending metrics");
             //TODO: pop up error message to the user
-            serverFalse.printStackTrace();
+            serverFalseException.printStackTrace();
         }
     }
 
@@ -178,8 +178,8 @@ public class AppController {
     private JSONObject getQuestionnaireFromDB(String questionnaire_name) {
         try {
             return httpRequests.sendGetRequest(questionnaire_name);
-        } catch (ServerFalse serverFalse) {
-            serverFalse.printStackTrace();
+        } catch (ServerFalseException serverFalseException) {
+            serverFalseException.printStackTrace();
         }
         return null;
     }
@@ -190,9 +190,9 @@ public class AppController {
             httpRequests.sendPostRequest(request,Urls.urlSendAnswersOfQuestionnaireByID+questionnaireID);
             Log.i("AppControler","sent to server");
 
-        } catch (ServerFalse serverFalse) {
-            serverFalse.printStackTrace();
-            Log.i("AppControler","problem in sending questionaire to server "+serverFalse.getLocalizedMessage());
+        } catch (ServerFalseException serverFalseException) {
+            serverFalseException.printStackTrace();
+            Log.i("AppControler","problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());
         }
     }
 
@@ -209,8 +209,8 @@ public class AppController {
                 String text = (String)array.getJSONObject(i).get("QuestionnaireText");
                 result.put(id,text);
             }
-        } catch (ServerFalse serverFalse) {
-            serverFalse.printStackTrace();
+        } catch (ServerFalseException serverFalseException) {
+            serverFalseException.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }

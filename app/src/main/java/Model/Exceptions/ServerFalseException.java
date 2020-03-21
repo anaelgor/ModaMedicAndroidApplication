@@ -1,8 +1,8 @@
 package Model.Exceptions;
 
-public class ServerFalse extends Exception {
+public class ServerFalseException extends Exception {
     private String message;
-    public ServerFalse() {
+    public ServerFalseException() {
         super();
     }
 
@@ -10,7 +10,7 @@ public class ServerFalse extends Exception {
      * create new exeption type
      * @param message the message
      */
-    public ServerFalse(String message)
+    public ServerFalseException(String message)
     {
         super(message);
         this.message = message;
