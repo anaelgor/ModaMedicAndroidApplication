@@ -10,7 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.autofill.AutofillValue;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -73,70 +73,137 @@ public class QuestionnaireActivity extends AppCompatActivity {
         question_TV.setLayoutParams(params);
         layout.addView(question_TV);
         BuildQuestionByType(questionnaire.getQuestions().get(i).getType(), i);
+
+        //next previous buttons
         FloatingActionButton nextButton = findViewById(R.id.nextButton);
-        setLocationOfButtonInRelativeLayout(nextButton);
+        setLocationOfButtonInRelativeLayout(nextButton,"next");
+
+        FloatingActionButton prevButton = findViewById(R.id.prevButton);
+        setLocationOfButtonInRelativeLayout(prevButton,"previous");
+
+        setColorOfNextOrPrevButton(nextButton);
+        setColorOfNextOrPrevButton(prevButton);
+
         if (i<questionnaire.getQuestions().size()-1){ // not last question
-            setColorOfNextButton(nextButton);
-            nextButton.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    if (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty()) {
-                        Toast.makeText(v.getContext(),R.string.answerTheQuestion,Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        layout.removeAllViews();
-                        showQuestion(++currentQuestionID);
-                    }
 
-                }
-            });
+            setNextButtonActionForAllQuestionsExceptLast(ii, layout, nextButton);
+
+            if (i>0) { //not first question
+                setPreviousButtonActionForAllQuestionsExceptFirst(layout,prevButton);
+            }
+            else { //first question
+                setInvisible(prevButton);
+            }
         }
         else { //last question in questionnaire
             nextButton.setImageResource(android.R.drawable.ic_menu_send);
-            setColorOfNextButton(nextButton);
-
-            nextButton.setOnClickListener(new View.OnClickListener() {
-
-                @SuppressLint("RestrictedApi")
-                @Override
-                public void onClick(View v) {
-                    if (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty()) {
-                        Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
-                    } else {
-                        sendAnswersToServer();
-                        layout.removeAllViews();
-                        FloatingActionButton nextButton = findViewById(R.id.nextButton);
-                        nextButton.setVisibility(View.INVISIBLE);
-                        TextView thanksTV = new TextView(v.getContext());
-                        thanksTV.setText(R.string.thanks);
-                        thanksTV.setTextSize(30);
-                        layout.addView(thanksTV);
-                        TextView sentTV = new TextView(v.getContext());
-                        sentTV.setText(R.string.sent_succesfully);
-                        sentTV.setTextSize(30);
-                        layout.addView(sentTV);
-
-
-                    }
-                }
-            });
+            setNextButtonActionForLastQuestion(ii, layout, nextButton);
+            setPreviousButtonActionForAllQuestionsExceptFirst(layout,prevButton);
 
         }
 
 
     }
+
+    @SuppressLint("RestrictedApi")
+    private void setInvisible(FloatingActionButton prevButton) {
+        prevButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void setNextButtonActionForLastQuestion(long ii, LinearLayout layout, FloatingActionButton nextButton) {
+        nextButton.setOnClickListener(new View.OnClickListener() {
+
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onClick(View v) {
+                if (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty()) {
+                    Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
+                } else {
+                    sendAnswersToServer();
+                    layout.removeAllViews();
+                    FloatingActionButton nextButton = findViewById(R.id.nextButton);
+                    animateFullCircle(nextButton);
+                    nextButton.setVisibility(View.INVISIBLE);
+                    FloatingActionButton prevButton = findViewById(R.id.prevButton);
+                    prevButton.setVisibility(View.INVISIBLE);
+                    TextView thanksTV = new TextView(v.getContext());
+                    thanksTV.setText(R.string.thanks);
+                    thanksTV.setTextSize(30);
+                    layout.addView(thanksTV);
+                    TextView sentTV = new TextView(v.getContext());
+                    sentTV.setText(R.string.sent_succesfully);
+                    sentTV.setTextSize(30);
+                    layout.addView(sentTV);
+
+
+                }
+            }
+        });
+    }
+
+    private void animateFullCircle(FloatingActionButton button) {
+        float deg = button.getRotation() + 360F;
+        button.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+    }
+    private void setNextButtonActionForAllQuestionsExceptLast(long ii, LinearLayout layout, FloatingActionButton nextButton) {
+        nextButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty()) {
+                    Toast.makeText(v.getContext(),R.string.answerTheQuestion,Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    layout.removeAllViews();
+                    showQuestion(++currentQuestionID);
+                    animateFullCircle(nextButton);
+
+                }
+
+            }
+        });
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void setPreviousButtonActionForAllQuestionsExceptFirst(LinearLayout layout, FloatingActionButton prevButton) {
+        prevButton.setVisibility(View.VISIBLE);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(),R.string.movingToPrevQuestion,Toast.LENGTH_SHORT).show();
+                animateFullCircle(prevButton);
+                layout.removeAllViews();
+                showQuestion(--currentQuestionID);
+
+            }
+        });
+    }
+
     //todo: understand why this doesn't works
-    private void setColorOfNextButton(FloatingActionButton nextButton) {
+    private void setColorOfNextOrPrevButton(FloatingActionButton nextButton) {
         int color = ResourcesCompat.getColor(getResources(),R.color.colorButtons, null);
         nextButton.setBackgroundColor(color);
     }
 
-    private void setLocationOfButtonInRelativeLayout(FloatingActionButton nextButton) {
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(10, new Double(getHeightOfScreen()*0.85).intValue(), 0, 0);
-        nextButton.setLayoutParams(params);
+    private void setLocationOfButtonInRelativeLayout(FloatingActionButton button, String nextOrPrev) {
+        RelativeLayout.LayoutParams params = null;
+        switch (nextOrPrev) {
+            case  "next":
+                params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(10, Double.valueOf(getHeightOfScreen()*0.85).intValue(), 0, 0);
+                button.setLayoutParams(params);
+                break;
+            case "previous":
+                params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(Double.valueOf(getWidthOfScreen()*0.85).intValue(), Double.valueOf(getHeightOfScreen()*0.85).intValue(), 0, 0);
+                button.setLayoutParams(params);
+                break;
+        }
+
     }
 
     private void sendAnswersToServer() {
