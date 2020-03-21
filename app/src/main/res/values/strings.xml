@@ -14,6 +14,8 @@
     <string name="this_alone">תשובה כזו אפשר לבחור רק לבד, אז העפנו לך את כל השאר</string>
     <string name="multiple_choices">אפשר לבחור כמה תשובות הפעם</string>
     <string name="answerTheQuestion">קודם תענה על השאלה!</string>
+    <string name="movingToPrevQuestion">חוזר לשאלה הקודמת</string>
+
 
 
 </resources>
