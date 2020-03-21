@@ -97,7 +97,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
             }
         }
         else { //last question in questionnaire
-            nextButton.setImageResource(android.R.drawable.ic_menu_send);
+            //nextButton.setImageResource(android.R.drawable.ic_menu_send);
             setNextButtonActionForLastQuestion(ii, layout, nextButton);
             setPreviousButtonActionForAllQuestionsExceptFirst(layout,prevButton);
 
@@ -203,7 +203,6 @@ public class QuestionnaireActivity extends AppCompatActivity {
                 button.setLayoutParams(params);
                 break;
         }
-
     }
 
     private void sendAnswersToServer() {
@@ -384,6 +383,7 @@ public class QuestionnaireActivity extends AppCompatActivity {
             final int reg_color = ResourcesCompat.getColor(getResources(),R.color.colorRegularAnswer, null);
             ans_Button.setBackgroundColor(reg_color);
             setButtonConfigurationForSingleAndMulti(ans_Button);
+
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
