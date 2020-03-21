@@ -127,8 +127,8 @@ public class SleepGoogleFitSecondTry {
         String userID = "1111111111";
         try {
             json.put("UserID", userID);
+            json.put("ValidTime", System.currentTimeMillis());
             json.put("Sleep", sleepDataArray);
-            json.put("ValidateTime", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package Model;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import okhttp3.Response;
 public class HttpRequests {//TODO: make this singleton after testing
 
     private SendRequestHttp sendRequestHttp;
+    private static final String TAG = "HttpRequests";
     //public static final String urlPrefix = "http://127.0.0.1:3000/";
     //public static final String urlPrefix = "http://10.0.2.2:3000/";
     //public static final String urlPrefix = "http://localhost:3000/";
@@ -49,6 +51,7 @@ public class HttpRequests {//TODO: make this singleton after testing
 
 class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
+    private static final String TAG = "SendRequestHttp";
     private ServerFalse exception;
     private final OkHttpClient client;
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -102,6 +105,9 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
      * @throws JSONException
      */
     public JSONObject PostRequest(String url,String json) throws IOException, JSONException {
+
+        Log.i(TAG, String.format("sending to: " + url + "   body: " + json));
+
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -121,6 +127,9 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
      * @throws JSONException
      */
     public JSONObject GetRequest(String url) throws IOException, JSONException {
+
+        Log.i(TAG, String.format("sending to: " + url ));
+
         Request request = new Request.Builder()
                 .url(url)
                 .build();
