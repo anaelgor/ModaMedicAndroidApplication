@@ -134,7 +134,9 @@ public class AppController {
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), Urls.urlPostCalories);
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), Urls.urlPostDistance);
             httpRequests.sendPostRequest(sleepGoogleFitSecondTry.getJson(), Urls.urlPostSleep);
+            sleepGoogleFitSecondTry.clearJson();
             httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
+            activitiesGoogleFit.clearJson();
 
         } catch (ServerFalse serverFalse) {
             Log.e("ServerFalse", "bug in sending metrics");

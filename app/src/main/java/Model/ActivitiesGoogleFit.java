@@ -115,4 +115,7 @@ public class ActivitiesGoogleFit {
         return this.json;
     }
 
+    public void clearJson(){
+        this.json = new JSONObject();
+    }
 }

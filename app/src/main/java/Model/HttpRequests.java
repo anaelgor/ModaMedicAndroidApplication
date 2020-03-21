@@ -108,7 +108,7 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
         Log.i(TAG, String.format("sending to: " + url + "   body: " + json));
 
-        RequestBody body = RequestBody.create(JSON, json);
+        RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
