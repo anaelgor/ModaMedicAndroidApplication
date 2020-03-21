@@ -1,7 +1,6 @@
 package Model;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -67,6 +65,11 @@ public class GPS implements LocationListener {
 
     public String getLocationJSON(){
         String locationJSON = null;
+
+        if (lat == null || lon == null){
+            Log.e("Location unavailable","***********CANT FIND LOCATION**********");
+            return null;
+        }
 
         try {
             String start = "https://api.openweathermap.org/data/2.5/weather?";
