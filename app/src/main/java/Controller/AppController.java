@@ -52,6 +52,8 @@ public class AppController {
     private LocationListener gpsLocationListener;
     private HttpRequests httpRequests;
 
+    private static final String TAG = "AppController";
+
 
     //my try
     private SleepGoogleFitSecondTry sleepGoogleFitSecondTry;
@@ -133,10 +135,22 @@ public class AppController {
             httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), Urls.urlPostSteps);
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), Urls.urlPostCalories);
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), Urls.urlPostDistance);
-            httpRequests.sendPostRequest(sleepGoogleFitSecondTry.getJson(), Urls.urlPostSleep);
-            sleepGoogleFitSecondTry.clearJson();
-            httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
-            activitiesGoogleFit.clearJson();
+            try{
+                httpRequests.sendPostRequest(sleepGoogleFitSecondTry.getJson(), Urls.urlPostSleep);
+                sleepGoogleFitSecondTry.clearJson();
+            }
+            catch (Exception e){
+                Log.e(TAG, "No data in sleep.");
+                e.printStackTrace();
+            }
+            try{
+                httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
+                activitiesGoogleFit.clearJson();
+            }
+            catch (Exception e){
+                Log.e(TAG, "No data in activity.");
+                e.printStackTrace();
+            }
 
         } catch (ServerFalse serverFalse) {
             Log.e("ServerFalse", "bug in sending metrics");
