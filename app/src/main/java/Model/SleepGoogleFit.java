@@ -1,262 +1,146 @@
 package Model;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.request.SessionReadRequest;
+import com.google.android.gms.fitness.result.SessionReadResponse;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static java.text.DateFormat.getDateInstance;
-import static java.text.DateFormat.getTimeInstance;
+import java.util.stream.Collectors;
 
 public class SleepGoogleFit {
+
+    private List sleepDataArray;
+    private long totalSleepTime;
+    private JSONObject json;
+
     public SleepGoogleFit() {
+        sleepDataArray = new ArrayList();
     }
 
-    private static List<Tuple<Integer,Tuple<Long,Long>>>sleepSegments;
-    private static JSONObject sleepPost;
-    public static final String TAG = "SleepData";
-    private static Boolean hasSleep = false;
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void extractSleepData(Context context){
 
-    private static long lightSleepTotal = 0;
-    private static long deepSleepTotal = 0;
-    private static long awakeTotal = 0;
-
-
-
-    /**
-     * Asynchronous task to read the sleep data. When the task succeeds, it will print out the data.
-     */
-    public Task<DataReadResponse> readSleepData(Context context, GoogleSignInOptionsExtension fitnessOptions) {
-        DataReadRequest readRequest = querySleepData();
-
-        GoogleSignInAccount googleSignInAccount =
-                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
-
-        return Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context))
-                .readData(readRequest)
-                .addOnSuccessListener(
-                        new OnSuccessListener<DataReadResponse>() {
-                            @Override
-                            public void onSuccess(DataReadResponse dataReadResult) {
-                                try {
-                                    makeSleepSegments(dataReadResult);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .addOnFailureListener(
-                                new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.e(TAG, "There was a problem reading the data.", e);
-                                    }
-                                });
-    }
-
-    /** Returns a {@link DataReadRequest} for all sleep count changes in the past day. */
-    public static DataReadRequest querySleepData() {
-        // [START build_read_data_request]
-        // Setting a start and end date using a range of 1 day before this moment.
         long endTime = System.currentTimeMillis();
         long startTime = endTime-86400000;
 
-        java.text.DateFormat dateFormat = getDateInstance();
-        Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
-        Log.i(TAG, "Range End: " + dateFormat.format(endTime));
-
-        // [END build_read_data_request]
-
-        return new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .bucketByTime(1, TimeUnit.MINUTES)
+        // Note: The android.permission.ACTIVITY_RECOGNITION permission is
+        // required to read DataType.TYPE_ACTIVITY_SEGMENT
+        SessionReadRequest request = new SessionReadRequest.Builder()
+                .readSessionsFromAllApps()
+                // Activity segment data is required for details of the fine-
+                // granularity sleep, if it is present.
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .setTimeInterval(startTime, System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .build();
-    }
 
-    @SuppressLint("DefaultLocale")
-    public static void makeSleepSegments(DataReadResponse dataReadResult) throws JSONException {
-        // [START parse_read_data_result]
-        // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
-        // as buckets containing DataSets, instead of just DataSets.
+        Task<SessionReadResponse> task = Fitness.getSessionsClient(context,
+                                        GoogleSignIn.getLastSignedInAccount(context))
+                                        .readSession(request);
 
-        DateFormat dateFormat = getTimeInstance();
-        if (dataReadResult.getBuckets().size() > 0) {
-            sleepSegments=new LinkedList<>();
+        task.addOnSuccessListener(response -> {
+            // Filter the resulting list of sessions to just those that are sleep.
+            List<Session> sleepSessions = response.getSessions().stream()
+                    .filter(s -> s.getActivity().equals(FitnessActivities.SLEEP))
+                    .collect(Collectors.toList());
 
-            sleepPost = new JSONObject();
-            JSONArray sleepSegmentss = new JSONArray();
+            for (Session session : sleepSessions) {
+                Log.d("AppName", String.format("Sleep between %d and %d",
+                        session.getStartTime(TimeUnit.MILLISECONDS),
+                        session.getEndTime(TimeUnit.MILLISECONDS)));
 
-            int lastSleepStep=0;
-            long start=0;
-            long end=0;
-            boolean find=false;
+                this.totalSleepTime = session.getEndTime(TimeUnit.MILLISECONDS) - session.getStartTime(TimeUnit.MILLISECONDS);
 
-
-            for (Bucket bucket : dataReadResult.getBuckets()) {
-                List<DataSet> dataSets = bucket.getDataSets();
+                // If the sleep session has finer granularity sub-components, extract them:
+                List<DataSet> dataSets = response.getDataSet(session);
                 for (DataSet dataSet : dataSets) {
-                    for (DataPoint dp : dataSet.getDataPoints()) {
-                        for (Field field : dp.getDataType().getFields()) {
-                            if(field.getName().equals("activity")&&
-                                    (dp.getValue(field).asInt()==(109)||//light
-                                            dp.getValue(field).asInt()==(110)||//deep
-                                            dp.getValue(field).asInt()==(112))){//awake
-                                find=!find;
-                                if(dp.getValue(field).asInt()==lastSleepStep){
-                                    end=dp.getEndTime(TimeUnit.MILLISECONDS);
-                                }else {
-                                    if(lastSleepStep!=0){
-                                        end=dp.getStartTime(TimeUnit.MILLISECONDS);
-                                        JSONObject segment = new JSONObject();
-                                        switch (lastSleepStep){
-                                            case 109:
-                                                segment.put("Type", "Light");
+                    for (DataPoint point : dataSet.getDataPoints()) {
+                        // The Activity defines whether this segment is light, deep, REM or awake.
+                        String sleepStage = point.getValue(Field.FIELD_ACTIVITY).asActivity();
 
-                                                lightSleepTotal += (end - start);
+                        int stateAsInt = point.getValue(Field.FIELD_ACTIVITY).asInt();
 
-                                                break;
-                                            case 110:
-                                                segment.put("Type", "Deep");
-
-                                                deepSleepTotal += (end - start);
-
-                                                break;
-                                            case 112:
-                                                segment.put("Type", "Awake");
-
-                                                awakeTotal += (end - start);
-
-                                                break;
-                                        }
-                                        segment.put("StartTime",start);
-                                        segment.put("EndTime",end);
-
-                                        sleepSegmentss.put(segment);
-
-
-                                        sleepSegments.add(new Tuple<Integer,Tuple<Long,Long>>(lastSleepStep,
-                                                new Tuple<Long,Long>(start,end)));
-                                        Log.i(TAG, "Type: " + lastSleepStep);
-                                        Log.i(TAG, "\tStart: " + dateFormat.format(start));
-                                        Log.i(TAG, "\tEnd: " + dateFormat.format(end));
-                                    }
-                                    lastSleepStep=dp.getValue(field).asInt();
-                                    start=dp.getStartTime(TimeUnit.MILLISECONDS);
-                                    end=dp.getEndTime(TimeUnit.MILLISECONDS);
-                                }
-                            }
+                        switch (stateAsInt){
+                            case 109:
+                                sleepStage = "SLEEP_LIGHT";
+                                break;
+                            case 110:
+                                sleepStage = "SLEEP_DEEP";
+                                break;
+                            case 112:
+                                sleepStage = "SLEEP_AWAKE";
+                                break;
                         }
-                        if(find){
-                            find=!find;
-                            break;
+
+                        long start = point.getStartTime(TimeUnit.MILLISECONDS);
+                        long end = point.getEndTime(TimeUnit.MILLISECONDS);
+                        Log.d("ModaMedicApplication",
+                                String.format("\t* %s between %d and %d", sleepStage, start, end));
+
+                        JSONObject json = new JSONObject();
+                        try {
+                            json.put("StartTime", start);
+                            json.put("EndTime", end);
+                            json.put("State", sleepStage);
+                            this.sleepDataArray.add(json);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+
+
                     }
                 }
             }
-
-            if(!find){
-
-                JSONObject segment = new JSONObject();
-                switch (lastSleepStep){
-                    case 109:
-                        segment.put("Type", "Light");
-                        lightSleepTotal += (end - start);
-                        break;
-                    case 110:
-                        segment.put("Type", "Deep");
-                        deepSleepTotal += (end - start);
-                        break;
-                    case 112:
-                        segment.put("Type", "Awake");
-                        awakeTotal += (end - start);
-                        break;
-                }
-                segment.put("StartTime",start);
-                segment.put("EndTime",end);
-
-                sleepSegmentss.put(segment);
-
-                sleepSegments.add(new Tuple<Integer,Tuple<Long,Long>>(lastSleepStep,
-                        new Tuple<Long,Long>(start,end)));
-                Log.i(TAG, "Type: " + lastSleepStep);
-                Log.i(TAG, "\tStart: " + dateFormat.format(start));
-                Log.i(TAG, "\tEnd: " + dateFormat.format(end));
-            }
-
-            if(sleepSegmentss.length()==0)
-                return;
-
-            hasSleep = true;
-
-            sleepPost.put("Sleep",sleepSegmentss);
-
-        }
-
-        int lightSleepSeconds = (int) (lightSleepTotal / 1000) % 60 ;
-        int lightSleepMinutes = (int) ((lightSleepTotal / (1000*60)) % 60);
-        int lightSleepHours   = (int) ((lightSleepTotal / (1000*60*60)) % 24);
-
-        int deepSleepSeconds = (int) (deepSleepTotal / 1000) % 60 ;
-        int deepSleepMinutes = (int) ((deepSleepTotal / (1000*60)) % 60);
-        int deepSleepHours   = (int) ((deepSleepTotal / (1000*60*60)) % 24);
-
-        int awakeSeconds = (int) (awakeTotal / 1000) % 60 ;
-        int awakeMinutes = (int) ((awakeTotal / (1000*60)) % 60);
-        int awakeHours   = (int) ((awakeTotal / (1000*60*60)) % 24);
-
-        Log.i(TAG, "Total light sleep time:" + lightSleepHours + ":" + lightSleepMinutes + ":" + lightSleepSeconds);
-        Log.i(TAG, "Total deep sleep time:" + deepSleepHours + ":" + deepSleepMinutes + ":" + deepSleepSeconds);
-        Log.i(TAG, "Total awake time:" + awakeHours + ":" + awakeMinutes + ":" + awakeSeconds);
+            // create a json for sending data to server
+            makeBodyJson();
+        })
+        .addOnFailureListener(response -> {
+            Log.e("ModaMedic",
+                    String.format(response.getMessage()));
+        });
 
     }
 
-    public JSONObject makeJsonBody(String userID){
+    public void makeBodyJson(){ //add userID
         JSONObject json = new JSONObject();
+        String userID = "1111111111";
         try {
-            json.put("UserName", userID);
-            json.put("ValidateTime", System.currentTimeMillis());
-            json.put("LightSleep",lightSleepTotal);
-            json.put("DeepSleep", deepSleepTotal);
-            json.put("Awake", awakeTotal);
+            json.put("UserID", userID);
+            json.put("ValidTime", System.currentTimeMillis());
+            json.put("Sleep", sleepDataArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        this.json = json;
     }
 
-    public static class Tuple<X, Y> {
-        public final X x;
-        public final Y y;
-        public Tuple(X x, Y y) {
-            this.x = x;
-            this.y = y;
-        }
+    public JSONObject getJson(){
+        return this.json;
+    }
+
+    public void clearJson(){
+        this.json = new JSONObject();
     }
 
 }

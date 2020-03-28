@@ -32,7 +32,6 @@ import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireManager;
 import Model.SleepGoogleFit;
-import Model.SleepGoogleFitSecondTry;
 import Model.StepsGoogleFit;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
@@ -46,7 +45,6 @@ public class AppController {
     private StepsGoogleFit stepsGoogleFit;
     private DistanceGoogleFit distanceGoogleFit;
     private CaloriesGoogleFit caloriesGoogleFit;
-    private SleepGoogleFit sleepGoogleFit;
     private Activity activity;
     private LocationManager locationManager;
     private LocationListener gpsLocationListener;
@@ -56,7 +54,7 @@ public class AppController {
 
 
     //my try
-    private SleepGoogleFitSecondTry sleepGoogleFitSecondTry;
+    private SleepGoogleFit sleepGoogleFit;
     private ActivitiesGoogleFit activitiesGoogleFit;
 
     private AppController(Activity activity) {
@@ -64,13 +62,12 @@ public class AppController {
         this.stepsGoogleFit = new StepsGoogleFit();
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
-        this.sleepGoogleFit = new SleepGoogleFit();
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new GPS(locationManager, activity);
         this.httpRequests = new HttpRequests();
 
         //my try
-        this.sleepGoogleFitSecondTry = new SleepGoogleFitSecondTry();
+        this.sleepGoogleFit = new SleepGoogleFit();
         this.activitiesGoogleFit = new ActivitiesGoogleFit();
 
     }
@@ -98,7 +95,7 @@ public class AppController {
                         .build();
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
-            sleepGoogleFitSecondTry.extractSleepData(this.activity);
+            sleepGoogleFit.extractSleepData(this.activity);
             activitiesGoogleFit.extractActivityData(this.activity);
             steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
@@ -122,7 +119,7 @@ public class AppController {
             //wait until we have all data (async tasks)
             long startTime = System.currentTimeMillis();
 
-            while (sleepGoogleFitSecondTry.getJson() == null || activitiesGoogleFit.getJson() == null)
+            while (sleepGoogleFit.getJson() == null || activitiesGoogleFit.getJson() == null)
             {
                 //fix time issue to avoid endless loop
                 long currTime = System.currentTimeMillis();
@@ -136,8 +133,8 @@ public class AppController {
             httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), Urls.urlPostCalories);
             httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), Urls.urlPostDistance);
             try{
-                httpRequests.sendPostRequest(sleepGoogleFitSecondTry.getJson(), Urls.urlPostSleep);
-                sleepGoogleFitSecondTry.clearJson();
+                httpRequests.sendPostRequest(sleepGoogleFit.getJson(), Urls.urlPostSleep);
+                sleepGoogleFit.clearJson();
             }
             catch (Exception e){
                 Log.e(TAG, "No data in sleep.");
