@@ -7,60 +7,94 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.HistoryClient;
+import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+
 import static com.google.android.gms.fitness.data.Field.FIELD_DISTANCE;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class DistanceGoogleFit {
+
+    private static final String TAG = "DistanceGoogleFit";
+    private float dist = 0;
+    private boolean calculated = false;
+    
     public DistanceGoogleFit() {
     }
-    public float getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions){
+    
+    public void getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions){
 
 
         GoogleSignInAccount googleSignInAccount =
                 GoogleSignIn.getAccountForExtension(context, fitnessOptions);
 
+        Calendar midnight = Calendar.getInstance();
+
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 0);
+        midnight.set(Calendar.MILLISECOND, 0);
+
+        long endTime = System.currentTimeMillis();
+        long startTime = midnight.getTimeInMillis();
+
         /**
          * Distance
          */
-        Task<DataSet> response =
-                Fitness.getHistoryClient(context, googleSignInAccount)
-                        .readDailyTotalFromLocalDevice(TYPE_DISTANCE_DELTA);
-        DataSet totalSet = null;
-        try {
-            totalSet = Tasks.await(response, 30, SECONDS);
-        } catch (Exception e) {
-            Log.i("Dist extraction error:", e.toString());
-            e.printStackTrace();
-        }
-        float dist = totalSet.isEmpty() // TYPE_DISTANCE_DELTA
-                ? 0
-                : totalSet.getDataPoints().get(0).getValue(FIELD_DISTANCE).asFloat();
 
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .build();
 
-        Log.i("total dist of the day:", "************ " +Float.toString(dist)  + " *************");
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task =historyClient.readData(request);
 
-        return dist;
+        task.addOnSuccessListener(response -> {
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint:
+                    dataset.getDataPoints()) {
+                dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
+            }
+
+            calculated = true;
+
+            Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
+        })
+                .addOnFailureListener(response -> {
+
+                    calculated = true;
+
+                    Log.e(TAG, "Could not extract distance data.");
+                });
 
     }
 
-    public JSONObject makeBodyJson(float distance, String userID){
-        userID = "111111111";
+    public JSONObject makeBodyJson(){
         JSONObject json = new JSONObject();
         try {
-            json.put("UserID", userID);
             json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", distance);
+            json.put("Data", this.dist);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return json;
     }
+
+    public boolean hadBeenCalc() {
+        return calculated;
+    }
+
 }

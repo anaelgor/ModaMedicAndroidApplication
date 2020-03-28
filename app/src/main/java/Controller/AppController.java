@@ -81,9 +81,6 @@ public class AppController {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void SendSensorData(){
-        int steps = 0;
-        float distance = 0;
-        float calories = 0;
 
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
@@ -97,9 +94,9 @@ public class AppController {
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), fitnessOptions)){
             sleepGoogleFit.extractSleepData(this.activity);
             activitiesGoogleFit.extractActivityData(this.activity);
-            steps = stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-            distance = distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
-            calories = caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
         }
         else{
             GoogleSignIn.requestPermissions(
@@ -115,45 +112,59 @@ public class AppController {
             System.out.println("Did not found location");
         }
 
-        try {
-            //wait until we have all data (async tasks)
-            long startTime = System.currentTimeMillis();
+        //wait until we have all data (async tasks)
+        long startTime = System.currentTimeMillis();
 
-            while (sleepGoogleFit.getJson() == null || activitiesGoogleFit.getJson() == null)
-            {
-                //fix time issue to avoid endless loop
-                long currTime = System.currentTimeMillis();
-                if (currTime - startTime >= 3000)
-                    break;
-            }
-            // send data to server
-            Log.i("SendMetrics", "******* Sending metrics to server ******");
-
-            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(steps,""), Urls.urlPostSteps);
-            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(calories,""), Urls.urlPostCalories);
-            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(distance,""), Urls.urlPostDistance);
-            try{
-                httpRequests.sendPostRequest(sleepGoogleFit.getJson(), Urls.urlPostSleep);
-                sleepGoogleFit.clearJson();
-            }
-            catch (Exception e){
-                Log.e(TAG, "No data in sleep.");
-                e.printStackTrace();
-            }
-            try{
-                httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
-                activitiesGoogleFit.clearJson();
-            }
-            catch (Exception e){
-                Log.e(TAG, "No data in activity.");
-                e.printStackTrace();
-            }
-
-        } catch (ServerFalseException serverFalseException) {
-            Log.e("ServerFalseException", "bug in sending metrics");
-            //TODO: pop up error message to the user
-            serverFalseException.printStackTrace();
+        while (sleepGoogleFit.getJson() == null || activitiesGoogleFit.getJson() == null
+            || !stepsGoogleFit.hadBeenCalc() || !caloriesGoogleFit.hadBeenCalc()
+            || !distanceGoogleFit.hadBeenCalc())
+        {
+            //fix time issue to avoid endless loop
+            long currTime = System.currentTimeMillis();
+            if (currTime - startTime >= 120000)
+                break;
         }
+        // send data to server
+        Log.i("SendMetrics", "******* Sending metrics to server ******");
+
+        try {
+            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(), Urls.urlPostSteps);
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in steps.");
+            e.printStackTrace();
+        }
+        try {
+            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(), Urls.urlPostCalories);
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in calories.");
+            e.printStackTrace();
+        }
+        try {
+            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(), Urls.urlPostDistance);
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in distance.");
+            e.printStackTrace();
+        }
+        try{
+            httpRequests.sendPostRequest(sleepGoogleFit.getJson(), Urls.urlPostSleep);
+            sleepGoogleFit.clearJson();
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in sleep.");
+            e.printStackTrace();
+        }
+        try{
+            httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
+            activitiesGoogleFit.clearJson();
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in activity.");
+            e.printStackTrace();
+        }
+
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {
