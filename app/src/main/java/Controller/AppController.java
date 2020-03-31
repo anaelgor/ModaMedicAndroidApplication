@@ -2,27 +2,19 @@ package Controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.annotation.RequiresApi;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import Model.ActivitiesGoogleFit;
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
@@ -30,7 +22,7 @@ import Model.Exceptions.ServerFalseException;
 import Model.GPS;
 import Model.HttpRequests;
 import Model.Login;
-import Model.Questionnaires.AnswersManager;
+import Model.QuestionnaireSenderAndReceiver;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireManager;
 import Model.SleepGoogleFit;
@@ -84,6 +76,7 @@ public class AppController {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void SendSensorData(){
+        System.out.println("token: " +Login.getToken());
 
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
@@ -137,63 +130,15 @@ public class AppController {
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {
-        JSONObject jsonObject = getQuestionnaireFromDB(Urls.urlGetQuestionnaireByID+questionnaire_id);
-
-        try {
-            System.out.println(jsonObject.toString());
-            Log.i("AppController", jsonObject.toString());
-            jsonObject = (JSONObject) jsonObject.get("data");
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        return QuestionnaireManager.createQuestionnaireFromJSON(jsonObject);
-    }
-
-    private JSONObject getQuestionnaireFromDB(String questionnaire_name) {
-        try {
-            return httpRequests.sendGetRequest(questionnaire_name);
-        } catch (ServerFalseException serverFalseException) {
-            serverFalseException.printStackTrace();
-        }
-        return null;
+        return QuestionnaireSenderAndReceiver.getUserQuestionnaireById(questionnaire_id, httpRequests);
     }
 
     public void sendAnswersToServer(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID) {
-        org.json.JSONObject request = AnswersManager.createJsonAnswersOfQuestsionnaire(questionsAndAnswers,questionnaireID);
-        try {
-            httpRequests.sendPostRequest(request,Urls.urlSendAnswersOfQuestionnaireByID+questionnaireID);
-            Log.i("AppControler","sent to server");
-
-        } catch (ServerFalseException serverFalseException) {
-            serverFalseException.printStackTrace();
-            Log.i("AppControler","problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());
-        }
+        QuestionnaireSenderAndReceiver.sendAnswers(questionsAndAnswers,questionnaireID, httpRequests);
     }
 
     public Map<Long, String> getUserQuestionnaires(String username) {
-        JSONObject user_questionnaires = null;
-        Map<Long,String> result = new HashMap<>();
-        //todo: add token
-        try {
-            username="111111111";
-            user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires+username);
-            JSONArray array = user_questionnaires.getJSONArray("data");
-            for (int i=0; i<array.length(); i++) {
-                Long id = new Long( (Integer)array.getJSONObject(i).get("QuestionnaireID"));
-                String text = (String)array.getJSONObject(i).get("QuestionnaireText");
-                result.put(id,text);
-            }
-        } catch (ServerFalseException serverFalseException) {
-            serverFalseException.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("xx");
-        return result;
+        return QuestionnaireSenderAndReceiver.getUserQuestionnaires(username, httpRequests);
     }
 
     public boolean login(String username, String password, Activity activity) {

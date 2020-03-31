@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class SleepGoogleFit {
+public class SleepGoogleFit implements DataSender {
 
     private List sleepDataArray;
     private long totalSleepTime;
@@ -124,12 +124,10 @@ public class SleepGoogleFit {
 
     }
 
-    public void makeBodyJson() { //add userID
+    public void makeBodyJson() {
         JSONObject json = new JSONObject();
-        String userID = "1111111111";
         JSONArray array = new JSONArray(sleepDataArray);
         try {
-            json.put("UserID", userID);
             json.put("ValidTime", System.currentTimeMillis());
             json.put("Data", array);
         } catch (JSONException e) {
@@ -149,7 +147,7 @@ public class SleepGoogleFit {
     public void sendDataToServer(HttpRequests httpRequests) {
 
         try{
-            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep);
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep, Login.getToken());
             clearJson();
         }
         catch (Exception e){

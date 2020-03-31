@@ -1,24 +1,26 @@
 package View;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.modamedicandroidapplication.R;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import Controller.AppController;
+import Model.Constants;
 import Model.Questionnaires.Questionnaire;
 
 /*
@@ -31,19 +33,41 @@ public class HomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        username = getUserName();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
         appController = AppController.getController(this);
 
+        Thread t_sensorData = new Thread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void run() {
+                appController.SendSensorData();
+            }
+        });
+        t_sensorData.start();
 
         questionnaires = getAllQuestionnaires(username);
-        Intent intent = getIntent();
-        username = intent.getStringExtra(BindingValues.LOGGED_USERNAME);
+
+        String not_exists = "not exists";
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+        String name = sharedPref.getString("name",not_exists);
+        if (name.equals(not_exists)) {
+            throw new NullPointerException("can't find username");
+        }
         TextView good_eve = findViewById(R.id.good_evening_textView);
-        //todo: change the good eve to something dynamic
-        good_eve.setText(this.getString(R.string.good_evening)+" "+username);
+        good_eve.setText(String.format("%s %s", this.getString(R.string.hello), name));
         createAllButtons();
 
+    }
+
+    private String getUserName() {
+        String not_exists = "not exists";
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+        String name = sharedPref.getString("username",not_exists);
+        if (name.equals(not_exists))
+            throw new NullPointerException("huge problem in getIUserName");
+        return name;
     }
 
     private void createAllButtons() {
@@ -89,9 +113,7 @@ public class HomePageActivity extends AppCompatActivity {
         b.setLayoutParams(params);
     }
 
-    //todo: implement this
     private void openQuestionnaireActivity(String questionnaire_name, Long questionnaire_id) {
-        //todo: get Questionnaire json from db
         Log.i("Home Page","questionnaire " + questionnaire_name + " has been opened");
         Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
         Intent intent = new Intent(this, QuestionnaireActivity.class);
@@ -101,7 +123,6 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
-    //todo: implement this with db and controller
     private Map<Long,String> getAllQuestionnaires(String username) {
         AppController appController = AppController.getController(this);
         Map<Long, String> questionnaires  = appController.getUserQuestionnaires(username);

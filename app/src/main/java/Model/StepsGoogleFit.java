@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.fitness.data.Field.FIELD_STEPS;
 
-public class StepsGoogleFit {
+public class StepsGoogleFit implements DataSender {
 
     private static final String TAG = "StepsGoogleFit";
     private int steps = 0;
@@ -98,7 +98,7 @@ public class StepsGoogleFit {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostSteps);
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostSteps, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in steps.");

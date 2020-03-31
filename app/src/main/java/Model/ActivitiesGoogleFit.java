@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class ActivitiesGoogleFit {
+public class ActivitiesGoogleFit implements DataSender {
 
     private List activityArray;
     private JSONObject json;
@@ -101,10 +101,8 @@ public class ActivitiesGoogleFit {
 
     public void makeBodyJson(){
         JSONObject json = new JSONObject();
-        String userID = "1111111111";
         JSONArray array = new JSONArray(activityArray);
         try {
-            json.put("UserID", userID);
             json.put("ValidTime", System.currentTimeMillis());
             json.put("Data", array);
         } catch (JSONException e) {
@@ -123,7 +121,7 @@ public class ActivitiesGoogleFit {
 
     public void sendDataToServer (HttpRequests httpRequests){
         try{
-            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity);
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity, Login.getToken());
             clearJson();
         }
         catch (Exception e){
