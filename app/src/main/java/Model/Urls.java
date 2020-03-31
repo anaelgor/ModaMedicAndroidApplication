@@ -1,4 +1,4 @@
-package Controller;
+package Model;
 
 public final class Urls {
     public static final String urlPostSteps = "metrics/steps";
@@ -12,5 +12,6 @@ public final class Urls {
     public static final String urlGetUserQuestionnaires = "users/getUserQuestionnaire/";
     public static final String urlGetQuestionnaireByID = "questionnaires/getQuestionnaire/"; //add id as param
     public static final String urlSendAnswersOfQuestionnaireByID = "answers/sendAnswers/"; //add id as param
+    public static  final String urlOfLogin = "users/login";
 
 }

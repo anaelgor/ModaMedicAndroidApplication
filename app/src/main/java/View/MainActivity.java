@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -98,29 +100,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //todo: implements this
     public void loginFunction(View view) {
-        Log.i("Main Page","Login button clicked");
+        Log.i("Main Page", "Login button clicked");
         EditText username_textfield = findViewById(R.id.username_textfield);
         EditText password_textfield = findViewById(R.id.password_textfield);
 
         this.username = username_textfield.getText().toString();
         this.password = password_textfield.getText().toString();
 
-        //todo: change this the user REAL name from db. "a" and "a" only for checks
         Log.i("Main Page", "User " + username + " with password " + password + " logged in");
-        if (username.equals("a") && password.equals("a")) {
-            username = "111111111";
+        AppController controller = AppController.getController(this);
+        boolean logged = controller.login(username, password, this);
+        if (logged) {
             Intent intent = new Intent(this, HomePageActivity.class);
             intent.putExtra(BindingValues.LOGGED_USERNAME, username);
             startActivity(intent);
-        }
+        } else {
+            Log.i("Main Page", "wrong password or user name for username: " + username);
+            WrongDetailsMessage();
 
+        }
     }
     //todo: implements this
 
     public void forgetPasswordFunction(View view) {
         Log.i("Main Page","Forgot password button clicked");
-
     }
-}
+
+//todo: add forgot password button to here
+    private void WrongDetailsMessage() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+    }

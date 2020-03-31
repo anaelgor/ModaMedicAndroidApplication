@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import Controller.Urls;
-
 public class SleepGoogleFit {
 
     private List sleepDataArray;
