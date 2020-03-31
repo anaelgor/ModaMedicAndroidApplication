@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import Controller.Urls;
+
 import static com.google.android.gms.fitness.data.Field.FIELD_STEPS;
 
 public class StepsGoogleFit {
@@ -33,7 +35,7 @@ public class StepsGoogleFit {
     public StepsGoogleFit() {
     }
 
-    public void getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions){
+    public void getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions) {
 
 
         GoogleSignInAccount googleSignInAccount =
@@ -58,12 +60,12 @@ public class StepsGoogleFit {
                 .build();
 
         HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
-        Task<DataReadResponse> task =historyClient.readData(request); //computed from midnight of the current day on the device's current timezone
+        Task<DataReadResponse> task = historyClient.readData(request); //computed from midnight of the current day on the device's current timezone
 
         task.addOnSuccessListener(response -> {
             DataSet dataset = response.getDataSets().get(0);
 
-            for (DataPoint datapoint:
+            for (DataPoint datapoint :
                     dataset.getDataPoints()) {
                 steps += datapoint.getValue(FIELD_STEPS).asInt();
             }
@@ -72,16 +74,16 @@ public class StepsGoogleFit {
 
             Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
         })
-        .addOnFailureListener(response -> {
+                .addOnFailureListener(response -> {
 
-            calculated = true;
+                    calculated = true;
 
-            Log.e(TAG, "Could not extract steps data.");
-        });
+                    Log.e(TAG, "Could not extract steps data.");
+                });
 
     }
 
-    public JSONObject makeBodyJson(){
+    public JSONObject makeBodyJson() {
         JSONObject json = new JSONObject();
         try {
             json.put("ValidTime", System.currentTimeMillis());
@@ -94,5 +96,15 @@ public class StepsGoogleFit {
 
     public boolean hadBeenCalc() {
         return calculated;
+    }
+
+    public void sendDataToServer(HttpRequests httpRequests) {
+        try {
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostSteps);
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in steps.");
+            e.printStackTrace();
+        }
     }
 }

@@ -126,45 +126,11 @@ public class AppController {
         }
         // send data to server
         Log.i("SendMetrics", "******* Sending metrics to server ******");
-
-        try {
-            httpRequests.sendPostRequest(stepsGoogleFit.makeBodyJson(), Urls.urlPostSteps);
-        }
-        catch (Exception e){
-            Log.e(TAG, "No data in steps.");
-            e.printStackTrace();
-        }
-        try {
-            httpRequests.sendPostRequest(caloriesGoogleFit.makeBodyJson(), Urls.urlPostCalories);
-        }
-        catch (Exception e){
-            Log.e(TAG, "No data in calories.");
-            e.printStackTrace();
-        }
-        try {
-            httpRequests.sendPostRequest(distanceGoogleFit.makeBodyJson(), Urls.urlPostDistance);
-        }
-        catch (Exception e){
-            Log.e(TAG, "No data in distance.");
-            e.printStackTrace();
-        }
-        try{
-            httpRequests.sendPostRequest(sleepGoogleFit.getJson(), Urls.urlPostSleep);
-            sleepGoogleFit.clearJson();
-        }
-        catch (Exception e){
-            Log.e(TAG, "No data in sleep.");
-            e.printStackTrace();
-        }
-        try{
-            httpRequests.sendPostRequest(activitiesGoogleFit.getJson(), Urls.urlPostActivity);
-            activitiesGoogleFit.clearJson();
-        }
-        catch (Exception e){
-            Log.e(TAG, "No data in activity.");
-            e.printStackTrace();
-        }
-
+        stepsGoogleFit.sendDataToServer(httpRequests);
+        caloriesGoogleFit.sendDataToServer(httpRequests);
+        distanceGoogleFit.sendDataToServer(httpRequests);
+        sleepGoogleFit.sendDataToServer(httpRequests);
+        activitiesGoogleFit.sendDataToServer(httpRequests);
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {

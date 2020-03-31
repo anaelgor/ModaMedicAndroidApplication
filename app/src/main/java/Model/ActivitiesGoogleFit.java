@@ -17,6 +17,7 @@ import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResponse;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,10 +26,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import Controller.Urls;
+
 public class ActivitiesGoogleFit {
 
     private List activityArray;
     private JSONObject json;
+    private static final String TAG = "ActivitiesGoogleFit";
 
     public ActivitiesGoogleFit() {
         activityArray = new ArrayList();
@@ -56,11 +60,11 @@ public class ActivitiesGoogleFit {
 
         task.addOnSuccessListener(response -> {
 
-            List<Session> sleepSessions = response.getSessions().stream()
+            List<Session> activitiesSessions = response.getSessions().stream()
                     .collect(Collectors.toList());
 
-            for (Session session : sleepSessions) {
-                Log.d("AppName", String.format("Activities between %d and %d",
+            for (Session session : activitiesSessions) {
+                Log.d(TAG, String.format("Activities between %d and %d",
                         session.getStartTime(TimeUnit.MILLISECONDS),
                         session.getEndTime(TimeUnit.MILLISECONDS)));
 
@@ -72,8 +76,7 @@ public class ActivitiesGoogleFit {
                         String activity = point.getValue(Field.FIELD_ACTIVITY).asActivity();
                         long start = point.getStartTime(TimeUnit.MILLISECONDS);
                         long end = point.getEndTime(TimeUnit.MILLISECONDS);
-                        Log.d("AppName",
-                                String.format("\t* %s between %d and %d", activity, start, end));
+                        Log.d(TAG, String.format("\t* %s between %d and %d", activity, start, end));
 
                         //ignore sleeping data
                         if (activity.equals("sleep.deep") || activity.equals("sleep.light"))
@@ -101,10 +104,11 @@ public class ActivitiesGoogleFit {
     public void makeBodyJson(){
         JSONObject json = new JSONObject();
         String userID = "1111111111";
+        JSONArray array = new JSONArray(activityArray);
         try {
             json.put("UserID", userID);
             json.put("ValidTime", System.currentTimeMillis());
-            json.put("Activity", activityArray);
+            json.put("Data", array);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -117,5 +121,16 @@ public class ActivitiesGoogleFit {
 
     public void clearJson(){
         this.json = new JSONObject();
+    }
+
+    public void sendDataToServer (HttpRequests httpRequests){
+        try{
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity);
+            clearJson();
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in activity.");
+            e.printStackTrace();
+        }
     }
 }
