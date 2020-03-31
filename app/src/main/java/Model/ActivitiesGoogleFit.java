@@ -122,4 +122,15 @@ public class ActivitiesGoogleFit {
     public void clearJson(){
         this.json = new JSONObject();
     }
+
+    public void sendDataToServer (HttpRequests httpRequests){
+        try{
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity);
+            clearJson();
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in activity.");
+            e.printStackTrace();
+        }
+    }
 }

@@ -21,6 +21,8 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import Controller.Urls;
+
 import static com.google.android.gms.fitness.data.Field.FIELD_DISTANCE;
 
 public class DistanceGoogleFit {
@@ -95,6 +97,16 @@ public class DistanceGoogleFit {
 
     public boolean hadBeenCalc() {
         return calculated;
+    }
+
+    public void sendDataToServer(HttpRequests httpRequests) {
+        try {
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance);
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in distance.");
+            e.printStackTrace();
+        }
     }
 
 }

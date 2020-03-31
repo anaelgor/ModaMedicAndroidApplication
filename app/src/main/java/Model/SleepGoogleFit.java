@@ -148,4 +148,16 @@ public class SleepGoogleFit {
         this.json = new JSONObject();
     }
 
+    public void sendDataToServer(HttpRequests httpRequests) {
+
+        try{
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep);
+            clearJson();
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in sleep.");
+            e.printStackTrace();
+        }
+    }
+
 }
