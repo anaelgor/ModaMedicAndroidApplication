@@ -21,8 +21,6 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import Controller.Urls;
-
 import static com.google.android.gms.fitness.data.Field.FIELD_CALORIES;
 
 public class CaloriesGoogleFit {

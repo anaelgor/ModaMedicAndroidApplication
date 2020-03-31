@@ -26,11 +26,12 @@ public class HttpRequests {//TODO: make this singleton after testing
 
 
 
-    public void sendPostRequest(JSONObject jsonPost, String url) throws ServerFalseException {
+    public JSONObject sendPostRequest(JSONObject jsonPost, String url) throws ServerFalseException {
         sendRequestHttp = new SendRequestHttp();
         try {
             JSONObject jo = sendRequestHttp.execute("POST", Constants.urlPrefix + url, jsonPost.toString()).get();
-            sendRequestHttp.checkExeption();
+            sendRequestHttp.checkException();
+            return jo;
 
         }catch (ExecutionException | InterruptedException e) {
             throw new ServerFalseException("Problem in the application, try again");
@@ -41,7 +42,7 @@ public class HttpRequests {//TODO: make this singleton after testing
         sendRequestHttp = new SendRequestHttp();
         try {
             JSONObject jo = sendRequestHttp.execute("GET", Constants.urlPrefix + url).get();
-            sendRequestHttp.checkExeption();
+            sendRequestHttp.checkException();
             return jo;
         }catch (ExecutionException | InterruptedException e) {
             throw new ServerFalseException("Problem in the application, try again");
@@ -139,7 +140,7 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
     }
 
-    public void checkExeption() throws ServerFalseException {
+    public void checkException() throws ServerFalseException {
         if (exception != null)
             throw exception;
     }

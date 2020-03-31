@@ -2,6 +2,7 @@ package Controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
@@ -28,11 +29,13 @@ import Model.DistanceGoogleFit;
 import Model.Exceptions.ServerFalseException;
 import Model.GPS;
 import Model.HttpRequests;
+import Model.Login;
 import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireManager;
 import Model.SleepGoogleFit;
 import Model.StepsGoogleFit;
+import Model.Urls;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
@@ -191,5 +194,9 @@ public class AppController {
 
         System.out.println("xx");
         return result;
+    }
+
+    public boolean login(String username, String password, Activity activity) {
+        return Login.login(username,password,activity, httpRequests);
     }
 }
