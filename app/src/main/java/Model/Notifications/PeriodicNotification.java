@@ -1,4 +1,4 @@
-package Model;
+package Model.Notifications;
 
 import android.content.Context;
 import android.content.Intent;

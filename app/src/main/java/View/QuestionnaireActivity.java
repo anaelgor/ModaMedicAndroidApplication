@@ -45,7 +45,6 @@ public class QuestionnaireActivity extends AppCompatActivity {
         answersButtons = new  HashMap<>();
         Intent intent = getIntent();
         questionnaire = (Questionnaire) intent.getSerializableExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
-        System.out.println("xxx");
         showTitle();
         showQuestion(0);
 

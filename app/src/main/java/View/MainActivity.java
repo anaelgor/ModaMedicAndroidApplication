@@ -1,13 +1,17 @@
 package View;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,9 +20,11 @@ import android.widget.EditText;
 import com.example.modamedicandroidapplication.R;
 
 import java.util.Calendar;
+import java.util.logging.Logger;
 
-import Model.DailyNotification;
-import Model.PeriodicNotification;
+import Model.Notifications.AbstractNotification;
+import Model.Notifications.DailyNotification;
+import Model.Notifications.PeriodicNotification;
 
 import Controller.AppController;
 import Model.Permissions;
@@ -41,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setNotifcations();
-
+        maor();
+       setNotifcations();
 
        /**
         * PERMMISIONS REQUEST
@@ -58,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
        AppController app = AppController.getController(this);
        Thread t_sensorData = new Thread(new Runnable() {
+           @RequiresApi(api = Build.VERSION_CODES.N)
            @Override
            public void run() {
                AppController app = AppController.getController(getContext());
@@ -65,6 +72,30 @@ public class MainActivity extends AppCompatActivity {
            }
        });
        t_sensorData.start();
+    }
+
+    private void maor() {
+        Context context = getContext();
+        Intent intent = new Intent(context, MainActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1,intent, PendingIntent.FLAG_ONE_SHOT);
+
+        Notification notification = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            System.out.println("maor12345");
+            notification = new Notification.Builder(context)
+                    .setContentTitle(context.getString(R.string.app_name))
+                    .setContentText("SUSHI?")
+                    .setContentIntent(pendingIntent)
+                    .addAction(android.R.drawable.sym_action_chat, context.getString(R.string.notification_action), pendingIntent)
+                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                    .setChannelId("3")
+                    .build();
+        }
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+        notificationManager.notify(3, notification);
+
     }
 
     //todo: move this to controller. also check what happen if user open the app again,
@@ -77,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
         //Daily notification - one in 16:00 and one in 19:00
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR,16);
-        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.MINUTE,40);
         Calendar calendar2 = Calendar.getInstance();
 
-        calendar2.set(Calendar.HOUR,19);
-        calendar2.set(Calendar.MINUTE,0);
+        calendar2.set(Calendar.HOUR,16);
+        calendar2.set(Calendar.MINUTE,41);
 
         setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
         setRepeatingNotification(DailyNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
@@ -94,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
     private void setRepeatingNotification(Class notification_class, long time, long interval) {
         Intent intent = new Intent(MainActivity.this,notification_class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time,interval, pendingIntent);
+        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time,interval, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,time,pendingIntent);
+
 
     }
 

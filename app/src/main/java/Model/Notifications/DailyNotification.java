@@ -1,7 +1,8 @@
-package Model;
+package Model.Notifications;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.example.modamedicandroidapplication.R;
 
@@ -16,9 +17,9 @@ public class DailyNotification extends AbstractNotification {
         boolean answered = checkIfUserAnsweredToday("");
         if (!answered) {
             String notification_text = context.getString(R.string.daily_questionnaire_notification);
-            int id = 2;
-            notify(MainActivity.class, context,notification_text,id);
-            System.out.println("MAOR");
+            int daily_id = 2;
+            notify(MainActivity.class, context,notification_text,daily_id);
+            Log.i("Line22DailyNotification", "onReceive: ");
         }
 
     }
