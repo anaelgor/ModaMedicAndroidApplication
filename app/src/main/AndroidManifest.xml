@@ -36,14 +36,14 @@
         </activity>
 
         <receiver
-            android:name="Model.PeriodicNotification"
+            android:name="Model.Notifications.PeriodicNotification"
             android:enabled="true">
             <intent-filter>
                 <action android:name="Model.PeriodicNotification.Action" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name="Model.DailyNotification"
+            android:name="Model.Notifications.DailyNotification"
             android:enabled="true">
             <intent-filter>
                 <action android:name="Model.DailyNotification.Action" />

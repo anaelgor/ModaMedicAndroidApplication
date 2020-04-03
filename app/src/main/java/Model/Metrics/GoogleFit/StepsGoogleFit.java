@@ -1,4 +1,5 @@
-package Model;
+package Model.Metrics.GoogleFit;
+
 
 import android.content.Context;
 import android.util.Log;
@@ -21,23 +22,31 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.android.gms.fitness.data.Field.FIELD_DISTANCE;
+import Model.Utils.HttpRequests;
+import Model.Users.Login;
+import Model.Metrics.DataSender;
+import Model.Utils.Urls;
 
-public class DistanceGoogleFit implements DataSender{
+import static com.google.android.gms.fitness.data.Field.FIELD_STEPS;
 
-    private static final String TAG = "DistanceGoogleFit";
-    private float dist = 0;
+public class StepsGoogleFit implements DataSender {
+
+    private static final String TAG = "StepsGoogleFit";
+    private int steps = 0;
     private boolean calculated = false;
-    
-    public DistanceGoogleFit() {
+
+    public StepsGoogleFit() {
     }
-    
-    public void getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions){
+
+    public void getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions) {
 
 
         GoogleSignInAccount googleSignInAccount =
                 GoogleSignIn.getAccountForExtension(context, fitnessOptions);
 
+        /**
+         * steps
+         */
         Calendar midnight = Calendar.getInstance();
 
         midnight.set(Calendar.HOUR_OF_DAY, 0);
@@ -48,45 +57,40 @@ public class DistanceGoogleFit implements DataSender{
         long endTime = System.currentTimeMillis();
         long startTime = midnight.getTimeInMillis();
 
-        /**
-         * Distance
-         */
-
         DataReadRequest request = new DataReadRequest.Builder()
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_STEP_COUNT_DELTA)
                 .build();
 
         HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
-        Task<DataReadResponse> task =historyClient.readData(request);
+        Task<DataReadResponse> task = historyClient.readData(request); //computed from midnight of the current day on the device's current timezone
 
         task.addOnSuccessListener(response -> {
-
             DataSet dataset = response.getDataSets().get(0);
 
-            for (DataPoint datapoint:
+            for (DataPoint datapoint :
                     dataset.getDataPoints()) {
-                dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
+                steps += datapoint.getValue(FIELD_STEPS).asInt();
             }
 
             calculated = true;
 
-            Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
+            Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
         })
                 .addOnFailureListener(response -> {
 
                     calculated = true;
 
-                    Log.e(TAG, "Could not extract distance data.");
+                    Log.e(TAG, "Could not extract steps data.");
                 });
 
     }
 
-    public JSONObject makeBodyJson(){
+    public JSONObject makeBodyJson() {
         JSONObject json = new JSONObject();
         try {
             json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.dist);
+            json.put("Data", this.steps);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -99,12 +103,11 @@ public class DistanceGoogleFit implements DataSender{
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance, Login.getToken());
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostSteps, Login.getToken());
         }
         catch (Exception e){
-            Log.e(TAG, "No data in distance.");
+            Log.e(TAG, "No data in steps.");
             e.printStackTrace();
         }
     }
-
 }

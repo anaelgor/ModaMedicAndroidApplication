@@ -13,20 +13,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.modamedicandroidapplication.R;
 
 import java.util.Map;
 
 import Controller.AppController;
-import Model.Constants;
 import Model.Questionnaires.Questionnaire;
+import Model.Utils.Constants;
 
 /*
 Home page screen
  */
-public class HomePageActivity extends AppCompatActivity {
+public class HomePageActivity extends AbstractActivity {
     Map<Long,String> questionnaires; //key: questID, value: questionnaire Text
     String username;
     AppController appController;

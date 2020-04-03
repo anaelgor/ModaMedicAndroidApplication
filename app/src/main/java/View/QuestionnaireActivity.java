@@ -30,7 +30,7 @@ import Model.Questionnaires.Answer;
 import Model.Questionnaires.Question;
 import Model.Questionnaires.Questionnaire;
 
-public class QuestionnaireActivity extends AppCompatActivity {
+public class QuestionnaireActivity extends AbstractActivity {
 
     Questionnaire questionnaire;
     long currentQuestionID;
@@ -135,11 +135,28 @@ public class QuestionnaireActivity extends AppCompatActivity {
                     sentTV.setText(R.string.sent_succesfully);
                     sentTV.setTextSize(30);
                     layout.addView(sentTV);
+                    Button backButton = new Button(v.getContext());
+                    backButton.setText(R.string.back_to_home_page);
+                    backButton.setWidth(20);
+                    backButton.setHeight(10);
+                    backButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            backToHomePage(v);
+                        }
+                    });
+                    layout.addView(backButton);
+
 
 
                 }
             }
         });
+    }
+
+    private void backToHomePage(View v) {
+        Intent intent = new Intent(this,HomePageActivity.class);
+        startActivity(intent);
     }
 
     private void animateFullCircle(FloatingActionButton button) {
@@ -206,7 +223,6 @@ public class QuestionnaireActivity extends AppCompatActivity {
     }
 
     private void sendAnswersToServer() {
-        //todo: implement this with server
         AppController appController = AppController.getController(this);
         appController.sendAnswersToServer(questionsAnswers,questionnaire.getQuestionaireID());
     }

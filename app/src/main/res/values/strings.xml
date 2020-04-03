@@ -18,6 +18,7 @@
     <string name="wrongDetails">אין התאמה בין ת.ז לסיסמא</string>
     <string name="error">שגיאה</string>
     <string name="tryAgain">נסה שוב</string>
+    <string name="back_to_home_page">חזור לדף הבית</string>
 
 
 </resources>

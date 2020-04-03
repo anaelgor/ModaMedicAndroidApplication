@@ -1,4 +1,4 @@
-package Model;
+package Model.Notifications;
 
 import android.app.Notification;
 import android.app.NotificationManager;

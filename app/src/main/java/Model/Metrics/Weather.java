@@ -1,4 +1,4 @@
-package Model;
+package Model.Metrics;
 
 import android.Manifest;
 import android.app.Activity;
@@ -20,6 +20,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import Model.Utils.HttpRequests;
+import Model.Users.Login;
+import Model.Utils.Urls;
 
 public class Weather implements LocationListener, DataSender {
 

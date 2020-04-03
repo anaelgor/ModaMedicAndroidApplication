@@ -1,4 +1,4 @@
-package Model;
+package Model.Metrics.GoogleFit;
 
 import android.content.Context;
 import android.util.Log;
@@ -20,6 +20,11 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+
+import Model.Utils.HttpRequests;
+import Model.Users.Login;
+import Model.Metrics.DataSender;
+import Model.Utils.Urls;
 
 import static com.google.android.gms.fitness.data.Field.FIELD_CALORIES;
 
