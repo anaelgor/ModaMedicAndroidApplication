@@ -11,16 +11,35 @@ import Model.Exceptions.ServerFalseException;
 
 public class Login {
 
+    private static String userToken;
+
+    private static void setTokenOfUser(Activity activity) {
+        String not_exists = "not exists";
+        SharedPreferences sharedPref = activity.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+        String token = sharedPref.getString("token",not_exists);
+        if (token.equals(not_exists))
+            throw new NullPointerException("have no token");
+        userToken = token;
+    }
+
+    public static String getToken() {
+        return userToken;
+    }
+
 
 
     public static boolean login(String username, String password, Activity activity, HttpRequests httpRequests) {
         JSONObject login_body  = makeBodyJson(username,password);
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        sharedPref.edit().putString("username",username).apply();
+        SharedPreferences sharedPref = activity.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
         try {
             JSONObject response = httpRequests.sendPostRequest(login_body,Urls.urlOfLogin);
-            String token = response.getString("data");
+            JSONObject data = response.getJSONObject("data");
+            String token = data.getString("token");
+            String name = data.getString("name");
+            sharedPref.edit().putString("username",username).apply();
             sharedPref.edit().putString("token",token).apply();
+            sharedPref.edit().putString("name",name).apply();
+            setTokenOfUser(activity);
             return true;
 
         } catch (ServerFalseException | JSONException e) {

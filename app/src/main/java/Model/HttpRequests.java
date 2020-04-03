@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 
 import Model.Exceptions.ServerFalseException;
@@ -38,10 +39,33 @@ public class HttpRequests {//TODO: make this singleton after testing
         }
     }
 
+    public JSONObject sendPostRequest(JSONObject jsonPost, String url, String token) throws ServerFalseException {
+        sendRequestHttp = new SendRequestHttp();
+        try {
+            JSONObject jo = sendRequestHttp.execute("POST_TOKEN", Constants.urlPrefix + url, jsonPost.toString(), token).get();
+            sendRequestHttp.checkException();
+            return jo;
+
+        }catch (ExecutionException | InterruptedException e) {
+            throw new ServerFalseException("Problem in the application, try again");
+        }
+    }
+
     public JSONObject sendGetRequest(String url) throws ServerFalseException {
         sendRequestHttp = new SendRequestHttp();
         try {
             JSONObject jo = sendRequestHttp.execute("GET", Constants.urlPrefix + url).get();
+            sendRequestHttp.checkException();
+            return jo;
+        }catch (ExecutionException | InterruptedException e) {
+            throw new ServerFalseException("Problem in the application, try again");
+        }
+    }
+
+    public JSONObject sendGetRequest(String url, String token) throws ServerFalseException {
+        sendRequestHttp = new SendRequestHttp();
+        try {
+            JSONObject jo = sendRequestHttp.execute("GET_TOKEN", Constants.urlPrefix + url,token).get();
             sendRequestHttp.checkException();
             return jo;
         }catch (ExecutionException | InterruptedException e) {
@@ -67,17 +91,25 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
         try {
             JSONObject ans = null;
             try {
-                JSONObject response;
+                JSONObject response = null;
                 if (urls[0].equals("POST"))
                 {
                     response = PostRequest(urls[1], urls[2]);
                 }
-                else // get request
+                else if (urls[0].equals("POST_TOKEN")) {
+                    response = PostRequest(urls[1], urls[2], urls[3]);
+
+                }
+                else if (urls[0].equals("GET"))
                 {
                     response = GetRequest(urls[1]);
                 }
 
-                if (response.getBoolean("error")) {
+                else if (urls[0].equals("GET_TOKEN")){
+                    response = GetRequest(urls[1], urls[2]);
+                }
+
+                if (response!= null && response.getBoolean("error")) {
                     exception = new ServerFalseException(response.getString("message"));
                 } else {
                     ans = response;
@@ -117,7 +149,21 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
         Response response = client.newCall(request).execute();
         return new JSONObject(response.body().string());
+    }
 
+    public JSONObject PostRequest(String url,String json, String token) throws IOException, JSONException {
+
+        Log.i(TAG, MessageFormat.format("sending with token: {0} to: {1}   body: {2}", token, url, json));
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .header("x-auth-token", token)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return new JSONObject(response.body().string());
     }
 
     /**
@@ -137,7 +183,19 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
         Response response = client.newCall(request).execute();
         return new JSONObject(response.body().string());
+    }
 
+    public JSONObject GetRequest(String url, String token) throws IOException, JSONException {
+
+        Log.i(TAG, String.format("sending with token: %s to %s", token, url));
+
+        Request request = new Request.Builder()
+                .url(url)
+                .header("x-auth-token", token)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return new JSONObject(response.body().string());
     }
 
     public void checkException() throws ServerFalseException {

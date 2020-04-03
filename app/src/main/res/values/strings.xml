@@ -7,7 +7,7 @@
     <string name="login">התחבר</string>
     <string name="questionnaire">שאלון</string>
     <string name="daily_questionnaire">שאלון יומי</string>
-    <string name="good_evening">ערב טוב</string>
+    <string name="hello">שלום</string>
     <string name="thanks">תודה</string>
     <string name="sent_succesfully">התשובות נשלחו בהצלחה</string>
     <string name="choose_else">אי אפשר לבחור את התשובה הזו ביחד עם מה שכבר בחרת. בטל את מה שבחרת קודם!</string>
@@ -15,7 +15,9 @@
     <string name="multiple_choices">אפשר לבחור כמה תשובות הפעם</string>
     <string name="answerTheQuestion">קודם תענה על השאלה!</string>
     <string name="movingToPrevQuestion">חוזר לשאלה הקודמת</string>
-
+    <string name="wrongDetails">אין התאמה בין ת.ז לסיסמא</string>
+    <string name="error">שגיאה</string>
+    <string name="tryAgain">נסה שוב</string>
 
 
 </resources>

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.fitness.data.Field.FIELD_DISTANCE;
 
-public class DistanceGoogleFit {
+public class DistanceGoogleFit implements DataSender{
 
     private static final String TAG = "DistanceGoogleFit";
     private float dist = 0;
@@ -99,7 +99,7 @@ public class DistanceGoogleFit {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance);
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in distance.");

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class ActivitiesGoogleFit {
+public class ActivitiesGoogleFit implements DataSender {
 
     private List activityArray;
     private JSONObject json;
@@ -37,10 +37,10 @@ public class ActivitiesGoogleFit {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void extractActivityData(Context context){
+    public void extractActivityData(Context context) {
 
         long endTime = System.currentTimeMillis();
-        long startTime = endTime-86400000;
+        long startTime = endTime - 86400000;
 
         // Note: The android.permission.ACTIVITY_RECOGNITION permission is
         // required to read DataType.TYPE_ACTIVITY_SEGMENT
@@ -99,12 +99,10 @@ public class ActivitiesGoogleFit {
         });
     }
 
-    public void makeBodyJson(){
+    public void makeBodyJson() {
         JSONObject json = new JSONObject();
-        String userID = "1111111111";
         JSONArray array = new JSONArray(activityArray);
         try {
-            json.put("UserID", userID);
             json.put("ValidTime", System.currentTimeMillis());
             json.put("Data", array);
         } catch (JSONException e) {
@@ -113,20 +111,19 @@ public class ActivitiesGoogleFit {
         this.json = json;
     }
 
-    public JSONObject getJson(){
+    public JSONObject getJson() {
         return this.json;
     }
 
-    public void clearJson(){
+    public void clearJson() {
         this.json = new JSONObject();
     }
 
-    public void sendDataToServer (HttpRequests httpRequests){
-        try{
-            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity);
+    public void sendDataToServer(HttpRequests httpRequests) {
+        try {
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity, Login.getToken());
             clearJson();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "No data in activity.");
             e.printStackTrace();
         }

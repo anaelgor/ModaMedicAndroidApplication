@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Weather implements LocationListener {
+public class Weather implements LocationListener, DataSender {
 
     private String lon;
     private String lat;
@@ -72,7 +72,7 @@ public class Weather implements LocationListener {
         String locationJSON = null;
 
         if (lat == null || lon == null){
-            Log.e("Location unavailable","***********CANT FIND LOCATION**********");
+            Log.w("Location unavailable","***********CANT FIND LOCATION**********");
             return null;
         }
 
@@ -136,20 +136,20 @@ public class Weather implements LocationListener {
 
     }
 
-    public JSONObject makeBodyJson(){
+    public JSONObject makeBodyJson() throws JSONException{
         JSONObject json = new JSONObject();
-        try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (this.jsonObject == null){
+            throw new NullPointerException(); //no weather data
         }
+        json.put("ValidTime", System.currentTimeMillis());
+        json.put("Data", this.jsonObject);
         return json;
     }
 
+    @Override
     public void sendDataToServer(HttpRequests httpRequests){
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories);
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in weather.");

@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String username;
     private String password;
-    public Activity getContext(){
+
+    public Activity getContext() {
         return this;
     }
 
@@ -43,30 +45,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setNotifcations();
+
+        setHideKeyBoard();
 
 
-       /**
-        * PERMMISIONS REQUEST
-        * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
-        */
-       Permissions permissions = new Permissions(this);
-       try {
-           permissions.requestPermissions();
-       } catch (PackageManager.NameNotFoundException e) {
-           e.printStackTrace();
-       }
-       //end permissions requests
+        /**
+         * PERMMISIONS REQUEST
+         * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
+         */
+        Permissions permissions = new Permissions(this);
+        try {
+            permissions.requestPermissions();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        //end permissions requests
 
-       AppController app = AppController.getController(this);
-       Thread t_sensorData = new Thread(new Runnable() {
-           @Override
-           public void run() {
-               AppController app = AppController.getController(getContext());
-               app.SendSensorData();
-           }
-       });
-       t_sensorData.start();
+
+    }
+
+    private void setHideKeyBoard() {
+        EditText password_textfield = findViewById(R.id.password_textfield);
+        View.OnFocusChangeListener ofcListener = new MyFocusChangeListener();
+        password_textfield.setOnFocusChangeListener(ofcListener);
+
+    }
+
+    private class MyFocusChangeListener implements View.OnFocusChangeListener {
+
+        public void onFocusChange(View v, boolean hasFocus){
+
+            if((v.getId() == R.id.password_textfield )&& !hasFocus ) {
+
+                InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+            }
+        }
     }
 
     //todo: move this to controller. also check what happen if user open the app again,
@@ -74,16 +89,16 @@ public class MainActivity extends AppCompatActivity {
     // HomePageActivity, because only there we have the logged in user.
     private void setNotifcations() {
         if (alarmManager == null)
-            alarmManager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
+            alarmManager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
 
         //Daily notification - one in 16:00 and one in 19:00
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR,16);
-        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.HOUR, 16);
+        calendar.set(Calendar.MINUTE, 0);
         Calendar calendar2 = Calendar.getInstance();
 
-        calendar2.set(Calendar.HOUR,19);
-        calendar2.set(Calendar.MINUTE,0);
+        calendar2.set(Calendar.HOUR, 19);
+        calendar2.set(Calendar.MINUTE, 0);
 
         setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
         setRepeatingNotification(DailyNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
@@ -94,9 +109,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRepeatingNotification(Class notification_class, long time, long interval) {
-        Intent intent = new Intent(MainActivity.this,notification_class);
+        Intent intent = new Intent(MainActivity.this, notification_class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time,interval, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
 
     }
 
@@ -124,26 +139,27 @@ public class MainActivity extends AppCompatActivity {
     //todo: implements this
 
     public void forgetPasswordFunction(View view) {
-        Log.i("Main Page","Forgot password button clicked");
+        Log.i("Main Page", "Forgot password button clicked");
     }
 
-//todo: add forgot password button to here
+    //todo: add forgot password button to here
     private void WrongDetailsMessage() {
         new AlertDialog.Builder(getContext())
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
-
-                // Specifying a listener allows you to take an action before dismissing the dialog.
-                // The dialog is automatically dismissed when a dialog button is clicked.
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        //do nothing
-                    }
-                })
-
-                // A null listener allows the button to dismiss the dialog and take no further action.
-                .setNegativeButton(android.R.string.no, null)
+                .setTitle(R.string.error)
+                .setMessage(R.string.wrongDetails)
+                .setNegativeButton(R.string.tryAgain, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+}

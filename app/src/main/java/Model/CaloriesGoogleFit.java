@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.fitness.data.Field.FIELD_CALORIES;
 
-public class CaloriesGoogleFit {
+public class CaloriesGoogleFit implements DataSender {
 
     private static final String TAG = "CaloriesGoogleFit";
     private float calories = 0;
@@ -99,7 +99,7 @@ public class CaloriesGoogleFit {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories);
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in calories.");

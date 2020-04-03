@@ -37,14 +37,6 @@ public class QuestionnaireManager {
 
     }
 
-
-    public static JSONObject jsonObject(Questionnaire questionnaire) {
-        //todo: will be implemented only if we need to add questionnaires.
-
-        return null;
-    }
-
-
     private static List<Question> parseQuestionsFromJSONArray(JSONArray questionsJSON) {
         List<Question> questions = new ArrayList<>();
         for (int i=0; i<questionsJSON.length(); i++) {
