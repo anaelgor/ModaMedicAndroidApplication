@@ -1,4 +1,4 @@
-package Model;
+package Model.Users;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;

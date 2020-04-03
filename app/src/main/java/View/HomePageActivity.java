@@ -20,7 +20,7 @@ import com.example.modamedicandroidapplication.R;
 import java.util.Map;
 
 import Controller.AppController;
-import Model.Constants;
+import Model.Utils.Constants;
 import Model.Questionnaires.Questionnaire;
 
 /*

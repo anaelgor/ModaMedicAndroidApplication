@@ -7,7 +7,6 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -20,11 +19,11 @@ import com.example.modamedicandroidapplication.R;
 
 import java.util.Calendar;
 
-import Model.DailyNotification;
-import Model.PeriodicNotification;
+import Model.Notifications.DailyNotification;
+import Model.Notifications.PeriodicNotification;
 
 import Controller.AppController;
-import Model.Permissions;
+import Model.Users.Permissions;
 
 /*
 Home page screen

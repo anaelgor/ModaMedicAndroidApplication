@@ -1,4 +1,4 @@
-package Model;
+package Model.Questionnaires;
 
 import android.util.Log;
 
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import Model.Exceptions.ServerFalseException;
-import Model.Questionnaires.AnswersManager;
-import Model.Questionnaires.Questionnaire;
-import Model.Questionnaires.QuestionnaireManager;
+import Model.Users.Login;
+import Model.Utils.HttpRequests;
+import Model.Utils.Urls;
 
 public class QuestionnaireSenderAndReceiver {
 
@@ -21,7 +21,7 @@ public class QuestionnaireSenderAndReceiver {
     public static void sendAnswers(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID, HttpRequests httpRequests) {
         JSONObject request = AnswersManager.createJsonAnswersOfQuestsionnaire(questionsAndAnswers,questionnaireID);
         try {
-            httpRequests.sendPostRequest(request,Urls.urlPostAnswersOfQuestionnaireByID +questionnaireID, Login.getToken());
+            httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID +questionnaireID, Login.getToken());
             Log.i(TAG,"sent to server");
 
         } catch (ServerFalseException serverFalseException) {

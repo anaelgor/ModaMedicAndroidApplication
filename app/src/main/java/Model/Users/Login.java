@@ -1,4 +1,4 @@
-package Model;
+package Model.Users;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import Model.Exceptions.ServerFalseException;
+import Model.Utils.Constants;
+import Model.Utils.HttpRequests;
+import Model.Utils.Urls;
 
 public class Login {
 
@@ -22,17 +25,16 @@ public class Login {
         userToken = token;
     }
 
+
     public static String getToken() {
         return userToken;
     }
-
-
 
     public static boolean login(String username, String password, Activity activity, HttpRequests httpRequests) {
         JSONObject login_body  = makeBodyJson(username,password);
         SharedPreferences sharedPref = activity.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
         try {
-            JSONObject response = httpRequests.sendPostRequest(login_body,Urls.urlOfLogin);
+            JSONObject response = httpRequests.sendPostRequest(login_body, Urls.urlOfLogin);
             JSONObject data = response.getJSONObject("data");
             String token = data.getString("token");
             String name = data.getString("name");

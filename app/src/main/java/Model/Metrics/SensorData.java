@@ -1,4 +1,4 @@
-package Model;
+package Model.Metrics;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +13,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
+
+import Model.Metrics.GoogleFit.ActivitiesGoogleFit;
+import Model.Metrics.GoogleFit.CaloriesGoogleFit;
+import Model.Metrics.GoogleFit.DistanceGoogleFit;
+import Model.Metrics.GoogleFit.SleepGoogleFit;
+import Model.Metrics.GoogleFit.StepsGoogleFit;
+import Model.Metrics.Weather;
+import Model.Utils.HttpRequests;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;

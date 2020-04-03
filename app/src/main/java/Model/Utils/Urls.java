@@ -1,4 +1,4 @@
-package Model;
+package Model.Utils;
 
 public final class Urls {
     public static final String urlPostSteps = "auth/patients/metrics/steps";

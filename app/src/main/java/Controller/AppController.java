@@ -8,11 +8,11 @@ import androidx.annotation.RequiresApi;
 import java.util.List;
 import java.util.Map;
 
-import Model.HttpRequests;
-import Model.Login;
-import Model.QuestionnaireSenderAndReceiver;
+import Model.Utils.HttpRequests;
+import Model.Users.Login;
+import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Questionnaires.Questionnaire;
-import Model.SensorData;
+import Model.Metrics.SensorData;
 
 public class AppController {
 

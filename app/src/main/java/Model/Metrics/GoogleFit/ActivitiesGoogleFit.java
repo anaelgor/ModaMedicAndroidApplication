@@ -1,4 +1,4 @@
-package Model;
+package Model.Metrics.GoogleFit;
 
 import android.content.Context;
 import android.os.Build;
@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import Model.Utils.HttpRequests;
+import Model.Users.Login;
+import Model.Metrics.DataSender;
+import Model.Utils.Urls;
 
 public class ActivitiesGoogleFit implements DataSender {
 
