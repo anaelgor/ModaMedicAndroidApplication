@@ -8,11 +8,12 @@ import androidx.annotation.RequiresApi;
 import java.util.List;
 import java.util.Map;
 
-import Model.Utils.HttpRequests;
-import Model.Users.Login;
-import Model.Questionnaires.QuestionnaireSenderAndReceiver;
-import Model.Questionnaires.Questionnaire;
+import Model.ConnectedDevices;
 import Model.Metrics.SensorData;
+import Model.Questionnaires.Questionnaire;
+import Model.Questionnaires.QuestionnaireSenderAndReceiver;
+import Model.Users.Login;
+import Model.Utils.HttpRequests;
 
 public class AppController {
 
@@ -57,5 +58,9 @@ public class AppController {
 
     public boolean login(String username, String password, Activity activity) {
         return Login.login(username,password,activity, httpRequests);
+    }
+
+    public void checkIfBandIsConnected(){
+        ConnectedDevices.checkIfBTIsOn(activity);
     }
 }
