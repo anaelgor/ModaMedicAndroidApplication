@@ -17,15 +17,21 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class HttpRequests {//TODO: make this singleton after testing
+public class HttpRequests {
 
     private SendRequestHttp sendRequestHttp;
     private static final String TAG = "HttpRequests";
-    //public static final String urlPrefix = "http://127.0.0.1:3000/";
-    //public static final String urlPrefix = "http://10.0.2.2:3000/";
-    //public static final String urlPrefix = "http://localhost:3000/";
 
+    private static HttpRequests httpRequests;
 
+    private HttpRequests(){}
+
+    public static HttpRequests getInstance(){
+        if (httpRequests == null){
+            httpRequests = new HttpRequests();
+        }
+        return httpRequests;
+    }
 
     public JSONObject sendPostRequest(JSONObject jsonPost, String url) throws ServerFalseException {
         sendRequestHttp = new SendRequestHttp();
