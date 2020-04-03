@@ -6,28 +6,27 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
+
 import androidx.annotation.RequiresApi;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.util.List;
 import java.util.Map;
+
 import Model.ActivitiesGoogleFit;
 import Model.CaloriesGoogleFit;
 import Model.DistanceGoogleFit;
-import Model.Exceptions.ServerFalseException;
-import Model.GPS;
 import Model.HttpRequests;
 import Model.Login;
 import Model.QuestionnaireSenderAndReceiver;
 import Model.Questionnaires.Questionnaire;
-import Model.Questionnaires.QuestionnaireManager;
 import Model.SleepGoogleFit;
 import Model.StepsGoogleFit;
-import Model.Urls;
+import Model.Weather;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
@@ -58,7 +57,7 @@ public class AppController {
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        this.gpsLocationListener = new GPS(locationManager, activity);
+        this.gpsLocationListener = new Weather(locationManager, activity);
         this.httpRequests = new HttpRequests();
 
         //my try
@@ -78,6 +77,10 @@ public class AppController {
     public void SendSensorData(){
         System.out.println("token: " +Login.getToken());
 
+        long time = System.currentTimeMillis();
+
+        while(System.currentTimeMillis() <= time + 60000);
+
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
@@ -93,6 +96,7 @@ public class AppController {
             stepsGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             caloriesGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
             distanceGoogleFit.getDataFromPrevDay(this.activity, fitnessOptions);
+            ((Weather) gpsLocationListener).extractDataForWeather();
         }
         else{
             GoogleSignIn.requestPermissions(
@@ -102,11 +106,6 @@ public class AppController {
                     fitnessOptions);
         }
 
-        //Weather
-        String json =((GPS)gpsLocationListener).getLocationJSON();
-        if (json == null){
-            System.out.println("Did not found location");
-        }
 
         //wait until we have all data (async tasks)
         long startTime = System.currentTimeMillis();
@@ -127,6 +126,7 @@ public class AppController {
         distanceGoogleFit.sendDataToServer(httpRequests);
         sleepGoogleFit.sendDataToServer(httpRequests);
         activitiesGoogleFit.sendDataToServer(httpRequests);
+        ((Weather)gpsLocationListener).sendDataToServer(httpRequests);
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {

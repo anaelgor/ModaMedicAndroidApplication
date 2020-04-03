@@ -13,17 +13,22 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class GPS implements LocationListener, DataSender{
+public class Weather implements LocationListener, DataSender {
 
     private String lon;
     private String lat;
+    private JSONObject jsonObject;
+    private static final String TAG = "Weather";
 
-    public GPS(LocationManager locationManager, Activity activity) {
+    public Weather(LocationManager locationManager, Activity activity) {
         if (Build.VERSION.SDK_INT < 23) {
 
             if (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && activity.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -63,11 +68,11 @@ public class GPS implements LocationListener, DataSender{
         return result.toString();
     }
 
-    public String getLocationJSON(){
+    public String extractDataForWeather(){
         String locationJSON = null;
 
         if (lat == null || lon == null){
-            Log.e("Location unavailable","***********CANT FIND LOCATION**********");
+            Log.w("Location unavailable","***********CANT FIND LOCATION**********");
             return null;
         }
 
@@ -78,20 +83,21 @@ public class GPS implements LocationListener, DataSender{
             final String all = start + params + api_key;
             Log.i("Input string", "GOT INPUT FOR WEATHER API: " + all);
 
-            String result = null;
-            result = getHTML(all);
+            String result = getHTML(all);
+
             Log.i("Weather", "**********" + result + "**********");
 
+
+            JSONObject resultFromWeb = new JSONObject(result);
+            resultFromWeb = new JSONObject(String.valueOf(resultFromWeb.getJSONObject("main")));
+
+            jsonObject = new JSONObject();
+            jsonObject.put("Low", resultFromWeb.getString("temp_min"));
+            jsonObject.put("High", resultFromWeb.getString("temp_max"));
+            jsonObject.put("Humidity", resultFromWeb.getString("humidity"));
+
             locationJSON = result;
-//
-//            long sunrise = 1575865668;
-//            long sunset = 1575902301;
-//
-//            int seconds = (int) (sunset / 1000) % 60;
-//            int minutes = (int) ((sunset / (1000 * 60)) % 60);
-//            int hours = (int) ((sunset / (1000 * 60 * 60)) % 24);
-//            String res = ("" + hours + ":" + minutes + ":" + seconds);
-//            System.out.println("Sunset Time:" + res);
+
         }
         catch (Exception e){
             e.printStackTrace();
@@ -107,8 +113,12 @@ public class GPS implements LocationListener, DataSender{
         String loc = location.toString();
         Log.i("Location tracker:", loc);
 
-        this.lat = Double.toString(location.getLatitude());
-        this.lon = Double.toString(location.getLongitude());
+        if (Double.toString(location.getLatitude()) != null && Double.toString(location.getLongitude()) !=null)
+        {
+            this.lat = Double.toString(location.getLatitude());
+            this.lon = Double.toString(location.getLongitude());
+        }
+
     }
 
     @Override
@@ -126,10 +136,24 @@ public class GPS implements LocationListener, DataSender{
 
     }
 
+    public JSONObject makeBodyJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        if (this.jsonObject == null){
+            throw new NullPointerException(); //no weather data
+        }
+        json.put("ValidTime", System.currentTimeMillis());
+        json.put("Data", this.jsonObject);
+        return json;
+    }
+
     @Override
-
-    public void sendDataToServer(HttpRequests httpRequests) {
-        //todo: anael! implements this
-
+    public void sendDataToServer(HttpRequests httpRequests){
+        try {
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories, Login.getToken());
+        }
+        catch (Exception e){
+            Log.e(TAG, "No data in weather.");
+            e.printStackTrace();
+        }
     }
 }

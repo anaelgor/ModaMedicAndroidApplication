@@ -37,10 +37,10 @@ public class ActivitiesGoogleFit implements DataSender {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void extractActivityData(Context context){
+    public void extractActivityData(Context context) {
 
         long endTime = System.currentTimeMillis();
-        long startTime = endTime-86400000;
+        long startTime = endTime - 86400000;
 
         // Note: The android.permission.ACTIVITY_RECOGNITION permission is
         // required to read DataType.TYPE_ACTIVITY_SEGMENT
@@ -99,7 +99,7 @@ public class ActivitiesGoogleFit implements DataSender {
         });
     }
 
-    public void makeBodyJson(){
+    public void makeBodyJson() {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray(activityArray);
         try {
@@ -111,20 +111,19 @@ public class ActivitiesGoogleFit implements DataSender {
         this.json = json;
     }
 
-    public JSONObject getJson(){
+    public JSONObject getJson() {
         return this.json;
     }
 
-    public void clearJson(){
+    public void clearJson() {
         this.json = new JSONObject();
     }
 
-    public void sendDataToServer (HttpRequests httpRequests){
-        try{
+    public void sendDataToServer(HttpRequests httpRequests) {
+        try {
             httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity, Login.getToken());
             clearJson();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "No data in activity.");
             e.printStackTrace();
         }
