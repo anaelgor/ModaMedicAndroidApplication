@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class GPS implements LocationListener {
+public class GPS implements LocationListener, DataSender{
 
     private String lon;
     private String lat;
@@ -123,6 +123,13 @@ public class GPS implements LocationListener {
 
     @Override
     public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+
+    public void sendDataToServer(HttpRequests httpRequests) {
+        //todo: anael! implements this
 
     }
 }
