@@ -28,7 +28,7 @@ import Model.Users.Permissions;
 /*
 Home page screen
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AbstractActivity {
     //todo: this should be moved to controoler
     AlarmManager alarmManager = null;
 

@@ -26,7 +26,7 @@ import Model.Questionnaires.Questionnaire;
 /*
 Home page screen
  */
-public class HomePageActivity extends AppCompatActivity {
+public class HomePageActivity extends AbstractActivity {
     Map<Long,String> questionnaires; //key: questID, value: questionnaire Text
     String username;
     AppController appController;
