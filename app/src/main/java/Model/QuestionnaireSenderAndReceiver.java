@@ -34,9 +34,7 @@ public class QuestionnaireSenderAndReceiver {
         JSONObject user_questionnaires;
         Map<Long,String> result = new HashMap<>();
         try {
-            //todo: remove this line and replace it with the one below and also edit the url in URLS
-            user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires+username);
-           // user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires+username, Login.getToken() );
+           user_questionnaires = httpRequests.sendGetRequest(Urls.urlGetUserQuestionnaires, Login.getToken() );
 
             JSONArray array = user_questionnaires.getJSONArray("data");
             for (int i=0; i<array.length(); i++) {
