@@ -31,12 +31,16 @@ public class HomePageActivity extends AppCompatActivity {
     String username;
     AppController appController;
 
+    public static boolean BAND_CONNECTED = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         username = getUserName();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
         appController = AppController.getController(this);
+
+        checkIfBandIsConnected();
 
         Thread t_sensorData = new Thread(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -138,5 +142,11 @@ public class HomePageActivity extends AppCompatActivity {
     public void changePasswordFunction(View view) {
         Log.i("Home Page","change password button clicked");
 
+    }
+
+
+    public void checkIfBandIsConnected(){
+        AppController appController = AppController.getController(this);
+        appController.checkIfBandIsConnected();
     }
 }

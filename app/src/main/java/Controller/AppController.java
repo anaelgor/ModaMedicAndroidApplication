@@ -19,6 +19,7 @@ import java.util.Map;
 
 import Model.ActivitiesGoogleFit;
 import Model.CaloriesGoogleFit;
+import Model.ConnectedDevices;
 import Model.DistanceGoogleFit;
 import Model.HttpRequests;
 import Model.Login;
@@ -143,5 +144,9 @@ public class AppController {
 
     public boolean login(String username, String password, Activity activity) {
         return Login.login(username,password,activity, httpRequests);
+    }
+
+    public void checkIfBandIsConnected(){
+        ConnectedDevices.checkIfBTIsOn(activity);
     }
 }
