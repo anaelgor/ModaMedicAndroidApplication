@@ -206,7 +206,6 @@ public class QuestionnaireActivity extends AppCompatActivity {
     }
 
     private void sendAnswersToServer() {
-        //todo: implement this with server
         AppController appController = AppController.getController(this);
         appController.sendAnswersToServer(questionsAnswers,questionnaire.getQuestionaireID());
     }
