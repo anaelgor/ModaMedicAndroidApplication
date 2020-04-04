@@ -23,7 +23,7 @@ public class PeriodicNotification extends AbstractNotification{
             if (!answered) {
                 String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) +
                         questionnaire + context.getString(R.string.periodic_questionnaire_notification_suffix);
-                int id = 3;
+                int id = 100;
                 notify(MainActivity.class, context, notification_text, id);
                 System.out.println("Periodically");
             }

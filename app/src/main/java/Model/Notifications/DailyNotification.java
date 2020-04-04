@@ -16,7 +16,7 @@ public class DailyNotification extends AbstractNotification {
         boolean answered = checkIfUserAnsweredToday("");
         if (!answered) {
             String notification_text = context.getString(R.string.daily_questionnaire_notification);
-            int id = 2;
+            int id = 101;
             notify(MainActivity.class, context,notification_text,id);
             System.out.println("MAOR");
         }
