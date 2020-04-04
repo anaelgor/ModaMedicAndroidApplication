@@ -1,6 +1,8 @@
 package Controller;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -10,6 +12,7 @@ import java.util.Map;
 
 import Model.ConnectedDevices;
 import Model.Metrics.SensorData;
+import Model.Notifications.NotificationsManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Users.Login;
@@ -62,5 +65,10 @@ public class AppController {
 
     public void checkIfBandIsConnected(){
         ConnectedDevices.checkIfBTIsOn(activity);
+    }
+
+    public void setNotifications(Context context) {
+        NotificationsManager notificationsManager = new NotificationsManager(context);
+        notificationsManager.setNotifications();
     }
 }

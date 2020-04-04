@@ -1,14 +1,15 @@
 package View;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,24 +17,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
-
 import java.util.Calendar;
-
+import Controller.AppController;
 import Model.Notifications.DailyNotification;
 import Model.Notifications.PeriodicNotification;
-
-import Controller.AppController;
 import Model.Users.Permissions;
 
 /*
 Home page screen
  */
 public class MainActivity extends AbstractActivity {
-    //todo: this should be moved to controoler
-    AlarmManager alarmManager = null;
 
     private String username;
     private String password;
+    private AppController controller;
 
     public Activity getContext() {
         return this;
@@ -44,10 +41,13 @@ public class MainActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setHideKeyBoard();
+        askForPermissions();
+        controller = AppController.getController(this);
+        controller.setNotifications(getApplicationContext());
+    }
 
-
+    private void askForPermissions() {
         /**
          * PERMMISIONS REQUEST
          * ALL YOU NEED TO DO IS TO INSERT THE PERMISSION NAME TO THE MANIFEST FILE
@@ -59,15 +59,12 @@ public class MainActivity extends AbstractActivity {
             e.printStackTrace();
         }
         //end permissions requests
-
-
     }
 
     private void setHideKeyBoard() {
         EditText password_textfield = findViewById(R.id.password_textfield);
         View.OnFocusChangeListener ofcListener = new MyFocusChangeListener();
         password_textfield.setOnFocusChangeListener(ofcListener);
-
     }
 
     private class MyFocusChangeListener implements View.OnFocusChangeListener {
@@ -83,36 +80,9 @@ public class MainActivity extends AbstractActivity {
         }
     }
 
-    //todo: move this to controller. also check what happen if user open the app again,
-    // probably this should be implemented from getInstance. this should be written from
-    // HomePageActivity, because only there we have the logged in user.
-    private void setNotifcations() {
-        if (alarmManager == null)
-            alarmManager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
 
-        //Daily notification - one in 16:00 and one in 19:00
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR, 16);
-        calendar.set(Calendar.MINUTE, 0);
-        Calendar calendar2 = Calendar.getInstance();
 
-        calendar2.set(Calendar.HOUR, 19);
-        calendar2.set(Calendar.MINUTE, 0);
 
-        setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
-        setRepeatingNotification(DailyNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
-
-        //Periodic notification
-        setRepeatingNotification(PeriodicNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
-
-    }
-
-    private void setRepeatingNotification(Class notification_class, long time, long interval) {
-        Intent intent = new Intent(MainActivity.this, notification_class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
-
-    }
 
     public void loginFunction(View view) {
         Log.i("Main Page", "Login button clicked");
@@ -161,4 +131,7 @@ public class MainActivity extends AbstractActivity {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-}
+
+
+
+    }
