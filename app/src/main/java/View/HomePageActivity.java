@@ -45,7 +45,7 @@ public class HomePageActivity extends AbstractActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
-                appController.SendSensorData();
+                //appController.SendSensorData();
             }
         });
         t_sensorData.start();
