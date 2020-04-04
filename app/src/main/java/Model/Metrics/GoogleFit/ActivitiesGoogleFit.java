@@ -125,6 +125,12 @@ public class ActivitiesGoogleFit implements DataSender {
     }
 
     public void sendDataToServer(HttpRequests httpRequests) {
+
+        if (activityArray.size() == 0){
+            Log.e(TAG, "No data in activity.");
+            return;
+        }
+
         try {
             httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity, Login.getToken());
             clearJson();

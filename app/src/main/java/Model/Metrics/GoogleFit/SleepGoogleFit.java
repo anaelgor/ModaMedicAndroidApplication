@@ -151,6 +151,11 @@ public class SleepGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
 
+        if (sleepDataArray.size() == 0){
+            Log.e(TAG, "No data in sleep.");
+            return;
+        }
+
         try{
             httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep, Login.getToken());
             clearJson();
