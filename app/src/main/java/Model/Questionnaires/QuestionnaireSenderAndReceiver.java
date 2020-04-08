@@ -19,7 +19,7 @@ public class QuestionnaireSenderAndReceiver {
 
     private static final String TAG = "QuestionnaireSender";
     public static void sendAnswers(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID, HttpRequests httpRequests) {
-        JSONObject request = AnswersManager.createJsonAnswersOfQuestsionnaire(questionsAndAnswers,questionnaireID);
+        JSONObject request = AnswersManager.createJsonAnswersOfQuestionnaire(questionsAndAnswers,questionnaireID);
         try {
             httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID +questionnaireID, Login.getToken());
             Log.i(TAG,"sent to server");
@@ -30,7 +30,7 @@ public class QuestionnaireSenderAndReceiver {
         }
     }
 
-    public static Map<Long, String> getUserQuestionnaires(String username, HttpRequests httpRequests) {
+    public static Map<Long, String> getUserQuestionnaires(HttpRequests httpRequests) {
         JSONObject user_questionnaires;
         Map<Long,String> result = new HashMap<>();
         try {

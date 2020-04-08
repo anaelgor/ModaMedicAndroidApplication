@@ -50,7 +50,7 @@ public class HomePageActivity extends AbstractActivity {
         });
         t_sensorData.start();
 
-        questionnaires = getAllQuestionnaires(username);
+        questionnaires = getAllQuestionnaires();
 
         String not_exists = "not exists";
         SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
@@ -126,9 +126,9 @@ public class HomePageActivity extends AbstractActivity {
 
     }
 
-    private Map<Long,String> getAllQuestionnaires(String username) {
+    private Map<Long,String> getAllQuestionnaires() {
         AppController appController = AppController.getController(this);
-        Map<Long, String> questionnaires  = appController.getUserQuestionnaires(username);
+        Map<Long, String> questionnaires  = appController.getUserQuestionnaires();
         return questionnaires;
     }
 

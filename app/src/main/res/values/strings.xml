@@ -15,10 +15,15 @@
     <string name="multiple_choices">אפשר לבחור כמה תשובות הפעם</string>
     <string name="answerTheQuestion">קודם תענה על השאלה!</string>
     <string name="movingToPrevQuestion">חוזר לשאלה הקודמת</string>
-    <string name="wrongDetails">אין התאמה בין ת.ז לסיסמא</string>
+    <string name="wrongDetails">אין התאמה בין אימייל לסיסמא</string>
     <string name="error">שגיאה</string>
     <string name="tryAgain">נסה שוב</string>
+    <string name="id">אימייל</string>
+    <string name="password">סיסמא</string>
+    <string name="forgot_password">שכחתי סיסמא</string>
+    <string name="reminder">תזכורת</string>
     <string name="back_to_home_page">חזור לדף הבית</string>
+
 
 
 </resources>

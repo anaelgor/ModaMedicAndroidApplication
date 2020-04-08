@@ -10,6 +10,9 @@ import android.os.Build;
 
 import java.util.Calendar;
 
+import Model.Utils.Constants;
+import Model.Utils.PropertiesManager;
+
 import static android.content.Context.ALARM_SERVICE;
 
 public class NotificationsManager {
@@ -28,19 +31,27 @@ public class NotificationsManager {
         if (alarmManager == null)
             alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
 
-        //Daily notification - one in 16:00 and one in 19:00
+        int daily_minute = Integer.parseInt(PropertiesManager.getProperty(Constants.minuteForDailyNotification,context));
+        int daily_hour = Integer.parseInt(PropertiesManager.getProperty(Constants.hourForDailyNotification,context));
+        int periodic_minute = Integer.parseInt(PropertiesManager.getProperty(Constants.minuteForPeriodicNotification,context));
+        int periodic_hour = Integer.parseInt(PropertiesManager.getProperty(Constants.hourForPeriodicNotification,context));
+        System.out.println(daily_hour+":"+daily_minute);
+        System.out.println(periodic_hour+":"+periodic_minute);
+
+
+
+        //Daily notification
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 19);
-        calendar.set(Calendar.MINUTE, 15);
+        calendar.set(Calendar.HOUR_OF_DAY, daily_hour);
+        calendar.set(Calendar.MINUTE, daily_minute);
 
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTimeInMillis(System.currentTimeMillis());
-        calendar2.set(Calendar.HOUR_OF_DAY, 19);
-        calendar2.set(Calendar.MINUTE, 10);
+        calendar2.set(Calendar.HOUR_OF_DAY, periodic_hour);
+        calendar2.set(Calendar.MINUTE, periodic_minute);
 
         setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis() , AlarmManager.INTERVAL_DAY);
-        setRepeatingNotification(DailyNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
         //Periodic notification
         setRepeatingNotification(PeriodicNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
     }

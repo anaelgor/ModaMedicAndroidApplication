@@ -34,7 +34,7 @@
         android:layout_marginStart="47dp"
         android:layout_marginTop="214dp"
         android:ems="10"
-        android:hint="תעודת זהות"
+        android:hint="@string/id"
         android:gravity="left|center_vertical"
         android:inputType="textPersonName"
         android:shadowColor="@color/colorAccent"
@@ -51,7 +51,7 @@
         android:layout_marginStart="47dp"
         android:layout_marginTop="277dp"
         android:ems="10"
-        android:hint="סיסמא"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:shadowColor="@color/colorAccent"
         android:textColorHighlight="@color/colorAccent"
@@ -77,6 +77,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="52dp"
         android:onClick="forgetPasswordFunction"
-        android:text="שכחתי סיסמא" />
+        android:text="@string/forgot_password" />
 
 </RelativeLayout>
