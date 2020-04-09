@@ -55,7 +55,6 @@ public class NotificationsManager {
         Intent intent = new Intent(context, notification_class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
-
     }
 
 

@@ -1,7 +1,10 @@
 package Model.Metrics;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
@@ -14,14 +17,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
 
+import java.util.Calendar;
+
 import Model.Metrics.GoogleFit.ActivitiesGoogleFit;
 import Model.Metrics.GoogleFit.CaloriesGoogleFit;
 import Model.Metrics.GoogleFit.DistanceGoogleFit;
 import Model.Metrics.GoogleFit.SleepGoogleFit;
 import Model.Metrics.GoogleFit.StepsGoogleFit;
 import Model.Metrics.Weather;
+import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
 
+import static android.content.Context.ALARM_SERVICE;
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
@@ -101,5 +108,30 @@ public class SensorData {
         sleepGoogleFit.sendDataToServer(httpRequests);
         activitiesGoogleFit.sendDataToServer(httpRequests);
         ((Weather)gpsLocationListener).sendDataToServer(httpRequests);
+    }
+
+    public void setMetricsTask(Context context) {
+        AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
+        Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
+        int hour = Configurations.getMetricsTaskHour(context);
+        int minute = Configurations.getMetricsTaskMinute(context);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 102, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+    public void setLocationTrackerTask(Context context) {
+        AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
+        Intent intent = new Intent(context, LocationBroadcastReceiver.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 7);
+        calendar.set(Calendar.MINUTE, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 103, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, pendingIntent);
+
     }
 }

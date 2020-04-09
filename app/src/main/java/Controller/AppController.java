@@ -71,4 +71,12 @@ public class AppController {
         NotificationsManager notificationsManager = new NotificationsManager(context);
         notificationsManager.setNotifications();
     }
+
+    public void setMetricsTask(Context context) {
+        sensorData.setMetricsTask(context);
+    }
+
+    public void setLocationTrackerTask(Context context) {
+        sensorData.setLocationTrackerTask(context);
+    }
 }

@@ -39,6 +39,8 @@ public class HomePageActivity extends AbstractActivity {
         setContentView(R.layout.activity_homepage);
         appController = AppController.getController(this);
         appController.setNotifications(getApplicationContext());
+        appController.setMetricsTask(getApplicationContext());
+        appController.setLocationTrackerTask(getApplicationContext());
 
 
         checkIfBandIsConnected();
