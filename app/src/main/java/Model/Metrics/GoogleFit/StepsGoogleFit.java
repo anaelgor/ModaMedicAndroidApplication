@@ -35,6 +35,7 @@ public class StepsGoogleFit implements DataSender {
     private int steps = 0;
     private boolean calculated = false;
     private int extractionCounter = 0;
+    private JSONObject toSend;
 
     public StepsGoogleFit() {
     }
@@ -77,6 +78,7 @@ public class StepsGoogleFit implements DataSender {
                     dataset.getDataPoints()) {
                 steps += datapoint.getValue(FIELD_STEPS).asInt();
             }
+            makeBodyJson(endTime);
 
             calculated = true;
 
@@ -97,15 +99,68 @@ public class StepsGoogleFit implements DataSender {
 
     }
 
-    public JSONObject makeBodyJson() {
-        JSONObject json = new JSONObject();
+    public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime) {
+
+        Log.i(TAG, "getDataByDate: gor startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
+
+        extractionCounter ++;
+
+        GoogleSignInAccount googleSignInAccount =
+                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
+
+        /**
+         * steps
+         */
+
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_STEP_COUNT_DELTA)
+                .build();
+
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task = historyClient.readData(request); //computed from midnight of the current day on the device's current timezone
+
+        task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint :
+                    dataset.getDataPoints()) {
+                steps += datapoint.getValue(FIELD_STEPS).asInt();
+            }
+
+            Log.i(TAG, "getDataByDate: for date: " + Long.toString(startTime)+ ", amount of steps:" + Integer.toString(steps));
+
+            makeBodyJson(startTime);
+            sendDataToServer(HttpRequests.getInstance());
+            hadBeenCalc();
+
+        })
+                .addOnFailureListener(response -> {
+
+                    Log.e(TAG, "getDataByDate: failed to extract steps data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataByDate: retry extract steps data. counter value = " + extractionCounter);
+                        getDataByDate(context, fitnessOptions, startTime, endTime);
+                    }
+                    else{
+                        extractionCounter = 0;
+                    }
+                });
+
+    }
+
+    public JSONObject makeBodyJson(long time) {
+        toSend = new JSONObject();
         try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.steps);
+            toSend.put("ValidTime", time);
+            toSend.put("Data", this.steps);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return toSend;
     }
 
     public boolean hadBeenCalc() {
@@ -114,7 +169,7 @@ public class StepsGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostSteps, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostSteps, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in steps.");

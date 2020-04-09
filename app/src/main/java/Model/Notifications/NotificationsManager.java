@@ -11,7 +11,6 @@ import android.os.Build;
 import java.util.Calendar;
 
 import Model.Utils.Configurations;
-import Model.Utils.PropertiesManager;
 
 import static android.content.Context.ALARM_SERVICE;
 

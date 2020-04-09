@@ -6,14 +6,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import Model.Exceptions.ServerFalseException;
 import Model.Users.Login;
-import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
 import Model.Utils.Urls;
 

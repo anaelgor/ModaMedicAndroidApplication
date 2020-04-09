@@ -34,6 +34,7 @@ public class CaloriesGoogleFit implements DataSender {
     private float calories = 0;
     private boolean calculated = false;
     private int extractionCounter = 0;
+    private JSONObject toSend;
 
     public CaloriesGoogleFit() {
     }
@@ -78,6 +79,8 @@ public class CaloriesGoogleFit implements DataSender {
                 calories += datapoint.getValue(FIELD_CALORIES).asFloat();
             }
 
+            makeBodyJson(endTime);
+
             calculated = true;
 
             Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
@@ -97,15 +100,68 @@ public class CaloriesGoogleFit implements DataSender {
 
     }
 
-    public JSONObject makeBodyJson(){
-        JSONObject json = new JSONObject();
+    public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime){
+
+        Log.i(TAG, "getDataByDate: got startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
+
+        extractionCounter++;
+
+        GoogleSignInAccount googleSignInAccount =
+                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
+
+        /**
+         * Calories
+         */
+
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_CALORIES_EXPENDED)
+                .build();
+
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task =historyClient.readData(request);
+
+        task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint:
+                    dataset.getDataPoints()) {
+                calories += datapoint.getValue(FIELD_CALORIES).asFloat();
+            }
+
+            Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
+
+            makeBodyJson(startTime);
+
+            sendDataToServer(HttpRequests.getInstance());
+
+        })
+                .addOnFailureListener(response -> {
+
+                    Log.e(TAG, "getDataByDate: failed to extract calories data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataByDate: retry extract calories data. counter value = " + Integer.toString(extractionCounter));
+                        getDataByDate(context, fitnessOptions, startTime, endTime);
+                    }
+                    else{
+                        extractionCounter = 0;
+                    }
+                });
+
+    }
+
+    public JSONObject makeBodyJson(long time){
+        toSend = new JSONObject();
         try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.calories);
+            toSend.put("ValidTime", time);
+            toSend.put("Data", this.calories);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return toSend;
     }
 
     public boolean hadBeenCalc() {
@@ -114,7 +170,7 @@ public class CaloriesGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostCalories, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in calories.");
