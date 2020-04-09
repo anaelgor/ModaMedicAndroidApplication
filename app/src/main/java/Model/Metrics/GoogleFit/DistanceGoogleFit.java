@@ -94,6 +94,56 @@ public class DistanceGoogleFit implements DataSender {
                         extractionCounter = 0;
                     }
                 });
+    }
+
+    public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime){
+
+        Log.i(TAG, "getDataByDate: gor startTime = " + startTime + ", endTime = " + endTime);
+
+        extractionCounter++;
+
+        GoogleSignInAccount googleSignInAccount =
+                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
+
+        /**
+         * Distance
+         */
+
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .build();
+
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task =historyClient.readData(request);
+
+        task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint:
+                    dataset.getDataPoints()) {
+                dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
+            }
+
+            calculated = true;
+
+            Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
+        })
+                .addOnFailureListener(response -> {
+
+                    Log.e(TAG, "getDataByDate: failed to extract distance data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataByDate: retry extract distance data. counter value = " + extractionCounter);
+                        getDataByDate(context, fitnessOptions, startTime, endTime);
+                    }
+                    else{
+                        calculated = true;
+                        extractionCounter = 0;
+                    }
+                });
 
     }
 

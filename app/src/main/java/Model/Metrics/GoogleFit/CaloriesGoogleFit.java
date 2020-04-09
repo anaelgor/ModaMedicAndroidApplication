@@ -97,6 +97,57 @@ public class CaloriesGoogleFit implements DataSender {
 
     }
 
+    public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime){
+
+        Log.i(TAG, "getDataByDate: got startTime = " + startTime + ", endTime = " + endTime);
+
+        extractionCounter++;
+
+        GoogleSignInAccount googleSignInAccount =
+                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
+
+        /**
+         * Calories
+         */
+
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_CALORIES_EXPENDED)
+                .build();
+
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task =historyClient.readData(request);
+
+        task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint:
+                    dataset.getDataPoints()) {
+                calories += datapoint.getValue(FIELD_CALORIES).asFloat();
+            }
+
+            calculated = true;
+
+            Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
+        })
+                .addOnFailureListener(response -> {
+
+                    Log.e(TAG, "getDataByDate: failed to extract calories data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataByDate: retry extract calories data. counter value = " + extractionCounter);
+                        getDataByDate(context, fitnessOptions, startTime, endTime);
+                    }
+                    else{
+                        calculated = true;
+                        extractionCounter = 0;
+                    }
+                });
+
+    }
+
     public JSONObject makeBodyJson(){
         JSONObject json = new JSONObject();
         try {

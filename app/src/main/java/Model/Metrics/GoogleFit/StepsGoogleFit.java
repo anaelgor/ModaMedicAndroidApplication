@@ -97,6 +97,57 @@ public class StepsGoogleFit implements DataSender {
 
     }
 
+    public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime) {
+
+        Log.i(TAG, "getDataByDate: gor startTime = " + startTime + ", endTime = " + endTime);
+
+        extractionCounter ++;
+
+        GoogleSignInAccount googleSignInAccount =
+                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
+
+        /**
+         * steps
+         */
+
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_STEP_COUNT_DELTA)
+                .build();
+
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task = historyClient.readData(request); //computed from midnight of the current day on the device's current timezone
+
+        task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint :
+                    dataset.getDataPoints()) {
+                steps += datapoint.getValue(FIELD_STEPS).asInt();
+            }
+
+            calculated = true;
+
+            Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
+        })
+                .addOnFailureListener(response -> {
+
+                    Log.e(TAG, "getDataByDate: failed to extract steps data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataByDate: retry extract steps data. counter value = " + extractionCounter);
+                        getDataByDate(context, fitnessOptions, startTime, endTime);
+                    }
+                    else{
+                        calculated = true;
+                        extractionCounter = 0;
+                    }
+                });
+
+    }
+
     public JSONObject makeBodyJson() {
         JSONObject json = new JSONObject();
         try {
