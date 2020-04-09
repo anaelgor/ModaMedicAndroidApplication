@@ -34,12 +34,14 @@ public class StepsGoogleFit implements DataSender {
     private static final String TAG = "StepsGoogleFit";
     private int steps = 0;
     private boolean calculated = false;
+    private int extractionCounter = 0;
 
     public StepsGoogleFit() {
     }
 
     public void getDataFromPrevDay(Context context, GoogleSignInOptionsExtension fitnessOptions) {
 
+        extractionCounter ++;
 
         GoogleSignInAccount googleSignInAccount =
                 GoogleSignIn.getAccountForExtension(context, fitnessOptions);
@@ -66,6 +68,9 @@ public class StepsGoogleFit implements DataSender {
         Task<DataReadResponse> task = historyClient.readData(request); //computed from midnight of the current day on the device's current timezone
 
         task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
             DataSet dataset = response.getDataSets().get(0);
 
             for (DataPoint datapoint :
@@ -79,9 +84,15 @@ public class StepsGoogleFit implements DataSender {
         })
                 .addOnFailureListener(response -> {
 
-                    calculated = true;
-
-                    Log.e(TAG, "Could not extract steps data.");
+                    Log.e(TAG, "getDataFromPrevDay: failed to extract steps data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataFromPrevDay: retry extract steps data. counter value = " + extractionCounter);
+                        getDataFromPrevDay(context, fitnessOptions);
+                    }
+                    else{
+                        calculated = true;
+                        extractionCounter = 0;
+                    }
                 });
 
     }
