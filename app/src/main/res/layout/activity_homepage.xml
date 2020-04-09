@@ -20,7 +20,7 @@
         android:src="@drawable/app_logo" />
 
     <Button
-        android:id="@+id/change_password_button"
+        android:id="@+id/forgot_password_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -55,8 +55,8 @@ public class AppController {
         QuestionnaireSenderAndReceiver.sendAnswers(questionsAndAnswers,questionnaireID, httpRequests);
     }
 
-    public Map<Long, String> getUserQuestionnaires(String username) {
-        return QuestionnaireSenderAndReceiver.getUserQuestionnaires(username, httpRequests);
+    public Map<Long, String> getUserQuestionnaires() {
+        return QuestionnaireSenderAndReceiver.getUserQuestionnaires(httpRequests);
     }
 
     public boolean login(String username, String password, Activity activity) {

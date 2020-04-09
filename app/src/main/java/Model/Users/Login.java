@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,11 +39,20 @@ public class Login {
             JSONObject data = response.getJSONObject("data");
             String token = data.getString("token");
             String name = data.getString("name");
-            sharedPref.edit().putString("username",username).apply();
-            sharedPref.edit().putString("token",token).apply();
-            sharedPref.edit().putString("name",name).apply();
-            setTokenOfUser(activity);
-            return true;
+            JSONArray type = data.getJSONArray("type");
+            boolean type_flag = false;
+            for (int i=0; i<type.length(); i++) {
+                if (type.get(i).equals("patient"))
+                    type_flag = true;
+            }
+            if (type_flag) {
+                sharedPref.edit().putString("username",username).apply();
+                sharedPref.edit().putString("token",token).apply();
+                sharedPref.edit().putString("name",name).apply();
+                setTokenOfUser(activity);
+            }
+
+            return type_flag;
 
         } catch (ServerFalseException | JSONException e) {
             e.printStackTrace();

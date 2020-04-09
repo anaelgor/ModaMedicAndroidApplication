@@ -7,7 +7,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,11 +19,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
+
 import java.util.Calendar;
+
 import Controller.AppController;
 import Model.Notifications.DailyNotification;
 import Model.Notifications.PeriodicNotification;
 import Model.Users.Permissions;
+import Model.Utils.Constants;
 
 /*
 Home page screen
@@ -30,7 +35,6 @@ public class MainActivity extends AbstractActivity {
 
     private String username;
     private String password;
-    private AppController controller;
 
     public Activity getContext() {
         return this;
@@ -43,9 +47,19 @@ public class MainActivity extends AbstractActivity {
         setContentView(R.layout.activity_main);
         setHideKeyBoard();
         askForPermissions();
-        controller = AppController.getController(this);
-        controller.setNotifications(getApplicationContext());
+        EditText username_textfield = findViewById(R.id.username_textfield);
+        String username = getUserName();
+        if (!username.equals("not exists"))
+            username_textfield.setText(username);
     }
+
+    private String getUserName() {
+        String not_exists = "not exists";
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+        String name = sharedPref.getString("username",not_exists);
+        return name;
+    }
+
 
     private void askForPermissions() {
         /**
@@ -69,19 +83,16 @@ public class MainActivity extends AbstractActivity {
 
     private class MyFocusChangeListener implements View.OnFocusChangeListener {
 
-        public void onFocusChange(View v, boolean hasFocus){
+        public void onFocusChange(View v, boolean hasFocus) {
 
-            if((v.getId() == R.id.password_textfield )&& !hasFocus ) {
+            if ((v.getId() == R.id.password_textfield) && !hasFocus) {
 
-                InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
             }
         }
     }
-
-
-
 
 
     public void loginFunction(View view) {
@@ -118,20 +129,12 @@ public class MainActivity extends AbstractActivity {
                 .setMessage(R.string.wrongDetails)
                 .setNegativeButton(R.string.tryAgain, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
+                .setNeutralButton(R.string.forgot_password, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        forgetPasswordFunction(getContext().findViewById(R.id.forgot_password_button));
+                    }
+                })
                 .show();
     }
-
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-
-
-    }
+}
