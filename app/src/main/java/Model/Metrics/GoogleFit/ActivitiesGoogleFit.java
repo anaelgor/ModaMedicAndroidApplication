@@ -46,7 +46,7 @@ public class ActivitiesGoogleFit implements DataSender {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void extractActivityDataByDate(Context context, long startTime, long endTime) {
 
-        Log.i(TAG, "extractActivityDataByDate: got startTime = " + startTime + ", endTime = " + endTime);
+        Log.i(TAG, "extractActivityDataByDate: got startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
 
         extractionCounter++;
 
@@ -109,11 +109,13 @@ public class ActivitiesGoogleFit implements DataSender {
                 }
             }
             makeBodyJson();
+            sendDataToServer(HttpRequests.getInstance());
+
         })
         .addOnFailureListener(response -> {
             Log.e(TAG, "extractActivityDataByDates: failed to extract activity data");
             if (extractionCounter < 3){
-                Log.i(TAG, "extractActivityDataByDates: retry extract activity data. counter value = " + extractionCounter);
+                Log.i(TAG, "extractActivityDataByDates: retry extract activity data. counter value = " + Integer.toString(extractionCounter));
                 extractActivityDataByDate(context, startTime, endTime);
             }
             else{

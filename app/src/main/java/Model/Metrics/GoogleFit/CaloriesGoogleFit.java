@@ -99,7 +99,7 @@ public class CaloriesGoogleFit implements DataSender {
 
     public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime){
 
-        Log.i(TAG, "getDataByDate: got startTime = " + startTime + ", endTime = " + endTime);
+        Log.i(TAG, "getDataByDate: got startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
 
         extractionCounter++;
 
@@ -129,19 +129,19 @@ public class CaloriesGoogleFit implements DataSender {
                 calories += datapoint.getValue(FIELD_CALORIES).asFloat();
             }
 
-            calculated = true;
-
             Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
+
+            sendDataToServer(HttpRequests.getInstance());
+
         })
                 .addOnFailureListener(response -> {
 
                     Log.e(TAG, "getDataByDate: failed to extract calories data");
                     if (extractionCounter < 3){
-                        Log.i(TAG, "getDataByDate: retry extract calories data. counter value = " + extractionCounter);
+                        Log.i(TAG, "getDataByDate: retry extract calories data. counter value = " + Integer.toString(extractionCounter));
                         getDataByDate(context, fitnessOptions, startTime, endTime);
                     }
                     else{
-                        calculated = true;
                         extractionCounter = 0;
                     }
                 });

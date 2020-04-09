@@ -151,7 +151,7 @@ public class SleepGoogleFit implements DataSender {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void extractSleepDataByDate(Context context, long startTime, long endTime) {
 
-        Log.i(TAG, "extractSleepDataByDate: got startTime = " + startTime + ", endTime = " + endTime);
+        Log.i(TAG, "extractSleepDataByDate: got startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
 
         extractionCounter ++;
 
@@ -235,11 +235,13 @@ public class SleepGoogleFit implements DataSender {
             }
             // create a json for sending data to server
             makeBodyJson();
+            sendDataToServer(HttpRequests.getInstance());
+
         })
                 .addOnFailureListener(response -> {
                     Log.e(TAG, "extractSleepData: failed to extract sleeping data");
                     if (extractionCounter < 3){
-                        Log.i(TAG, "extractSleepData: retry extract sleeping data. counter value = " + extractionCounter);
+                        Log.i(TAG, "extractSleepData: retry extract sleeping data. counter value = " + Integer.toString(extractionCounter));
                         extractSleepDataByDate(context, startTime, endTime);
                     }
                     else{

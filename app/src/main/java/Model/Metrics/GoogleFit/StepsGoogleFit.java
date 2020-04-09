@@ -99,7 +99,7 @@ public class StepsGoogleFit implements DataSender {
 
     public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime) {
 
-        Log.i(TAG, "getDataByDate: gor startTime = " + startTime + ", endTime = " + endTime);
+        Log.i(TAG, "getDataByDate: gor startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
 
         extractionCounter ++;
 
@@ -129,9 +129,9 @@ public class StepsGoogleFit implements DataSender {
                 steps += datapoint.getValue(FIELD_STEPS).asInt();
             }
 
-            calculated = true;
+            Log.i(TAG, "getDataByDate: for date: " + Long.toString(startTime)+ ", amount of steps:" + Integer.toString(steps));
+            sendDataToServer(HttpRequests.getInstance());
 
-            Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
         })
                 .addOnFailureListener(response -> {
 
@@ -141,7 +141,6 @@ public class StepsGoogleFit implements DataSender {
                         getDataByDate(context, fitnessOptions, startTime, endTime);
                     }
                     else{
-                        calculated = true;
                         extractionCounter = 0;
                     }
                 });

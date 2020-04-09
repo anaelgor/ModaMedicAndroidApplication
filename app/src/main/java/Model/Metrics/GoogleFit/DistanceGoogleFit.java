@@ -98,7 +98,7 @@ public class DistanceGoogleFit implements DataSender {
 
     public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime){
 
-        Log.i(TAG, "getDataByDate: gor startTime = " + startTime + ", endTime = " + endTime);
+        Log.i(TAG, "getDataByDate: gor startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
 
         extractionCounter++;
 
@@ -128,19 +128,19 @@ public class DistanceGoogleFit implements DataSender {
                 dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
             }
 
-            calculated = true;
-
             Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
+
+            sendDataToServer(HttpRequests.getInstance());
+
         })
                 .addOnFailureListener(response -> {
 
                     Log.e(TAG, "getDataByDate: failed to extract distance data");
                     if (extractionCounter < 3){
-                        Log.i(TAG, "getDataByDate: retry extract distance data. counter value = " + extractionCounter);
+                        Log.i(TAG, "getDataByDate: retry extract distance data. counter value = " + Integer.toString(extractionCounter));
                         getDataByDate(context, fitnessOptions, startTime, endTime);
                     }
                     else{
-                        calculated = true;
                         extractionCounter = 0;
                     }
                 });
