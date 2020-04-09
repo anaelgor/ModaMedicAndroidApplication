@@ -38,6 +38,7 @@ public class SleepGoogleFit implements DataSender {
     private long totalSleepTime;
     private JSONObject json;
     private static final String TAG = "SleepGoogleFit";
+    private int extractionCounter = 0;
 
     public SleepGoogleFit() {
         sleepDataArray = new ArrayList();
@@ -46,6 +47,8 @@ public class SleepGoogleFit implements DataSender {
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void extractSleepData(Context context) {
+
+        extractionCounter ++;
 
         long endTime = System.currentTimeMillis();
         long startTime = endTime - 86400000;
@@ -65,10 +68,18 @@ public class SleepGoogleFit implements DataSender {
                 .readSession(request);
 
         task.addOnSuccessListener(response -> {
+
             // Filter the resulting list of sessions to just those that are sleep.
             List<Session> sleepSessions = response.getSessions().stream()
                     //.filter(s -> s.getActivity().equals(FitnessActivities.SLEEP))
                     .collect(Collectors.toList());
+
+            if (sleepSessions.size() == 0){
+                extractSleepData(context);
+                return;
+            }
+
+            extractionCounter = 0;
 
             for (Session session : sleepSessions) {
                 Log.d(TAG, String.format("Sleep between %d and %d",
@@ -124,7 +135,14 @@ public class SleepGoogleFit implements DataSender {
             makeBodyJson();
         })
                 .addOnFailureListener(response -> {
-                    Log.e(TAG, String.format(response.getMessage()));
+                    Log.e(TAG, "extractSleepData: failed to extract sleeping data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "extractSleepData: retry extract sleeping data. counter value = " + extractionCounter);
+                        extractSleepData(context);
+                    }
+                    else{
+                        extractionCounter = 0;
+                    }
                 });
 
     }
@@ -146,7 +164,7 @@ public class SleepGoogleFit implements DataSender {
     }
 
     public void clearJson() {
-        this.json = new JSONObject();
+        this.json = null;
     }
 
     public void sendDataToServer(HttpRequests httpRequests) {

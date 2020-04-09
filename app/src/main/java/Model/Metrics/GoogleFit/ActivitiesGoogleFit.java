@@ -37,12 +37,16 @@ public class ActivitiesGoogleFit implements DataSender {
     private JSONObject json;
     private static final String TAG = "ActivitiesGoogleFit";
 
+    private int extractionCounter = 0;
+
     public ActivitiesGoogleFit() {
         activityArray = new ArrayList();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void extractActivityData(Context context) {
+
+        extractionCounter++;
 
         long endTime = System.currentTimeMillis();
         long startTime = endTime - 86400000;
@@ -65,6 +69,13 @@ public class ActivitiesGoogleFit implements DataSender {
 
             List<Session> activitiesSessions = response.getSessions().stream()
                     .collect(Collectors.toList());
+
+            if (activitiesSessions.size() == 0){
+                extractActivityData(context);
+                return;
+            }
+
+            extractionCounter = 0;
 
             for (Session session : activitiesSessions) {
                 Log.d(TAG, String.format("Activities between %d and %d",
@@ -101,6 +112,16 @@ public class ActivitiesGoogleFit implements DataSender {
                 }
             }
             makeBodyJson();
+        })
+        .addOnFailureListener(response -> {
+            Log.e(TAG, "extractActivityData: failed to extract activity data");
+            if (extractionCounter < 3){
+                Log.i(TAG, "extractActivityData: retry extract activity data. counter value = " + extractionCounter);
+                extractActivityData(context);
+            }
+            else{
+                extractionCounter = 0;
+            }
         });
     }
 
@@ -121,7 +142,7 @@ public class ActivitiesGoogleFit implements DataSender {
     }
 
     public void clearJson() {
-        this.json = new JSONObject();
+        this.json = null;
     }
 
     public void sendDataToServer(HttpRequests httpRequests) {
