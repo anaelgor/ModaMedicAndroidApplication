@@ -75,4 +75,8 @@ public class AppController {
     public void setMetricsTask(Context context) {
         sensorData.setMetricsTask(context);
     }
+
+    public void setLocationTrackerTask(Context context) {
+        sensorData.setLocationTrackerTask(context);
+    }
 }

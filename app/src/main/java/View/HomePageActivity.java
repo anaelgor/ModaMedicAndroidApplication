@@ -40,6 +40,7 @@ public class HomePageActivity extends AbstractActivity {
         appController = AppController.getController(this);
         appController.setNotifications(getApplicationContext());
         appController.setMetricsTask(getApplicationContext());
+        appController.setLocationTrackerTask(getApplicationContext());
 
 
         checkIfBandIsConnected();
