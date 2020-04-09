@@ -16,6 +16,7 @@
     <string name="answerTheQuestion">קודם תענה על השאלה!</string>
     <string name="movingToPrevQuestion">חוזר לשאלה הקודמת</string>
     <string name="wrongDetails">אין התאמה בין אימייל לסיסמא</string>
+    <string name="wrongEmailAddress">אנא הזן כתובת אימייל תקנית</string>
     <string name="error">שגיאה</string>
     <string name="tryAgain">נסה שוב</string>
     <string name="id">אימייל</string>
@@ -23,7 +24,19 @@
     <string name="forgot_password">שכחתי סיסמא</string>
     <string name="reminder">תזכורת</string>
     <string name="back_to_home_page">חזור לדף הבית</string>
-
+    <string name="answer_verification_question">ענה על שאלת האימות</string>
+    <string name="birthday_string">תאריך לידה</string>
+    <string name="choose_birthday_string">בחר תאריך לידה</string>
+    <string name="answer">הקלד כאן את תשובתך</string>
+    <string name="send">שלח</string>
+    <string name="wrong_answer_try_again">תשובה שגויה, נסה שוב</string>
+    <string name="you_have_5_minutes">יש לך 5 דקות בלבד לשנות את הסיסמא</string>
+    <string name="new_password">סיסמא חדשה</string>
+    <string name="new_password_again">סיסמא חדשה שוב</string>
+    <string name="password_has_changed">הסיסמא שונתה בהצלחה, התחבר באמצעות הסיסמא החדשה שלך!</string>
+    <string name="userNonExists">לא נמצא משתמש</string>
+    <string name="wrongAnswerOrDate">תאריך לידה ו/או תשובה לא תקינים</string>
+    <string name="something_went_wrong">שגיאה. נסה שנית</string>
 
 
 </resources>

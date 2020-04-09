@@ -85,8 +85,8 @@ public class SensorData {
         }
     }
 
-    public void sendData (){
-        HttpRequests httpRequests = HttpRequests.getInstance();
+    public void sendData(Context context){
+        HttpRequests httpRequests = HttpRequests.getInstance(context);
 
         //wait until we have all data (async tasks)
         long startTime = System.currentTimeMillis();

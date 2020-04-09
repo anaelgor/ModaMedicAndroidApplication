@@ -114,7 +114,7 @@ public class DistanceGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance, Login.getToken());
+            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance, Login.getToken(HttpRequests.getContext()));
         }
         catch (Exception e){
             Log.e(TAG, "No data in distance.");

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/verification_question"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="View.AnswerVerificationQuestionActivity">
+
+
+    <Button
+        android:id="@+id/send"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="456dp"
+        android:layout_marginEnd="97dp"
+        android:background="@color/colorButtons"
+        android:backgroundTintMode="src_in"
+        android:gravity="center_horizontal"
+        android:onClick="answerQuestion"
+        android:text="@string/send"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Button
+        android:id="@+id/chooseDate"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="383dp"
+        android:layout_marginEnd="95dp"
+        android:background="@color/colorButtons"
+        android:backgroundTintMode="src_in"
+        android:gravity="center_horizontal"
+        android:onClick="chooseDate"
+        android:text="@string/choose_birthday_string"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <EditText
+        android:id="@+id/answer_textfield"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="150dp"
+        android:ems="10"
+        android:gravity="center_horizontal"
+        android:hint="@string/answer"
+        android:inputType="textPersonName"
+        android:shadowColor="@color/colorAccent"
+        android:textColorHighlight="@color/colorAccent"
+        android:textColorLink="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="@string/answer_verification_question"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/title2"
+        android:layout_width="272dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="61dp"
+        android:layout_marginTop="220dp"
+        android:gravity="center_horizontal"
+        android:text="@string/birthday_string"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/question_textView"
+        android:layout_width="277dp"
+        android:layout_height="72dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="70dp"
+        android:ems="10"
+        android:textSize="20sp"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="266dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="69dp"
+        android:layout_marginTop="277dp"
+        android:ems="10" />
+
+
+</RelativeLayout>

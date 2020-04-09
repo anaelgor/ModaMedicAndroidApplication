@@ -21,7 +21,7 @@ public class PeriodicNotification extends AbstractNotification{
     //TODO: change Main Activity to this Question activity
     @Override
     public void onReceive(Context context, Intent intent) {
-        Map<Long,String> Questionnaires = getAllQuestionairesOfUser();
+        Map<Long,String> Questionnaires = getAllQuestionairesOfUser(context);
         for (Long questionnaireID: Questionnaires.keySet()) {
             if (questionnaireID == 0)
                 continue;
@@ -42,8 +42,8 @@ public class PeriodicNotification extends AbstractNotification{
     }
 
 
-    private Map<Long, String> getAllQuestionairesOfUser() {
-      return QuestionnaireSenderAndReceiver.getUserQuestionnaires(HttpRequests.getInstance());
+    private Map<Long, String> getAllQuestionairesOfUser(Context context) {
+      return QuestionnaireSenderAndReceiver.getUserQuestionnaires(HttpRequests.getInstance(context));
 
 
 }

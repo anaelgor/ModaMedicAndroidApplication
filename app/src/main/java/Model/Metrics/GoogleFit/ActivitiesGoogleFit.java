@@ -153,7 +153,7 @@ public class ActivitiesGoogleFit implements DataSender {
         }
 
         try {
-            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity, Login.getToken());
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostActivity, Login.getToken(HttpRequests.getContext()));
             clearJson();
         } catch (Exception e) {
             Log.e(TAG, "No data in activity.");

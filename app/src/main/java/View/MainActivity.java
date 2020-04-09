@@ -116,13 +116,15 @@ public class MainActivity extends AbstractActivity {
 
         }
     }
-    //todo: implements this
 
     public void forgetPasswordFunction(View view) {
-        Log.i("Main Page", "Forgot password button clicked");
+        Intent intent = new Intent(this, ForgotPasswordActivity.class);
+        EditText username_textfield = findViewById(R.id.username_textfield);
+        this.username = username_textfield.getText().toString();
+        intent.putExtra(BindingValues.TRIED_TO_LOG_USERNAME, username);
+        startActivity(intent);
     }
 
-    //todo: add forgot password button to here
     private void WrongDetailsMessage() {
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.error)

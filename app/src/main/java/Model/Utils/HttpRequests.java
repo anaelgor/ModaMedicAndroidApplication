@@ -1,5 +1,6 @@
 package Model.Utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,17 +22,20 @@ public class HttpRequests {
 
     private SendRequestHttp sendRequestHttp;
     private static final String TAG = "HttpRequests";
-
+    private static Context context;
     private static HttpRequests httpRequests;
 
     private HttpRequests(){}
 
-    public static HttpRequests getInstance(){
+    public static HttpRequests getInstance(Context c_context){
         if (httpRequests == null){
             httpRequests = new HttpRequests();
+            context = c_context;
         }
         return httpRequests;
     }
+
+    public static Context getContext() { return context; }
 
     public JSONObject sendPostRequest(JSONObject jsonPost, String url) throws ServerFalseException {
         sendRequestHttp = new SendRequestHttp();

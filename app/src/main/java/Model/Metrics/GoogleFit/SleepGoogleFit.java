@@ -175,7 +175,7 @@ public class SleepGoogleFit implements DataSender {
         }
 
         try{
-            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep, Login.getToken());
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep, Login.getToken(HttpRequests.getContext()));
             clearJson();
         }
         catch (Exception e){
