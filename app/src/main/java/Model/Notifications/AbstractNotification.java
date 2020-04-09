@@ -21,7 +21,7 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     String CHANNEL_ID = "MainChannel";
 
     /*
-   this method should send daily notification to user
+   this method should send notifications to user
     */
     public void notify(Class activity_class, Context context, String notification_text, int id) {
         Intent intent = new Intent(context, activity_class);
