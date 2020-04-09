@@ -38,6 +38,8 @@ public class HomePageActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
         appController = AppController.getController(this);
+        appController.setNotifications(getApplicationContext());
+
 
         checkIfBandIsConnected();
 

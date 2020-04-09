@@ -35,7 +35,6 @@ public class NotificationsManager {
         int daily_hour = Configurations.getNotificationHour(context,"daily");
         int periodic_minute = Configurations.getNotificationMinute(context,"periodic");
         int periodic_hour =  Configurations.getNotificationHour(context,"periodic");
-
         //Daily notification
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());

@@ -21,7 +21,7 @@ public class QuestionnaireSenderAndReceiver {
     public static void sendAnswers(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID, HttpRequests httpRequests) {
         JSONObject request = AnswersManager.createJsonAnswersOfQuestionnaire(questionsAndAnswers,questionnaireID);
         try {
-            httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID +questionnaireID, Login.getToken());
+            httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID, Login.getToken());
             Log.i(TAG,"sent to server");
 
         } catch (ServerFalseException serverFalseException) {

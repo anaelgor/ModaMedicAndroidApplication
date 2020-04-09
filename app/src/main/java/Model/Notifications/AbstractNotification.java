@@ -11,7 +11,9 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.modamedicandroidapplication.R;
 
+import Model.Questionnaires.AnswersManager;
 import Model.Utils.Configurations;
+import Model.Utils.HttpRequests;
 import Model.Utils.PropertiesManager;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
@@ -45,10 +47,8 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     }
 
     protected boolean HasUserAnswered(String questionnaire_id, Context context) {
-        //todo: remove notes
-        return false;
-       // String days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
-        // return AnswersManager.hasUserAnswered(questionnaire_id,days,HttpRequests.getInstance());
+        String days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
+         return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance());
     }
 
 

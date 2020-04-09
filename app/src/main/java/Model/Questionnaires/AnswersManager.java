@@ -26,7 +26,7 @@ public class AnswersManager {
         JSONObject result = new JSONObject();
         try {
             result.put("QuestionnaireID",questionnaireID);
-            result.put("ValidDate",new Date().getTime());
+            result.put("ValidTime",new Date().getTime());
             JSONArray totalAnswers = new JSONArray();
             for (Long key : questionsAndAnswers.keySet()) {
                 JSONObject question = new JSONObject();
@@ -51,14 +51,15 @@ public class AnswersManager {
         try {
             JSONObject result = httpRequests.sendGetRequest(url, Login.getToken());
             Log.i(TAG,"sent to server");
-            System.out.println(result);
-            return result.toString().equals("true");
-
+            System.out.println(result.getString("data"));
+            return result.getString("data").equals("true");
         } catch (ServerFalseException serverFalseException) {
             serverFalseException.printStackTrace();
             Log.i(TAG,"problem in asking if user has been answered to server "+ serverFalseException.getLocalizedMessage());
-            return false;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
 
