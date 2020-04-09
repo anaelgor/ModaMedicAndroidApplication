@@ -75,7 +75,9 @@ public class SleepGoogleFit implements DataSender {
                     .collect(Collectors.toList());
 
             if (sleepSessions.size() == 0){
-                extractSleepData(context);
+                if (extractionCounter < 3) {
+                    extractSleepData(context);
+                }
                 return;
             }
 
@@ -177,7 +179,9 @@ public class SleepGoogleFit implements DataSender {
                     .collect(Collectors.toList());
 
             if (sleepSessions.size() == 0){
-                extractSleepDataByDate(context, startTime, endTime);
+                if (extractionCounter < 3) {
+                    extractSleepDataByDate(context, startTime, endTime);
+                }
                 return;
             }
 

@@ -70,7 +70,9 @@ public class ActivitiesGoogleFit implements DataSender {
                     .collect(Collectors.toList());
 
             if (activitiesSessions.size() == 0){
-                extractActivityDataByDate(context, startTime, endTime);
+                if (extractionCounter < 3) {
+                    extractActivityDataByDate(context, startTime, endTime);
+                }
                 return;
             }
 
@@ -152,7 +154,9 @@ public class ActivitiesGoogleFit implements DataSender {
                     .collect(Collectors.toList());
 
             if (activitiesSessions.size() == 0){
-                extractActivityData(context);
+                if (extractionCounter < 3) {
+                    extractActivityData(context);
+                }
                 return;
             }
 
