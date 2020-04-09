@@ -132,7 +132,7 @@ public class SleepGoogleFit implements DataSender {
                 }
             }
             // create a json for sending data to server
-            makeBodyJson();
+            makeBodyJson(System.currentTimeMillis());
         })
                 .addOnFailureListener(response -> {
                     Log.e(TAG, "extractSleepData: failed to extract sleeping data");
@@ -234,7 +234,7 @@ public class SleepGoogleFit implements DataSender {
                 }
             }
             // create a json for sending data to server
-            makeBodyJson();
+            makeBodyJson(startTime);
             sendDataToServer(HttpRequests.getInstance());
 
         })
@@ -251,11 +251,11 @@ public class SleepGoogleFit implements DataSender {
 
     }
 
-    public void makeBodyJson() {
+    public void makeBodyJson(long time) {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray(sleepDataArray);
         try {
-            json.put("ValidTime", System.currentTimeMillis());
+            json.put("ValidTime", time);
             json.put("Data", array);
         } catch (JSONException e) {
             e.printStackTrace();

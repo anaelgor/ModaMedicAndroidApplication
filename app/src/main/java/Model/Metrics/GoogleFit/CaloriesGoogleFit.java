@@ -34,6 +34,7 @@ public class CaloriesGoogleFit implements DataSender {
     private float calories = 0;
     private boolean calculated = false;
     private int extractionCounter = 0;
+    private JSONObject toSend;
 
     public CaloriesGoogleFit() {
     }
@@ -77,6 +78,8 @@ public class CaloriesGoogleFit implements DataSender {
                  dataset.getDataPoints()) {
                 calories += datapoint.getValue(FIELD_CALORIES).asFloat();
             }
+
+            makeBodyJson(endTime);
 
             calculated = true;
 
@@ -131,6 +134,8 @@ public class CaloriesGoogleFit implements DataSender {
 
             Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
 
+            makeBodyJson(startTime);
+
             sendDataToServer(HttpRequests.getInstance());
 
         })
@@ -148,15 +153,15 @@ public class CaloriesGoogleFit implements DataSender {
 
     }
 
-    public JSONObject makeBodyJson(){
-        JSONObject json = new JSONObject();
+    public JSONObject makeBodyJson(long time){
+        toSend = new JSONObject();
         try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.calories);
+            toSend.put("ValidTime", time);
+            toSend.put("Data", this.calories);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return toSend;
     }
 
     public boolean hadBeenCalc() {
@@ -165,7 +170,7 @@ public class CaloriesGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostCalories, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostCalories, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in calories.");

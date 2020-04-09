@@ -108,7 +108,7 @@ public class ActivitiesGoogleFit implements DataSender {
                     }
                 }
             }
-            makeBodyJson();
+            makeBodyJson(startTime);
             sendDataToServer(HttpRequests.getInstance());
 
         })
@@ -192,7 +192,7 @@ public class ActivitiesGoogleFit implements DataSender {
                     }
                 }
             }
-            makeBodyJson();
+            makeBodyJson(System.currentTimeMillis());
         })
                 .addOnFailureListener(response -> {
                     Log.e(TAG, "extractActivityData: failed to extract activity data");
@@ -206,11 +206,11 @@ public class ActivitiesGoogleFit implements DataSender {
                 });
     }
 
-    public void makeBodyJson() {
+    public void makeBodyJson(long time) {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray(activityArray);
         try {
-            json.put("ValidTime", System.currentTimeMillis());
+            json.put("ValidTime", time);
             json.put("Data", array);
         } catch (JSONException e) {
             e.printStackTrace();

@@ -38,7 +38,9 @@
         </activity>
 
         <receiver android:name="Model.Notifications.PeriodicNotification"/>
-        <receiver android:name="Model.Notifications.DailyNotification" />
+        <receiver android:name="Model.Notifications.DailyNotification"/>
+        <receiver android:name="Model.Metrics.MetricsBroadcastReceiver"/>
+        <receiver android:name="Model.Metrics.LocationBroadcastReceiver"/>
 
         <activity android:name="View.MainActivity">
             <intent-filter>

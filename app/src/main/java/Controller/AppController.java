@@ -1,7 +1,6 @@
 package Controller;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 
@@ -55,8 +54,8 @@ public class AppController {
         QuestionnaireSenderAndReceiver.sendAnswers(questionsAndAnswers,questionnaireID, httpRequests);
     }
 
-    public Map<Long, String> getUserQuestionnaires(String username) {
-        return QuestionnaireSenderAndReceiver.getUserQuestionnaires(username, httpRequests);
+    public Map<Long, String> getUserQuestionnaires() {
+        return QuestionnaireSenderAndReceiver.getUserQuestionnaires(httpRequests);
     }
 
     public boolean login(String username, String password, Activity activity) {
@@ -70,5 +69,13 @@ public class AppController {
     public void setNotifications(Context context) {
         NotificationsManager notificationsManager = new NotificationsManager(context);
         notificationsManager.setNotifications();
+    }
+
+    public void setMetricsTask(Context context) {
+        sensorData.setMetricsTask(context);
+    }
+
+    public void setLocationTrackerTask(Context context) {
+        sensorData.setLocationTrackerTask(context);
     }
 }

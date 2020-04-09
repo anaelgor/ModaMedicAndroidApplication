@@ -1,7 +1,10 @@
 package Model.Metrics;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
@@ -18,16 +21,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 
 import Model.Metrics.GoogleFit.ActivitiesGoogleFit;
 import Model.Metrics.GoogleFit.CaloriesGoogleFit;
 import Model.Metrics.GoogleFit.DistanceGoogleFit;
 import Model.Metrics.GoogleFit.SleepGoogleFit;
 import Model.Metrics.GoogleFit.StepsGoogleFit;
+import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
 
+import static android.content.Context.ALARM_SERVICE;
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
@@ -53,6 +58,14 @@ public class SensorData {
         this.activitiesGoogleFit = new ActivitiesGoogleFit();
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new Weather(locationManager, activity);
+    }
+
+    public SensorData(){
+        this.stepsGoogleFit = new StepsGoogleFit();
+        this.distanceGoogleFit = new DistanceGoogleFit();
+        this.caloriesGoogleFit = new CaloriesGoogleFit();
+        this.sleepGoogleFit = new SleepGoogleFit();
+        this.activitiesGoogleFit = new ActivitiesGoogleFit();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -127,33 +140,33 @@ public class SensorData {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Iterator<String> keys = jsonObject.keys();
-                List<Long> times;
+                JSONArray times;
                 while(keys.hasNext()) {
                     String key = keys.next();
                     System.out.println(key);
                     switch (key){
                         case "Steps":
-                            times = (List<Long>) jsonObject.get("Steps");
-                            for (int t = 0; t< times.size() ; t++){
-                                this.stepsGoogleFit.getDataByDate(context, fitnessOptions,times.get(t),times.get(t) + 86400000);
+                            times = (JSONArray) jsonObject.get("Steps");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.stepsGoogleFit.getDataByDate(context, fitnessOptions,(long)times.get(t),(long)times.get(t) + 86400000);
                             }
                             break;
                         case "Calories":
-                            times = (List<Long>) jsonObject.get("Calories");
-                            for (int t = 0; t< times.size() ; t++){
-                                this.caloriesGoogleFit.getDataByDate(context, fitnessOptions,times.get(t),times.get(t) + 86400000);
+                            times = (JSONArray) jsonObject.get("Calories");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.caloriesGoogleFit.getDataByDate(context, fitnessOptions,(long)times.get(t),(long)times.get(t) + 86400000);
                             }
                             break;
                         case "Distance":
-                            times = (List<Long>) jsonObject.get("Distance");
-                            for (int t = 0; t< times.size() ; t++){
-                                this.distanceGoogleFit.getDataByDate(context, fitnessOptions,times.get(t),times.get(t) + 86400000);
+                            times = (JSONArray) jsonObject.get("Distance");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.distanceGoogleFit.getDataByDate(context, fitnessOptions,(long)times.get(t),(long)times.get(t) + 86400000);
                             }
                             break;
                         case "Sleep":
-                            times = (List<Long>) jsonObject.get("Sleep");
-                            for (int t = 0; t< times.size() ; t++){
-                                this.sleepGoogleFit.extractSleepDataByDate(context,times.get(t),times.get(t) + 86400000);
+                            times = (JSONArray) jsonObject.get("Sleep");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.sleepGoogleFit.extractSleepDataByDate(context,(long)times.get(t),(long)times.get(t) + 86400000);
                             }
                             break;
                         case "Accelerometer":
@@ -163,9 +176,9 @@ public class SensorData {
                             //no way to collect weather data
                             break;
                         case "Activity":
-                            times = (List<Long>) jsonObject.get("Activity");
-                            for (int t = 0; t< times.size() ; t++){
-                                this.activitiesGoogleFit.extractActivityDataByDate(context,times.get(t),times.get(t) + 86400000);
+                            times = (JSONArray) jsonObject.get("Activity");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.activitiesGoogleFit.extractActivityDataByDate(context,(long)times.get(t),(long)times.get(t) + 86400000);
                             }
                             break;
 
@@ -181,4 +194,29 @@ public class SensorData {
 
     }
 
+
+    public void setMetricsTask(Context context) {
+        AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
+        Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
+        int hour = Configurations.getMetricsTaskHour(context);
+        int minute = Configurations.getMetricsTaskMinute(context);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 102, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+    public void setLocationTrackerTask(Context context) {
+        AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
+        Intent intent = new Intent(context, LocationBroadcastReceiver.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 7);
+        calendar.set(Calendar.MINUTE, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 103, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, pendingIntent);
+
+    }
 }

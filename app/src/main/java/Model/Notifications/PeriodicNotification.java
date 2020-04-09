@@ -5,9 +5,10 @@ import android.content.Intent;
 
 import com.example.modamedicandroidapplication.R;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
+import Model.Questionnaires.QuestionnaireSenderAndReceiver;
+import Model.Utils.HttpRequests;
 import View.MainActivity;
 
 public class PeriodicNotification extends AbstractNotification{
@@ -17,31 +18,29 @@ public class PeriodicNotification extends AbstractNotification{
     //TODO: change Main Activity to this Question activity
     @Override
     public void onReceive(Context context, Intent intent) {
-        List<String> Questionnaires = getAllQuestionairesOfUser("");
-        for ( String questionnaire: Questionnaires) {
-            boolean answered = checkIfUserAnsweredInLast21Days("",questionnaire);
+        Map<Long,String> Questionnaires = getAllQuestionairesOfUser();
+        for (Long questionnaireID: Questionnaires.keySet()) {
+            if (questionnaireID == 0)
+                continue;
+            boolean answered = HasUserAnswered(questionnaireID.toString(), context);
             if (!answered) {
                 String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) +
-                        questionnaire + context.getString(R.string.periodic_questionnaire_notification_suffix);
+                        Questionnaires.get(questionnaireID) + context.getString(R.string.periodic_questionnaire_notification_suffix);
                 int id = 100;
                 notify(MainActivity.class, context, notification_text, id);
-                System.out.println("Periodically");
+                System.out.println("Periodically for questionnaire " + Questionnaires.get(questionnaireID));
+                try {
+                    Thread.sleep(5000); //for avoid android block our app from posting notifications
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
-
     }
 
-    // TODO: implement with db
-    private boolean checkIfUserAnsweredInLast21Days(String username, String questionnaire_name) {
-        return false;
-    }
 
-    // TODO: implement with db
-    private List<String> getAllQuestionairesOfUser(String usrrname) {
-        List<String> res =  new ArrayList<>();
-        res.add("Pain");
-        return res;
+    private Map<Long, String> getAllQuestionairesOfUser() {
+      return QuestionnaireSenderAndReceiver.getUserQuestionnaires(HttpRequests.getInstance());
 
 
 }

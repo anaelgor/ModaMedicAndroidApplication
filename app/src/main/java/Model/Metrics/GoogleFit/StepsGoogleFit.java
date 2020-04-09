@@ -35,6 +35,7 @@ public class StepsGoogleFit implements DataSender {
     private int steps = 0;
     private boolean calculated = false;
     private int extractionCounter = 0;
+    private JSONObject toSend;
 
     public StepsGoogleFit() {
     }
@@ -77,6 +78,7 @@ public class StepsGoogleFit implements DataSender {
                     dataset.getDataPoints()) {
                 steps += datapoint.getValue(FIELD_STEPS).asInt();
             }
+            makeBodyJson(endTime);
 
             calculated = true;
 
@@ -130,7 +132,10 @@ public class StepsGoogleFit implements DataSender {
             }
 
             Log.i(TAG, "getDataByDate: for date: " + Long.toString(startTime)+ ", amount of steps:" + Integer.toString(steps));
+
+            makeBodyJson(startTime);
             sendDataToServer(HttpRequests.getInstance());
+            hadBeenCalc();
 
         })
                 .addOnFailureListener(response -> {
@@ -147,15 +152,15 @@ public class StepsGoogleFit implements DataSender {
 
     }
 
-    public JSONObject makeBodyJson() {
-        JSONObject json = new JSONObject();
+    public JSONObject makeBodyJson(long time) {
+        toSend = new JSONObject();
         try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.steps);
+            toSend.put("ValidTime", time);
+            toSend.put("Data", this.steps);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return toSend;
     }
 
     public boolean hadBeenCalc() {
@@ -164,7 +169,7 @@ public class StepsGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostSteps, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostSteps, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in steps.");

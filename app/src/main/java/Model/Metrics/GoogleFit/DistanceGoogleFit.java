@@ -34,6 +34,7 @@ public class DistanceGoogleFit implements DataSender {
     private float dist = 0;
     private boolean calculated = false;
     private int extractionCounter = 0;
+    private JSONObject toSend;
     
     public DistanceGoogleFit() {
     }
@@ -77,6 +78,8 @@ public class DistanceGoogleFit implements DataSender {
                     dataset.getDataPoints()) {
                 dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
             }
+
+            makeBodyJson(endTime);
 
             calculated = true;
 
@@ -130,6 +133,8 @@ public class DistanceGoogleFit implements DataSender {
 
             Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
 
+            makeBodyJson(startTime);
+
             sendDataToServer(HttpRequests.getInstance());
 
         })
@@ -147,15 +152,15 @@ public class DistanceGoogleFit implements DataSender {
 
     }
 
-    public JSONObject makeBodyJson(){
-        JSONObject json = new JSONObject();
+    public JSONObject makeBodyJson(long time){
+        toSend = new JSONObject();
         try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.dist);
+            toSend.put("ValidTime", time);
+            toSend.put("Data", this.dist);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return toSend;
     }
 
     public boolean hadBeenCalc() {
@@ -164,7 +169,7 @@ public class DistanceGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostDistance, Login.getToken());
         }
         catch (Exception e){
             Log.e(TAG, "No data in distance.");
