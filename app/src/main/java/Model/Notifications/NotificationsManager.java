@@ -23,8 +23,6 @@ public class NotificationsManager {
         this.context = context;
     }
 
-    //todo: maybe this should be written only after HomePageActivity, because only there we have the logged in user.
-    //todo: also, add an option to configure the time by a configurations file
     public void setNotifications() {
         createNotificationChannel("MainChannel");
         if (alarmManager == null)
