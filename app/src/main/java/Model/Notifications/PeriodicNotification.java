@@ -15,7 +15,7 @@ public class PeriodicNotification extends AbstractNotification{
 
 
 
-    //TODO: change Main Activity to this Question activity
+    //TODO: consider changing Main Activity to this Question activity
     @Override
     public void onReceive(Context context, Intent intent) {
         Map<Long,String> Questionnaires = getAllQuestionairesOfUser(context);

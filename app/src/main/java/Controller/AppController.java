@@ -93,4 +93,8 @@ public class AppController {
     public boolean setNewPasswordForLoggedOutUser(String newPassword) throws InvalidTokenException {
         return Login.setNewPasswordForLoggedOutUser(newPassword, httpRequests);
     }
+
+    public boolean askForChangePassword() {
+        return Login.askForChangePassword(httpRequests);
+    }
 }

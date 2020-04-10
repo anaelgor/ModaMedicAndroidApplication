@@ -52,6 +52,7 @@
         <activity android:name="View.ForgotPasswordActivity" />
         <activity android:name="View.AnswerVerificationQuestionActivity" />
         <activity android:name="View.SetNewPasswordForLoggedOutUserActivity" />
+        <activity android:name="View.SetNewPasswordForLoggedInUserActivity" />
     </application>
 
 </manifest>

@@ -126,7 +126,22 @@ public class Login {
             e.printStackTrace();
             throw new InvalidTokenException();
         }
+        finally {
+            specialToken = null;
+        }
         return false;
 
     }
+
+    public static boolean askForChangePassword(HttpRequests httpRequests) {
+
+        JSONObject emptyBody = new JSONObject();
+        try {
+            JSONObject response = httpRequests.sendPostRequest(emptyBody, Urls.urlOfGetSpecialToken, Login.getToken(HttpRequests.getContext()));
+            specialToken = response.getString("data");
+            return true;
+        } catch (ServerFalseException | JSONException e) {
+            e.printStackTrace();
+            return false;
+        } }
 }
