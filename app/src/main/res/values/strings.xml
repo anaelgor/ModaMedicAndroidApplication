@@ -42,6 +42,7 @@
     <string name="error_on_server">אירעה שגיאה בשרת</string>
     <string name="succes">אישור</string>
     <string name="specialTokenInvalid">עברו חמש דקות, אז חזור אחורה, ענה על שאלה האימות ונסה פעם נוספת.</string>
+    <string name="gohome">חזור לדף הבית</string>
 
 
 </resources>

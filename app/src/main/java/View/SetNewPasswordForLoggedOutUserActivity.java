@@ -67,7 +67,7 @@ public class SetNewPasswordForLoggedOutUserActivity extends AbstractActivity {
         new AlertDialog.Builder(SetNewPasswordForLoggedOutUserActivity.this)
                 .setTitle(R.string.succes)
                 .setMessage(msg)
-                .setNegativeButton(R.string.tryAgain, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.gohome, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         openMainActivity();
