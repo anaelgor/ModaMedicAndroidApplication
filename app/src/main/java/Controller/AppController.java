@@ -3,6 +3,7 @@ package Controller;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import Model.ConnectedDevices;
+import Model.Exceptions.InvalidTokenException;
+import Model.Exceptions.WrongAnswerException;
 import Model.Metrics.SensorData;
 import Model.Notifications.NotificationsManager;
 import Model.Questionnaires.Questionnaire;
@@ -29,7 +32,7 @@ public class AppController {
 
     private AppController(Activity activity) {
         this.activity = activity;
-        this.httpRequests = HttpRequests.getInstance();
+        this.httpRequests = HttpRequests.getInstance(activity.getApplicationContext());
         this.sensorData = new SensorData(activity);
     }
 
@@ -43,7 +46,7 @@ public class AppController {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void SendSensorData(){
         sensorData.collectData(this.activity);
-        sensorData.sendData();
+        sensorData.sendData(activity.getApplicationContext());
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {
@@ -77,5 +80,17 @@ public class AppController {
 
     public void setLocationTrackerTask(Context context) {
         sensorData.setLocationTrackerTask(context);
+    }
+
+    public String getVerificationQuestion(String username) {
+        return Login.getVerificationQuestion(username, httpRequests);
+    }
+
+    public boolean checkVerificationOfAnswerToUserQuestion(String username,String answer, long date) throws WrongAnswerException {
+        return Login.checkVerificationOfAnswerToUserQuestion(username,date,answer,httpRequests);
+    }
+
+    public boolean setNewPasswordForLoggedOutUser(String newPassword) throws InvalidTokenException {
+        return Login.setNewPasswordForLoggedOutUser(newPassword, httpRequests);
     }
 }

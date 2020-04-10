@@ -239,7 +239,7 @@ public class SleepGoogleFit implements DataSender {
             }
             // create a json for sending data to server
             makeBodyJson(startTime);
-            sendDataToServer(HttpRequests.getInstance());
+            sendDataToServer(HttpRequests.getInstance(context));
 
         })
                 .addOnFailureListener(response -> {
@@ -283,7 +283,7 @@ public class SleepGoogleFit implements DataSender {
         }
 
         try{
-            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep, Login.getToken());
+            httpRequests.sendPostRequest(getJson(), Urls.urlPostSleep, Login.getToken(HttpRequests.getContext()));
             clearJson();
         }
         catch (Exception e){

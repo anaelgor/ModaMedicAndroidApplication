@@ -28,11 +28,11 @@ public class MetricsBroadcastReceiver extends BroadcastReceiver {
         int days = 5;
         sensorData = new SensorData();
 
-        HttpRequests httpRequests = HttpRequests.getInstance();
+        HttpRequests httpRequests = HttpRequests.getInstance(context);
 
         String url = Urls.urlGetMissingDates+Urls.getUrlGetMissingDatesDaysParam+days;
         try {
-            JSONObject result = httpRequests.sendGetRequest(url, Login.getToken());
+            JSONObject result = httpRequests.sendGetRequest(url, Login.getToken(context));
             Log.i(TAG,"sent to server");
             System.out.println(result.getString("data"));
             JSONArray resultJSONArray = result.getJSONArray("data");

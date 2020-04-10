@@ -47,7 +47,7 @@ public class AnswersManager {
     public static boolean hasUserAnswered(String questionnaire_id, String days, HttpRequests httpRequests) {
         String url = Urls.urlHasBeenAnswered+Urls.getUrlHasBeenAnsweredDaysParam+days+Urls.getUrlHasBeenAnsweredQuestionnaireIDParam+questionnaire_id;
         try {
-            JSONObject result = httpRequests.sendGetRequest(url, Login.getToken());
+            JSONObject result = httpRequests.sendGetRequest(url, Login.getToken(HttpRequests.getContext()));
             Log.i(TAG,"sent to server");
             System.out.println(result.getString("data"));
             return result.getString("data").equals("true");

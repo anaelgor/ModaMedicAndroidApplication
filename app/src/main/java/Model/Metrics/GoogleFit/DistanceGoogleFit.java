@@ -35,7 +35,7 @@ public class DistanceGoogleFit implements DataSender {
     private boolean calculated = false;
     private int extractionCounter = 0;
     private JSONObject toSend;
-    
+
     public DistanceGoogleFit() {
     }
     
@@ -135,7 +135,7 @@ public class DistanceGoogleFit implements DataSender {
 
             makeBodyJson(startTime);
 
-            sendDataToServer(HttpRequests.getInstance());
+            sendDataToServer(HttpRequests.getInstance(context));
 
         })
                 .addOnFailureListener(response -> {
@@ -169,7 +169,7 @@ public class DistanceGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(toSend, Urls.urlPostDistance, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostDistance, Login.getToken(HttpRequests.getContext()));
         }
         catch (Exception e){
             Log.e(TAG, "No data in distance.");

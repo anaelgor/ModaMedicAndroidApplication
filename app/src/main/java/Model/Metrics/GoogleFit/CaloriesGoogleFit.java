@@ -136,7 +136,7 @@ public class CaloriesGoogleFit implements DataSender {
 
             makeBodyJson(startTime);
 
-            sendDataToServer(HttpRequests.getInstance());
+            sendDataToServer(HttpRequests.getInstance(context));
 
         })
                 .addOnFailureListener(response -> {
@@ -170,7 +170,7 @@ public class CaloriesGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(toSend, Urls.urlPostCalories, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostCalories, Login.getToken(HttpRequests.getContext()));
         }
         catch (Exception e){
             Log.e(TAG, "No data in calories.");

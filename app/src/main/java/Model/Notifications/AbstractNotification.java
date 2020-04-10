@@ -48,7 +48,7 @@ public abstract class AbstractNotification extends BroadcastReceiver {
 
     protected boolean HasUserAnswered(String questionnaire_id, Context context) {
         String days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
-         return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance());
+         return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
     }
 
 

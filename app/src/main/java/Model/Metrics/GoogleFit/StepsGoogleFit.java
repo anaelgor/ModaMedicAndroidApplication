@@ -134,7 +134,7 @@ public class StepsGoogleFit implements DataSender {
             Log.i(TAG, "getDataByDate: for date: " + Long.toString(startTime)+ ", amount of steps:" + Integer.toString(steps));
 
             makeBodyJson(startTime);
-            sendDataToServer(HttpRequests.getInstance());
+            sendDataToServer(HttpRequests.getInstance(context));
             hadBeenCalc();
 
         })
@@ -169,7 +169,7 @@ public class StepsGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(toSend, Urls.urlPostSteps, Login.getToken());
+            httpRequests.sendPostRequest(toSend, Urls.urlPostSteps, Login.getToken(HttpRequests.getContext()));
         }
         catch (Exception e){
             Log.e(TAG, "No data in steps.");

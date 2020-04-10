@@ -15,10 +15,15 @@ public final class Urls {
     public static final String urlHasBeenAnswered = "auth/patients/answers/answeredQuestionnaire?"; // params: days, questionnaireID
     public static final String getUrlHasBeenAnsweredDaysParam = "days=";
     public static final String getUrlHasBeenAnsweredQuestionnaireIDParam = "&questionnaireID=";
-
-    public static final String urlGetUserQuestionnaires = "auth/usersAll/getUserQuestionnaire/";
+    public static final String urlGetUserQuestionnaires = "auth/usersAll/getUserQuestionnaire";
     public static final String urlGetQuestionnaireByID = "questionnaires/getQuestionnaire/"; //add id as param
-    public static final String urlPostAnswersOfQuestionnaireByID = "auth/patients/answers/sendAnswers/"; //add id as param
+    public static final String urlPostAnswersOfQuestionnaireByID = "auth/patients/answers/sendAnswers";
     public static final String urlOfLogin = "users/login";
+    public static final String urlOfForgotPassword = "users/forgotPassword";
+    public static final String urlOfGetVerificationQuestion = "users/getVerificationQuestion?QuestionID="; //id of question is param
+    public static final String urlOfCheckVerificationAnswer = "users/checkVerification";
+    public static final String urlOfSetNewPassword = "users/passwordChangeCheck/changePassword";
+    public static final String urlOfGetSpecialToken = "auth/usersAll/askChangePassword";
+            ;
 
 }
