@@ -34,6 +34,7 @@
     <string name="new_password">סיסמא חדשה</string>
     <string name="new_password_again">סיסמא חדשה שוב</string>
     <string name="password_has_changed">הסיסמא שונתה בהצלחה, התחבר באמצעות הסיסמא החדשה שלך!</string>
+    <string name="password_has_changed2">הסיסמא שונתה בהצלחה!</string>
     <string name="userNonExists">לא נמצא משתמש</string>
     <string name="wrongAnswerOrDate">תאריך לידה ו/או תשובה לא תקינים</string>
     <string name="something_went_wrong">שגיאה. נסה שנית</string>
@@ -43,6 +44,8 @@
     <string name="succes">אישור</string>
     <string name="specialTokenInvalid">עברו חמש דקות, אז חזור אחורה, ענה על שאלה האימות ונסה פעם נוספת.</string>
     <string name="gohome">חזור לדף הבית</string>
+    <string name="old_password">סיסמא נוכחית</string>
+    <string name="something_went_wrong_please_log_in">משהו בלתי צפוי קרה. התחבר למערכת מחדש ונסה שוב</string>
 
 
 </resources>

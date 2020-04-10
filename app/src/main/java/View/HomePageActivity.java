@@ -136,15 +136,9 @@ public class HomePageActivity extends AbstractActivity {
         return questionnaires;
     }
 
-
-
-
-
-    //todo: implements this
-
     public void changePasswordFunction(View view) {
-        Log.i("Home Page","change password button clicked");
-
+            Intent intent = new Intent(this, SetNewPasswordForLoggedInUserActivity.class);
+            startActivity(intent);
     }
 
 
