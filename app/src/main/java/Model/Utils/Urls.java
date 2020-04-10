@@ -7,11 +7,8 @@ public final class Urls {
     public static final String urlPostSleep = "auth/patients/metrics/sleep";
     public static final String urlPostActivity = "auth/patients/metrics/activity";
     public static final String urlPostWeather = "auth/patients/metrics/weather";
-
     public static final String urlGetMissingDates = "auth/patients/metrics/getMissingDates?"; //param: days
     public static final String getUrlGetMissingDatesDaysParam = "days=";
-
-    public static final String urlGetLastDailyAnswer = "auth/patients/answers/getLastDaily";
     public static final String urlHasBeenAnswered = "auth/patients/answers/answeredQuestionnaire?"; // params: days, questionnaireID
     public static final String getUrlHasBeenAnsweredDaysParam = "days=";
     public static final String getUrlHasBeenAnsweredQuestionnaireIDParam = "&questionnaireID=";
@@ -24,6 +21,4 @@ public final class Urls {
     public static final String urlOfCheckVerificationAnswer = "users/checkVerification";
     public static final String urlOfSetNewPassword = "users/passwordChangeCheck/changePassword";
     public static final String urlOfGetSpecialToken = "auth/usersAll/askChangePassword";
-            ;
-
 }
