@@ -47,10 +47,12 @@ public class SensorData {
     private ActivitiesGoogleFit activitiesGoogleFit;
     private LocationManager locationManager;
     private LocationListener gpsLocationListener;
+    private Activity activity;
 
     private static final String TAG = "SensorData";
 
     public SensorData(Activity activity) {
+        this.activity = activity;
         this.stepsGoogleFit = new StepsGoogleFit();
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
