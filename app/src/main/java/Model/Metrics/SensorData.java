@@ -17,14 +17,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
+import java.util.Iterator;
 
 import Model.Metrics.GoogleFit.ActivitiesGoogleFit;
 import Model.Metrics.GoogleFit.CaloriesGoogleFit;
 import Model.Metrics.GoogleFit.DistanceGoogleFit;
 import Model.Metrics.GoogleFit.SleepGoogleFit;
 import Model.Metrics.GoogleFit.StepsGoogleFit;
-import Model.Metrics.Weather;
 import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
 
@@ -43,10 +47,12 @@ public class SensorData {
     private ActivitiesGoogleFit activitiesGoogleFit;
     private LocationManager locationManager;
     private LocationListener gpsLocationListener;
+    private Activity activity;
 
     private static final String TAG = "SensorData";
 
     public SensorData(Activity activity) {
+        this.activity = activity;
         this.stepsGoogleFit = new StepsGoogleFit();
         this.distanceGoogleFit = new DistanceGoogleFit();
         this.caloriesGoogleFit = new CaloriesGoogleFit();
@@ -54,6 +60,14 @@ public class SensorData {
         this.activitiesGoogleFit = new ActivitiesGoogleFit();
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         this.gpsLocationListener = new Weather(locationManager, activity);
+    }
+
+    public SensorData(){
+        this.stepsGoogleFit = new StepsGoogleFit();
+        this.distanceGoogleFit = new DistanceGoogleFit();
+        this.caloriesGoogleFit = new CaloriesGoogleFit();
+        this.sleepGoogleFit = new SleepGoogleFit();
+        this.activitiesGoogleFit = new ActivitiesGoogleFit();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -109,6 +123,79 @@ public class SensorData {
         activitiesGoogleFit.sendDataToServer(httpRequests);
         ((Weather)gpsLocationListener).sendDataToServer(httpRequests);
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sensorDataByDates(JSONArray jsonArray, Context context){
+
+        GoogleSignInOptionsExtension fitnessOptions =
+                FitnessOptions.builder()
+                        .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
+                        .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
+                        .addDataType(TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
+                        .build();
+
+        //parse json
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Iterator<String> keys = jsonObject.keys();
+                JSONArray times;
+                while(keys.hasNext()) {
+                    String key = keys.next();
+                    System.out.println(key);
+                    switch (key){
+                        case "Steps":
+                            times = (JSONArray) jsonObject.get("Steps");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.stepsGoogleFit.getDataByDate(context, fitnessOptions,(long)times.get(t),(long)times.get(t) + 86400000);
+                            }
+                            break;
+                        case "Calories":
+                            times = (JSONArray) jsonObject.get("Calories");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.caloriesGoogleFit.getDataByDate(context, fitnessOptions,(long)times.get(t),(long)times.get(t) + 86400000);
+                            }
+                            break;
+                        case "Distance":
+                            times = (JSONArray) jsonObject.get("Distance");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.distanceGoogleFit.getDataByDate(context, fitnessOptions,(long)times.get(t),(long)times.get(t) + 86400000);
+                            }
+                            break;
+                        case "Sleep":
+                            times = (JSONArray) jsonObject.get("Sleep");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.sleepGoogleFit.extractSleepDataByDate(context,(long)times.get(t),(long)times.get(t) + 86400000);
+                            }
+                            break;
+                        case "Accelerometer":
+                            //no way to collect accelerometer data
+                            break;
+                        case "Weather":
+                            //no way to collect weather data
+                            break;
+                        case "Activity":
+                            times = (JSONArray) jsonObject.get("Activity");
+                            for (int t = 0; t< times.length() ; t++){
+                                this.activitiesGoogleFit.extractActivityDataByDate(context,(long)times.get(t),(long)times.get(t) + 86400000);
+                            }
+                            break;
+
+                        default:
+                            Log.w(TAG, "sensorDataByDates: did not recognize metric " + key);
+                            break;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 
     public void setMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));

@@ -34,7 +34,8 @@ public class DistanceGoogleFit implements DataSender {
     private float dist = 0;
     private boolean calculated = false;
     private int extractionCounter = 0;
-    
+    private JSONObject toSend;
+
     public DistanceGoogleFit() {
     }
     
@@ -78,6 +79,8 @@ public class DistanceGoogleFit implements DataSender {
                 dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
             }
 
+            makeBodyJson(endTime);
+
             calculated = true;
 
             Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
@@ -94,18 +97,70 @@ public class DistanceGoogleFit implements DataSender {
                         extractionCounter = 0;
                     }
                 });
+    }
+
+    public void getDataByDate(Context context, GoogleSignInOptionsExtension fitnessOptions, long startTime, long endTime){
+
+        Log.i(TAG, "getDataByDate: gor startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
+
+        extractionCounter++;
+
+        GoogleSignInAccount googleSignInAccount =
+                GoogleSignIn.getAccountForExtension(context, fitnessOptions);
+
+        /**
+         * Distance
+         */
+
+        DataReadRequest request = new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .build();
+
+        HistoryClient historyClient = Fitness.getHistoryClient(context, googleSignInAccount);
+        Task<DataReadResponse> task =historyClient.readData(request);
+
+        task.addOnSuccessListener(response -> {
+
+            extractionCounter = 0;
+
+            DataSet dataset = response.getDataSets().get(0);
+
+            for (DataPoint datapoint:
+                    dataset.getDataPoints()) {
+                dist += datapoint.getValue(FIELD_DISTANCE).asFloat();
+            }
+
+            Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
+
+            makeBodyJson(startTime);
+
+            sendDataToServer(HttpRequests.getInstance(context));
+
+        })
+                .addOnFailureListener(response -> {
+
+                    Log.e(TAG, "getDataByDate: failed to extract distance data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "getDataByDate: retry extract distance data. counter value = " + Integer.toString(extractionCounter));
+                        getDataByDate(context, fitnessOptions, startTime, endTime);
+                    }
+                    else{
+                        extractionCounter = 0;
+                    }
+                });
 
     }
 
-    public JSONObject makeBodyJson(){
-        JSONObject json = new JSONObject();
+    public JSONObject makeBodyJson(long time){
+        toSend = new JSONObject();
         try {
-            json.put("ValidTime", System.currentTimeMillis());
-            json.put("Data", this.dist);
+            toSend.put("ValidTime", time);
+            toSend.put("Data", this.dist);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return toSend;
     }
 
     public boolean hadBeenCalc() {
@@ -114,7 +169,7 @@ public class DistanceGoogleFit implements DataSender {
 
     public void sendDataToServer(HttpRequests httpRequests) {
         try {
-            httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostDistance, Login.getToken(HttpRequests.getContext()));
+            httpRequests.sendPostRequest(toSend, Urls.urlPostDistance, Login.getToken(HttpRequests.getContext()));
         }
         catch (Exception e){
             Log.e(TAG, "No data in distance.");

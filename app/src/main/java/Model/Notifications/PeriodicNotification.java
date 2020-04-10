@@ -7,11 +7,8 @@ import com.example.modamedicandroidapplication.R;
 
 import java.util.Map;
 
-import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
-import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
-import Model.Utils.PropertiesManager;
 import View.MainActivity;
 
 public class PeriodicNotification extends AbstractNotification{

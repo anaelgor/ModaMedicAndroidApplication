@@ -1,7 +1,6 @@
 package Controller;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;

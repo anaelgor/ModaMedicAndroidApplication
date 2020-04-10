@@ -75,7 +75,9 @@ public class SleepGoogleFit implements DataSender {
                     .collect(Collectors.toList());
 
             if (sleepSessions.size() == 0){
-                extractSleepData(context);
+                if (extractionCounter < 3) {
+                    extractSleepData(context);
+                }
                 return;
             }
 
@@ -132,7 +134,7 @@ public class SleepGoogleFit implements DataSender {
                 }
             }
             // create a json for sending data to server
-            makeBodyJson();
+            makeBodyJson(System.currentTimeMillis());
         })
                 .addOnFailureListener(response -> {
                     Log.e(TAG, "extractSleepData: failed to extract sleeping data");
@@ -147,11 +149,117 @@ public class SleepGoogleFit implements DataSender {
 
     }
 
-    public void makeBodyJson() {
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void extractSleepDataByDate(Context context, long startTime, long endTime) {
+
+        Log.i(TAG, "extractSleepDataByDate: got startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
+
+        extractionCounter ++;
+
+        // Note: The android.permission.ACTIVITY_RECOGNITION permission is
+        // required to read DataType.TYPE_ACTIVITY_SEGMENT
+        SessionReadRequest request = new SessionReadRequest.Builder()
+                .readSessionsFromAllApps()
+                // Activity segment data is required for details of the fine-
+                // granularity sleep, if it is present.
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .build();
+
+        Task<SessionReadResponse> task = Fitness.getSessionsClient(context,
+                GoogleSignIn.getLastSignedInAccount(context))
+                .readSession(request);
+
+        task.addOnSuccessListener(response -> {
+
+            // Filter the resulting list of sessions to just those that are sleep.
+            List<Session> sleepSessions = response.getSessions().stream()
+                    //.filter(s -> s.getActivity().equals(FitnessActivities.SLEEP))
+                    .collect(Collectors.toList());
+
+            if (sleepSessions.size() == 0){
+                if (extractionCounter < 3) {
+                    extractSleepDataByDate(context, startTime, endTime);
+                }
+                return;
+            }
+
+            extractionCounter = 0;
+
+            for (Session session : sleepSessions) {
+                Log.d(TAG, String.format("Sleep between %d and %d",
+                        session.getStartTime(TimeUnit.MILLISECONDS),
+                        session.getEndTime(TimeUnit.MILLISECONDS)));
+
+                this.totalSleepTime = session.getEndTime(TimeUnit.MILLISECONDS) - session.getStartTime(TimeUnit.MILLISECONDS);
+
+                // If the sleep session has finer granularity sub-components, extract them:
+                List<DataSet> dataSets = response.getDataSet(session);
+                for (DataSet dataSet : dataSets) {
+                    for (DataPoint point : dataSet.getDataPoints()) {
+                        // The Activity defines whether this segment is light, deep, REM or awake.
+                        String sleepStage = point.getValue(Field.FIELD_ACTIVITY).asActivity();
+
+                        //ignore non sleeping data
+                        if (!sleepStage.equals("sleep.deep") && !sleepStage.equals("sleep.light"))
+                            continue;
+
+
+                        int stateAsInt = point.getValue(Field.FIELD_ACTIVITY).asInt();
+
+                        switch (stateAsInt) {
+                            case 109:
+                                sleepStage = "SLEEP_LIGHT";
+                                break;
+                            case 110:
+                                sleepStage = "SLEEP_DEEP";
+                                break;
+                            case 112:
+                                sleepStage = "SLEEP_AWAKE";
+                                break;
+                        }
+
+                        long start = point.getStartTime(TimeUnit.MILLISECONDS);
+                        long end = point.getEndTime(TimeUnit.MILLISECONDS);
+                        Log.d(TAG, String.format("\t* %s between %d and %d", sleepStage, start, end));
+
+                        JSONObject json = new JSONObject();
+                        try {
+                            json.put("StartTime", start);
+                            json.put("EndTime", end);
+                            json.put("State", sleepStage);
+                            this.sleepDataArray.add(json);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            // create a json for sending data to server
+            makeBodyJson(startTime);
+            sendDataToServer(HttpRequests.getInstance(context));
+
+        })
+                .addOnFailureListener(response -> {
+                    Log.e(TAG, "extractSleepData: failed to extract sleeping data");
+                    if (extractionCounter < 3){
+                        Log.i(TAG, "extractSleepData: retry extract sleeping data. counter value = " + Integer.toString(extractionCounter));
+                        extractSleepDataByDate(context, startTime, endTime);
+                    }
+                    else{
+                        extractionCounter = 0;
+                    }
+                });
+
+    }
+
+    public void makeBodyJson(long time) {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray(sleepDataArray);
         try {
-            json.put("ValidTime", System.currentTimeMillis());
+            json.put("ValidTime", time);
             json.put("Data", array);
         } catch (JSONException e) {
             e.printStackTrace();
