@@ -18,4 +18,8 @@ public final class Urls {
     public static final String urlOfForgotPassword = "users/forgotPassword";
     public static final String urlOfGetVerificationQuestion = "users/getVerificationQuestion?QuestionID="; //id of question is param
     public static final String urlOfCheckVerificationAnswer = "users/checkVerification";
+    public static final String urlOfSetNewPassword = "users/passwordChangeCheck/changePassword";
+    public static final String urlOfGetSpecialToken = "auth/usersAll/askChangePassword";
+            ;
+
 }

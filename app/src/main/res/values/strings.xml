@@ -37,6 +37,11 @@
     <string name="userNonExists">לא נמצא משתמש</string>
     <string name="wrongAnswerOrDate">תאריך לידה ו/או תשובה לא תקינים</string>
     <string name="something_went_wrong">שגיאה. נסה שנית</string>
+    <string name="new_password_title">הגדר סיסמא חדשה</string>
+    <string name="password_are_not_equal">אי תאימות בין שדות סיסמא חדשה</string>
+    <string name="error_on_server">אירעה שגיאה בשרת</string>
+    <string name="succes">אישור</string>
+    <string name="specialTokenInvalid">עברו חמש דקות, אז חזור אחורה, ענה על שאלה האימות ונסה פעם נוספת.</string>
 
 
 </resources>

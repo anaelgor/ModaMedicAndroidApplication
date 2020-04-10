@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import Model.ConnectedDevices;
+import Model.Exceptions.InvalidTokenException;
 import Model.Exceptions.WrongAnswerException;
 import Model.Metrics.SensorData;
 import Model.Notifications.NotificationsManager;
@@ -87,5 +89,9 @@ public class AppController {
 
     public boolean checkVerificationOfAnswerToUserQuestion(String username,String answer, long date) throws WrongAnswerException {
         return Login.checkVerificationOfAnswerToUserQuestion(username,date,answer,httpRequests);
+    }
+
+    public boolean setNewPasswordForLoggedOutUser(String newPassword) throws InvalidTokenException {
+        return Login.setNewPasswordForLoggedOutUser(newPassword, httpRequests);
     }
 }

@@ -9,24 +9,6 @@
 
 
     <Button
-        android:id="@+id/send"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="242dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="456dp"
-        android:layout_marginEnd="97dp"
-        android:background="@color/colorButtons"
-        android:backgroundTintMode="src_in"
-        android:gravity="center_horizontal"
-        android:onClick="answerQuestion"
-        android:text="@string/send"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <Button
         android:id="@+id/chooseDate"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="242dp"
@@ -34,13 +16,31 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="383dp"
-        android:layout_marginEnd="95dp"
+        android:layout_marginTop="318dp"
+        android:layout_marginEnd="47dp"
         android:background="@color/colorButtons"
         android:backgroundTintMode="src_in"
         android:gravity="center_horizontal"
         android:onClick="chooseDate"
         android:text="@string/choose_birthday_string"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Button
+        android:id="@+id/send"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="454dp"
+        android:layout_marginEnd="47dp"
+        android:background="@color/colorButtons"
+        android:backgroundTintMode="src_in"
+        android:gravity="center_horizontal"
+        android:onClick="answerQuestion"
+        android:text="@string/send"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 

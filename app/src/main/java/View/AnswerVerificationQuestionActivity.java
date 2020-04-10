@@ -2,6 +2,7 @@ package View;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -53,27 +54,33 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
     public void answerQuestion(View view) {
         EditText answer_edittext = findViewById(R.id.answer_textfield);
         String answer = answer_edittext.getText().toString();
-        answer = "ליאו";
         long date = (chosenTime.getTimeInMillis() / 10000) * 10000;
         boolean flag = false;
         try {
             flag = appController.checkVerificationOfAnswerToUserQuestion(username,answer,date);
             if (!flag) {
-                Log.i(TAG,"something went wrong");
-                ShowWrongEmailAlert(R.string.something_went_wrong);
+                Log.i(TAG,"wrong date or answer. error");
+                ShowWrongEmailAlert(R.string.wrongAnswerOrDate);
             }
             else {
-                //todo: open next page
-                System.out.println("yoao this is worksssss");
+                openNewPasswordActivity();
             }
         } catch (WrongAnswerException e) {
             Log.i(TAG,"wrong date or answer. error: " + e.getMessage());
             ShowWrongEmailAlert(R.string.wrongAnswerOrDate);
         }
+        catch (Exception e) {
+            Log.e(TAG,"something went wrong");
+            ShowWrongEmailAlert(R.string.something_went_wrong);
+        }
 
 
     }
 
+    private void openNewPasswordActivity() {
+            Intent intent = new Intent(this, SetNewPasswordForLoggedOutUserActivity.class);
+            startActivity(intent);
+    }
 
 
     public void chooseDate(View view) {
