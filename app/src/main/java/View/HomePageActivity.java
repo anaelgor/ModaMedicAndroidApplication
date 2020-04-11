@@ -177,7 +177,7 @@ public class HomePageActivity extends AbstractActivity {
                     bt_state.setBackgroundResource(R.drawable.red_circle);
                     bt_state.setText(getString(R.string.short_watch_off));
                 }            }
-        }, 0, 30, TimeUnit.SECONDS);
+        }, 0, 5, TimeUnit.SECONDS);
 
     }
 
