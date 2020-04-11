@@ -20,14 +20,29 @@
         android:src="@drawable/app_logo" />
 
     <Button
-        android:id="@+id/forgot_password_button"
+        android:id="@+id/change_password_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="52dp"
+        android:layout_marginEnd="87dp"
+        android:layout_marginBottom="53dp"
         android:onClick="changePasswordFunction"
         android:text="שינוי סיסמא" />
+
+    <TextView
+        android:id="@+id/bt_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/red_circle"
+        android:textColor="@color/colorWhite"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="300dp"
+        android:layout_marginBottom="53dp"
+        android:onClick="showBTInfo"
+        android:text="@string/short_watch_off"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

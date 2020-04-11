@@ -3,6 +3,7 @@ package View;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +12,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
 import com.example.modamedicandroidapplication.R;
 
+import java.util.Calendar;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import Controller.AppController;
 import Model.Questionnaires.Questionnaire;
@@ -26,6 +32,7 @@ import Model.Utils.Constants;
 Home page screen
  */
 public class HomePageActivity extends AbstractActivity {
+    private static final String TAG = "HomePageActivity";
     Map<Long,String> questionnaires; //key: questID, value: questionnaire Text
     String username;
     AppController appController;
@@ -41,7 +48,6 @@ public class HomePageActivity extends AbstractActivity {
         appController.setNotifications(getApplicationContext());
         appController.setMetricsTask(getApplicationContext());
         appController.setLocationTrackerTask(getApplicationContext());
-
 
         checkIfBandIsConnected();
 
@@ -65,6 +71,7 @@ public class HomePageActivity extends AbstractActivity {
         TextView good_eve = findViewById(R.id.good_evening_textView);
         good_eve.setText(String.format("%s %s", this.getString(R.string.hello), name));
         createAllButtons();
+        updateBTState();
 
     }
 
@@ -143,7 +150,36 @@ public class HomePageActivity extends AbstractActivity {
 
 
     public void checkIfBandIsConnected(){
-        AppController appController = AppController.getController(this);
         appController.checkIfBandIsConnected();
     }
+
+    public void showBTInfo(View view) {
+        if (BAND_CONNECTED)
+            Toast.makeText(view.getContext(),R.string.watch_on , Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(view.getContext(),R.string.watch_off , Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateBTState() {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                TextView bt_state = findViewById(R.id.bt_state);
+                if (BAND_CONNECTED) {
+                    Log.i(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Connected");
+                    bt_state.setBackgroundResource(R.drawable.green_circle);
+                    bt_state.setText(getString(R.string.short_watch_on));
+                }
+                else {
+                    Log.i(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Disconnected");
+
+                    bt_state.setBackgroundResource(R.drawable.red_circle);
+                    bt_state.setText(getString(R.string.short_watch_off));
+                }            }
+        }, 0, 30, TimeUnit.SECONDS);
+
+    }
+
+
 }

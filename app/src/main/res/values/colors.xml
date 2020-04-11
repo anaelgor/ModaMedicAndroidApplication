@@ -15,8 +15,11 @@
     <color name="colorVAS8">#ff6826</color>
     <color name="colorVAS9">#ff4320</color>
     <color name="colorVAS10">#d91a06</color>
+    <color name="colorBToff">#d91a06</color>
+    <color name="colorBTon">#17AD10</color>
     <color name="colorRegularAnswer">#cccccc</color>
     <color name="colorChosenAnswer">#EC54FF</color>
+    <color name="colorWhite">#FFFFFF</color>
 
 
 

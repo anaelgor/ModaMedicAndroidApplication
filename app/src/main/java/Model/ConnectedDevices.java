@@ -63,6 +63,24 @@ public class ConnectedDevices {
 
     public static void checkIfBTIsOn(Context context) {
         context.registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        //first init
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            // Device does not support Bluetooth
+        } else {
+            if (mBluetoothAdapter.isEnabled()) {
+                HomePageActivity.BAND_CONNECTED = checkIfBandIsConnectedByBT(context);
+                Log.i(TAG, "BT state is STATE_ON");
+                Log.i(TAG, "BAND_CONNECTED state is " + HomePageActivity.BAND_CONNECTED);
+            }
+            else {
+                HomePageActivity.BAND_CONNECTED = false;
+                Log.i(TAG, "BT state is STATE_OFF");
+                Log.i(TAG, "BAND_CONNECTED state is " + HomePageActivity.BAND_CONNECTED);
+            }
+        }
+
+
     }
 
 
