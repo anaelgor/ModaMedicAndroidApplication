@@ -46,6 +46,10 @@
     <string name="gohome">חזור לדף הבית</string>
     <string name="old_password">סיסמא נוכחית</string>
     <string name="something_went_wrong_please_log_in">משהו בלתי צפוי קרה. התחבר למערכת מחדש ונסה שוב</string>
+    <string name="watch_on">צמיד מחובר</string>
+    <string name="watch_off">צמיד לא מחובר</string>
+    <string name="short_watch_on">ON</string>
+    <string name="short_watch_off">OFF</string>
 
 
 </resources>
