@@ -2,12 +2,14 @@ package View;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
         setContentView(R.layout.activity_answer_verification_question);
         getVerificationQuestion();
         appController = AppController.getController(this);
+        setHideKeyBoard();
     }
 
     private void getVerificationQuestion() {
@@ -126,5 +129,23 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
                 .setNegativeButton(R.string.tryAgain, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void setHideKeyBoard() {
+        EditText answer_textfield = findViewById(R.id.answer_textfield);
+        View.OnFocusChangeListener ofcListener = new MyFocusChangeListener();
+        answer_textfield.setOnFocusChangeListener(ofcListener);
+    }
+
+    private class MyFocusChangeListener implements View.OnFocusChangeListener {
+
+        public void onFocusChange(View v, boolean hasFocus) {
+
+            if ((v.getId() == R.id.answer_textfield) && !hasFocus) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert imm != null;
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        }
     }
 }

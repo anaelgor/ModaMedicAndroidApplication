@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.BLUETOOTH"  android:required="false" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
 
     <!--TODO: when moving to production we should remove this: android:usesCleartextTraffic="true"-->
     <application
@@ -36,11 +38,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="View.MainActivity" />
         </activity>
+        <service android:name="Model.RebootService" />
 
         <receiver android:name="Model.Notifications.PeriodicNotification"/>
         <receiver android:name="Model.Notifications.DailyNotification"/>
         <receiver android:name="Model.Metrics.MetricsBroadcastReceiver"/>
         <receiver android:name="Model.Metrics.LocationBroadcastReceiver"/>
+        <receiver android:name="Model.RebootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
 
         <activity android:name="View.MainActivity">
             <intent-filter>

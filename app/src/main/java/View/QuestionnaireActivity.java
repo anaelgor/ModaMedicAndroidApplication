@@ -81,9 +81,6 @@ public class QuestionnaireActivity extends AbstractActivity {
         FloatingActionButton prevButton = findViewById(R.id.prevButton);
         //setLocationOfButtonInRelativeLayout(prevButton,"previous");
 
-        setColorOfNextOrPrevButton(nextButton);
-        setColorOfNextOrPrevButton(prevButton);
-
         if (i<questionnaire.getQuestions().size()-1){ // not last question
 
 
@@ -198,11 +195,6 @@ public class QuestionnaireActivity extends AbstractActivity {
         });
     }
 
-    //todo: understand why this doesn't works
-    private void setColorOfNextOrPrevButton(FloatingActionButton nextButton) {
-        int color = ResourcesCompat.getColor(getResources(),R.color.colorButtons, null);
-        nextButton.setBackgroundColor(color);
-    }
 
     private void setLocationOfButtonInRelativeLayout(FloatingActionButton button, String nextOrPrev) {
         RelativeLayout.LayoutParams params = null;
