@@ -111,7 +111,7 @@ public class SensorData {
         {
             //fix time issue to avoid endless loop
             long currTime = System.currentTimeMillis();
-            if (currTime - startTime >= 120000)
+            if (currTime - startTime >= 10000)
                 break;
         }
         // send data to server
