@@ -46,84 +46,91 @@ public class ActivitiesGoogleFit implements DataSender {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void extractActivityDataByDate(Context context, long startTime, long endTime) {
 
-        Log.i(TAG, "extractActivityDataByDate: got startTime = " + Long.toString(startTime )+ ", endTime = " + Long.toString(endTime));
+        try {
 
-        extractionCounter++;
+            Log.i(TAG, "extractActivityDataByDate: got startTime = " + Long.toString(startTime) + ", endTime = " + Long.toString(endTime));
 
-        // Note: The android.permission.ACTIVITY_RECOGNITION permission is
-        // required to read DataType.TYPE_ACTIVITY_SEGMENT
-        SessionReadRequest request = new SessionReadRequest.Builder()
-                .readSessionsFromAllApps()
-                // Activity segment data is required for details of the fine-
-                // granularity sleep, if it is present.
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
+            extractionCounter++;
 
-        Task<SessionReadResponse> task = Fitness.getSessionsClient(context,
-                GoogleSignIn.getLastSignedInAccount(context))
-                .readSession(request);
+            // Note: The android.permission.ACTIVITY_RECOGNITION permission is
+            // required to read DataType.TYPE_ACTIVITY_SEGMENT
+            SessionReadRequest request = new SessionReadRequest.Builder()
+                    .readSessionsFromAllApps()
+                    // Activity segment data is required for details of the fine-
+                    // granularity sleep, if it is present.
+                    .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                    .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                    .build();
 
-        task.addOnSuccessListener(response -> {
+            Task<SessionReadResponse> task = Fitness.getSessionsClient(context,
+                    GoogleSignIn.getLastSignedInAccount(context))
+                    .readSession(request);
 
-            List<Session> activitiesSessions = response.getSessions().stream()
-                    .collect(Collectors.toList());
+            task.addOnSuccessListener(response -> {
 
-            if (activitiesSessions.size() == 0){
-                if (extractionCounter < 3) {
-                    extractActivityDataByDate(context, startTime, endTime);
+                List<Session> activitiesSessions = response.getSessions().stream()
+                        .collect(Collectors.toList());
+
+                if (activitiesSessions.size() == 0) {
+                    if (extractionCounter < 3) {
+                        extractActivityDataByDate(context, startTime, endTime);
+                    }
+                    return;
                 }
-                return;
-            }
 
-            extractionCounter = 0;
+                extractionCounter = 0;
 
-            for (Session session : activitiesSessions) {
-                Log.d(TAG, String.format("Activities between %d and %d",
-                        session.getStartTime(TimeUnit.MILLISECONDS),
-                        session.getEndTime(TimeUnit.MILLISECONDS)));
+                for (Session session : activitiesSessions) {
+                    Log.d(TAG, String.format("Activities between %d and %d",
+                            session.getStartTime(TimeUnit.MILLISECONDS),
+                            session.getEndTime(TimeUnit.MILLISECONDS)));
 
-                // If the sleep session has finer granularity sub-components, extract them:
-                List<DataSet> dataSets = response.getDataSet(session);
-                for (DataSet dataSet : dataSets) {
-                    for (DataPoint point : dataSet.getDataPoints()) {
-                        String activity = point.getValue(Field.FIELD_ACTIVITY).asActivity();
-                        long start = point.getStartTime(TimeUnit.MILLISECONDS);
-                        long end = point.getEndTime(TimeUnit.MILLISECONDS);
-                        Log.d(TAG, String.format("\t* %s between %d and %d", activity, start, end));
+                    // If the sleep session has finer granularity sub-components, extract them:
+                    List<DataSet> dataSets = response.getDataSet(session);
+                    for (DataSet dataSet : dataSets) {
+                        for (DataPoint point : dataSet.getDataPoints()) {
+                            String activity = point.getValue(Field.FIELD_ACTIVITY).asActivity();
+                            long start = point.getStartTime(TimeUnit.MILLISECONDS);
+                            long end = point.getEndTime(TimeUnit.MILLISECONDS);
+                            Log.d(TAG, String.format("\t* %s between %d and %d", activity, start, end));
 
-                        //ignore sleeping data
-                        if (activity.equals("sleep.deep") || activity.equals("sleep.light"))
-                            continue;
+                            //ignore sleeping data
+                            if (activity.equals("sleep.deep") || activity.equals("sleep.light"))
+                                continue;
 
-                        JSONObject json = new JSONObject();
-                        try {
-                            json.put("StartTime", start);
-                            json.put("EndTime", end);
-                            json.put("State", activity);
+                            JSONObject json = new JSONObject();
+                            try {
+                                json.put("StartTime", start);
+                                json.put("EndTime", end);
+                                json.put("State", activity);
 
-                            activityArray.add(json);
+                                activityArray.add(json);
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-            }
-            makeBodyJson(startTime);
-            sendDataToServer(HttpRequests.getInstance(context));
+                makeBodyJson(startTime);
+                sendDataToServer(HttpRequests.getInstance(context));
 
-        })
-        .addOnFailureListener(response -> {
-            Log.e(TAG, "extractActivityDataByDates: failed to extract activity data");
-            if (extractionCounter < 3){
-                Log.i(TAG, "extractActivityDataByDates: retry extract activity data. counter value = " + Integer.toString(extractionCounter));
-                extractActivityDataByDate(context, startTime, endTime);
-            }
-            else{
-                extractionCounter = 0;
-            }
-        });
+            })
+                    .addOnFailureListener(response -> {
+                        Log.e(TAG, "extractActivityDataByDates: failed to extract activity data");
+                        if (extractionCounter < 3) {
+                            Log.i(TAG, "extractActivityDataByDates: retry extract activity data. counter value = " + Integer.toString(extractionCounter));
+                            extractActivityDataByDate(context, startTime, endTime);
+                        } else {
+                            extractionCounter = 0;
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(TAG,"Error occured: ");
+            e.printStackTrace();
+
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
