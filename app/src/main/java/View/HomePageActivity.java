@@ -41,13 +41,19 @@ public class HomePageActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        username = getUserName();
         super.onCreate(savedInstanceState);
+        username = getUserName();
         setContentView(R.layout.activity_homepage);
         appController = AppController.getController(this);
-        appController.setNotifications(getApplicationContext());
-        appController.setMetricsTask(getApplicationContext());
-        appController.setLocationTrackerTask(getApplicationContext());
+        Thread t_backgroundTasks = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                appController.setNotifications(getApplicationContext());
+                appController.setMetricsTask(getApplicationContext());
+                appController.setLocationTrackerTask(getApplicationContext());
+            }
+        });
+        t_backgroundTasks.start();
 
         checkIfBandIsConnected();
 
@@ -167,12 +173,12 @@ public class HomePageActivity extends AbstractActivity {
             public void run() {
                 TextView bt_state = findViewById(R.id.bt_state);
                 if (BAND_CONNECTED) {
-                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Connected");
+                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Connected");
                     bt_state.setBackgroundResource(R.drawable.green_circle);
                     bt_state.setText(getString(R.string.short_watch_on));
                 }
                 else {
-                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Disconnected");
+                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Disconnected");
 
                     bt_state.setBackgroundResource(R.drawable.red_circle);
                     bt_state.setText(getString(R.string.short_watch_off));

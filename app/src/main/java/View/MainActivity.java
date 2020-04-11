@@ -88,6 +88,7 @@ public class MainActivity extends AbstractActivity {
             if ((v.getId() == R.id.password_textfield) && !hasFocus) {
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert imm != null;
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
             }
