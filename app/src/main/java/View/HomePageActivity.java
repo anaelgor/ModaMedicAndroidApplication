@@ -167,12 +167,12 @@ public class HomePageActivity extends AbstractActivity {
             public void run() {
                 TextView bt_state = findViewById(R.id.bt_state);
                 if (BAND_CONNECTED) {
-                    Log.i(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Connected");
+                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Connected");
                     bt_state.setBackgroundResource(R.drawable.green_circle);
                     bt_state.setText(getString(R.string.short_watch_on));
                 }
                 else {
-                    Log.i(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Disconnected");
+                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and this is Disconnected");
 
                     bt_state.setBackgroundResource(R.drawable.red_circle);
                     bt_state.setText(getString(R.string.short_watch_off));
