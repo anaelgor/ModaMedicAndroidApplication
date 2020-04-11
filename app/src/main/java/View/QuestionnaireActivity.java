@@ -76,10 +76,10 @@ public class QuestionnaireActivity extends AbstractActivity {
 
         //next previous buttons
         FloatingActionButton nextButton = findViewById(R.id.nextButton);
-        setLocationOfButtonInRelativeLayout(nextButton,"next");
+        //setLocationOfButtonInRelativeLayout(nextButton,"next");
 
         FloatingActionButton prevButton = findViewById(R.id.prevButton);
-        setLocationOfButtonInRelativeLayout(prevButton,"previous");
+        //setLocationOfButtonInRelativeLayout(prevButton,"previous");
 
         setColorOfNextOrPrevButton(nextButton);
         setColorOfNextOrPrevButton(prevButton);
