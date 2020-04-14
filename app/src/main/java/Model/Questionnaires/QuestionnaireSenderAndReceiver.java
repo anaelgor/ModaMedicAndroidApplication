@@ -19,15 +19,21 @@ public class QuestionnaireSenderAndReceiver {
 
     private static final String TAG = "QuestionnaireSender";
     public static void sendAnswers(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID, HttpRequests httpRequests) {
-        JSONObject request = AnswersManager.createJsonAnswersOfQuestionnaire(questionsAndAnswers,questionnaireID);
-        try {
-            httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID, Login.getToken(HttpRequests.getContext()));
-            Log.i(TAG,"sent to server");
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject request = AnswersManager.createJsonAnswersOfQuestionnaire(questionsAndAnswers,questionnaireID);
+                try {
+                    httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID, Login.getToken(HttpRequests.getContext()));
+                    Log.i(TAG,"sent to server");
 
-        } catch (ServerFalseException serverFalseException) {
-            serverFalseException.printStackTrace();
-            Log.i(TAG,"problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());
-        }
+                } catch (ServerFalseException serverFalseException) {
+                    serverFalseException.printStackTrace();
+                    Log.i(TAG,"problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());
+                }
+            }
+        });
+        t.start();
     }
 
     public static Map<Long, String> getUserQuestionnaires(HttpRequests httpRequests) {
