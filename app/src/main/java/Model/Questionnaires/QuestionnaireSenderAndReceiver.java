@@ -40,7 +40,10 @@ public class QuestionnaireSenderAndReceiver {
             for (int i=0; i<array.length(); i++) {
                 Long id = Long.valueOf( (Integer)array.getJSONObject(i).get("QuestionnaireID"));
                 String text = (String)array.getJSONObject(i).get("QuestionnaireText");
-                result.put(id,text);
+                if (id!=6)
+                    result.put(id,text);
+                else
+                    System.out.println("skipping questionnaire 6");
             }
         } catch (ServerFalseException | JSONException serverFalseException) {
             serverFalseException.printStackTrace();
