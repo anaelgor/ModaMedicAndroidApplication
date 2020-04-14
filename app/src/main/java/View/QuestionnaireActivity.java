@@ -126,6 +126,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                     String answerNumber = answerEQ5TF.getText().toString();
                     if (answerNumber.equals("")) {
                         Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
+                        return;
                     } else {
                         List<Long> answer = new ArrayList<>();
                         answer.add(Long.parseLong(answerNumber));
@@ -261,6 +262,7 @@ public class QuestionnaireActivity extends AbstractActivity {
             System.out.println("please check type of Question");
     }
 
+    @SuppressLint("SetTextI18n")
     private void buildEQ5Question(int i) {
         LinearLayout layout = findViewById(R.id.lin_layout);
         float sizeBestWorst = 15;
@@ -277,15 +279,10 @@ public class QuestionnaireActivity extends AbstractActivity {
         int height = RelativeLayout.LayoutParams.WRAP_CONTENT;
         answer_editText.setLayoutParams(new LinearLayout.LayoutParams(width, height));
         TextView bestTV = new TextView(this);
-        bestTV.setText(best);
+        bestTV.setText(worst + " " + best);
         bestTV.setTextSize(sizeBestWorst);
         bestTV.setGravity(Gravity.CENTER);
         bestTV.setPadding(0, 5, 0, 0);
-        TextView worstTV = new TextView(this);
-        worstTV.setText(worst);
-        worstTV.setTextSize(sizeBestWorst);
-        worstTV.setGravity(Gravity.CENTER);
-        worstTV.setPadding(0, 5, 0, 0);
         TextView subtextTV = new TextView(this);
         subtextTV.setText(subtext);
         subtextTV.setGravity(Gravity.CENTER);
@@ -294,7 +291,6 @@ public class QuestionnaireActivity extends AbstractActivity {
 
         answerEQ5TF = answer_editText;
         layout.addView(subtextTV);
-        layout.addView(worstTV);
         layout.addView(bestTV);
         layout.addView(answerEQ5TF);
     }
