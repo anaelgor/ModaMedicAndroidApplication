@@ -107,21 +107,22 @@ public class HomePageActivity extends AbstractActivity {
 //        layout.addView(daily_questionnaire_button);
 
         Button[] questionnaire_buttons = new Button[questionnaires.size()];
-        for (int i=0; i<questionnaire_buttons.length; i++) {
-            questionnaire_buttons[i] = new Button(this);
-            final int finalI = i;
-            final Long QuestionnaireID = new Long(finalI);
-            questionnaire_buttons[i].setText(questionnaires.get(QuestionnaireID));
-            questionnaire_buttons[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openQuestionnaireActivity(questionnaires.get(QuestionnaireID),QuestionnaireID);
-                }
-            });
-            setButtonConfiguration(questionnaire_buttons[i]);
-
-            layout.addView(questionnaire_buttons[i]);
-        }
+        int i=0;
+        for (Map.Entry<Long,String> entry : questionnaires.entrySet()) {
+                questionnaire_buttons[i] = new Button(this);
+                final Long QuestionnaireID = entry.getKey();
+                String text = entry.getValue();
+                questionnaire_buttons[i].setText(text);
+                questionnaire_buttons[i].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openQuestionnaireActivity(questionnaires.get(QuestionnaireID),QuestionnaireID);
+                    }
+                });
+                setButtonConfiguration(questionnaire_buttons[i]);
+                layout.addView(questionnaire_buttons[i]);
+                i++;
+            }
 
     }
 
@@ -139,8 +140,6 @@ public class HomePageActivity extends AbstractActivity {
         Intent intent = new Intent(this, QuestionnaireActivity.class);
         intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
         startActivity(intent);
-
-
     }
 
     private Map<Long,String> getAllQuestionnaires() {

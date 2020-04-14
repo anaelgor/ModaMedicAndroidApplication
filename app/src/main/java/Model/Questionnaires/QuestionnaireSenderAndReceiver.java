@@ -19,15 +19,21 @@ public class QuestionnaireSenderAndReceiver {
 
     private static final String TAG = "QuestionnaireSender";
     public static void sendAnswers(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID, HttpRequests httpRequests) {
-        JSONObject request = AnswersManager.createJsonAnswersOfQuestionnaire(questionsAndAnswers,questionnaireID);
-        try {
-            httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID, Login.getToken(HttpRequests.getContext()));
-            Log.i(TAG,"sent to server");
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject request = AnswersManager.createJsonAnswersOfQuestionnaire(questionsAndAnswers,questionnaireID);
+                try {
+                    httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID, Login.getToken(HttpRequests.getContext()));
+                    Log.i(TAG,"sent to server");
 
-        } catch (ServerFalseException serverFalseException) {
-            serverFalseException.printStackTrace();
-            Log.i(TAG,"problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());
-        }
+                } catch (ServerFalseException serverFalseException) {
+                    serverFalseException.printStackTrace();
+                    Log.i(TAG,"problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());
+                }
+            }
+        });
+        t.start();
     }
 
     public static Map<Long, String> getUserQuestionnaires(HttpRequests httpRequests) {
@@ -40,7 +46,10 @@ public class QuestionnaireSenderAndReceiver {
             for (int i=0; i<array.length(); i++) {
                 Long id = Long.valueOf( (Integer)array.getJSONObject(i).get("QuestionnaireID"));
                 String text = (String)array.getJSONObject(i).get("QuestionnaireText");
-                result.put(id,text);
+                if (id!=6)
+                    result.put(id,text);
+                else
+                    System.out.println("skipping questionnaire 6");
             }
         } catch (ServerFalseException | JSONException serverFalseException) {
             serverFalseException.printStackTrace();

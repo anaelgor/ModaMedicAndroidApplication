@@ -66,7 +66,7 @@ public class QuestionnaireManager {
             question.setType(type);
             question.setAnswers(answersList);
             //for specific questions type
-            if (type.toUpperCase().equals("VAS")) {
+            if (type.toUpperCase().equals("VAS") || type.toUpperCase().equals("EQ5")) {
                 String best = (String) jsonObject.get("Best");
                 String worst = (String) jsonObject.get("Worst");
                 question.setBest(best);

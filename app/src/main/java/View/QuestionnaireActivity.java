@@ -6,12 +6,16 @@ import androidx.core.content.res.ResourcesCompat;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,20 +36,21 @@ import Model.Questionnaires.Questionnaire;
 
 public class QuestionnaireActivity extends AbstractActivity {
 
+    private static final String TAG = "QuestionnaireActivity";
     Questionnaire questionnaire;
     long currentQuestionID;
-    Map<Long,List<Long>> questionsAnswers; //key: questionID, value: list of answerID
-    Map<Long,Map<Long,Button>> answersButtons; //key:: answerID, value: answer Button
+    Map<Long, List<Long>> questionsAnswers; //key: questionID, value: list of answerID
+    Map<Long, Map<Long, Button>> answersButtons; //key:: answerID, value: answer Button
+    private EditText answerEQ5TF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questionnaire);
         questionsAnswers = new HashMap<>();
-        answersButtons = new  HashMap<>();
+        answersButtons = new HashMap<>();
         Intent intent = getIntent();
         questionnaire = (Questionnaire) intent.getSerializableExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
-        System.out.println("xxx");
         showTitle();
         showQuestion(0);
 
@@ -60,7 +65,7 @@ public class QuestionnaireActivity extends AbstractActivity {
     private void showQuestion(final long ii) {
         final int i = safeLongToInt(ii);
         currentQuestionID = questionnaire.getQuestions().get(i).getQuestionID();
-        answersButtons.put(currentQuestionID,new HashMap<Long, Button>());
+        answersButtons.put(currentQuestionID, new HashMap<Long, Button>());
         final LinearLayout layout = findViewById(R.id.lin_layout);
         String ques_TEXT = questionnaire.getQuestions().get(i).getQuestionText();
         TextView question_TV = new TextView(this);
@@ -81,22 +86,23 @@ public class QuestionnaireActivity extends AbstractActivity {
         FloatingActionButton prevButton = findViewById(R.id.prevButton);
         //setLocationOfButtonInRelativeLayout(prevButton,"previous");
 
-        if (i<questionnaire.getQuestions().size()-1){ // not last question
+        if (i < questionnaire.getQuestions().size() - 1) { // not last question
 
 
             setNextButtonActionForAllQuestionsExceptLast(ii, layout, nextButton);
 
-            if (i>0) { //not first question
-                setPreviousButtonActionForAllQuestionsExceptFirst(layout,prevButton);
-            }
-            else { //first question
+            if (i > 0) { //not first question
+                setPreviousButtonActionForAllQuestionsExceptFirst(layout, prevButton);
+            } else { //first question
                 setInvisible(prevButton);
             }
-        }
-        else { //last question in questionnaire
+        } else { //last question in questionnaire
             //nextButton.setImageResource(android.R.drawable.ic_menu_send);
             setNextButtonActionForLastQuestion(ii, layout, nextButton);
-            setPreviousButtonActionForAllQuestionsExceptFirst(layout,prevButton);
+            if (i == 0) //first question
+                setInvisible(prevButton);
+            else
+                setPreviousButtonActionForAllQuestionsExceptFirst(layout, prevButton);
 
         }
 
@@ -114,45 +120,62 @@ public class QuestionnaireActivity extends AbstractActivity {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
-                if (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty()) {
+                boolean isEq5 = questionnaire.getQuestionaireID() == 6 && answerEQ5TF != null;
+                if (isEq5) {
+                    //special section for EQ5 special question
+                    String answerNumber = answerEQ5TF.getText().toString();
+                    if (answerNumber.equals("")) {
+                        Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        List<Long> answer = new ArrayList<>();
+                        answer.add(Long.parseLong(answerNumber));
+                        questionsAnswers.put(Long.parseLong("0"), answer);
+                    }
+                }
+
+                if (!isEq5 && (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty())) {
                     Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
                 } else {
                     sendAnswersToServer();
                     layout.removeAllViews();
-                    FloatingActionButton nextButton = findViewById(R.id.nextButton);
-                    animateFullCircle(nextButton);
-                    nextButton.setVisibility(View.INVISIBLE);
-                    FloatingActionButton prevButton = findViewById(R.id.prevButton);
-                    prevButton.setVisibility(View.INVISIBLE);
-                    TextView thanksTV = new TextView(v.getContext());
-                    thanksTV.setText(R.string.thanks);
-                    thanksTV.setTextSize(30);
-                    layout.addView(thanksTV);
-                    TextView sentTV = new TextView(v.getContext());
-                    sentTV.setText(R.string.sent_succesfully);
-                    sentTV.setTextSize(30);
-                    layout.addView(sentTV);
-                    Button backButton = new Button(v.getContext());
-                    backButton.setText(R.string.back_to_home_page);
-                    backButton.setWidth(20);
-                    backButton.setHeight(10);
-                    backButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            backToHomePage(v);
-                        }
-                    });
-                    layout.addView(backButton);
-
-
-
+                    if (questionnaire.getQuestionaireID() == 5) {
+                        long six = 6;
+                        openQuestionnaireActivity("EQ-5 Special Question", six);
+                    } else {
+                        FloatingActionButton nextButton = findViewById(R.id.nextButton);
+                        animateFullCircle(nextButton);
+                        nextButton.setVisibility(View.INVISIBLE);
+                        FloatingActionButton prevButton = findViewById(R.id.prevButton);
+                        prevButton.setVisibility(View.INVISIBLE);
+                        TextView thanksTV = new TextView(v.getContext());
+                        thanksTV.setText(R.string.thanks);
+                        thanksTV.setTextSize(30);
+                        layout.addView(thanksTV);
+                        TextView sentTV = new TextView(v.getContext());
+                        sentTV.setText(R.string.sent_succesfully);
+                        sentTV.setTextSize(30);
+                        layout.addView(sentTV);
+                        Button backButton = new Button(v.getContext());
+                        backButton.setText(R.string.back_to_home_page);
+                        backButton.setWidth(20);
+                        backButton.setHeight(10);
+                        backButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                backToHomePage(v);
+                            }
+                        });
+                        layout.addView(backButton);
+                    }
                 }
+
             }
         });
     }
 
     private void backToHomePage(View v) {
-        Intent intent = new Intent(this,HomePageActivity.class);
+        Intent intent = new Intent(this, HomePageActivity.class);
         startActivity(intent);
     }
 
@@ -160,19 +183,18 @@ public class QuestionnaireActivity extends AbstractActivity {
         float deg = button.getRotation() + 360F;
         button.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
     }
+
     private void setNextButtonActionForAllQuestionsExceptLast(long ii, LinearLayout layout, FloatingActionButton nextButton) {
         nextButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (questionsAnswers.get(ii) == null || questionsAnswers.get(ii).isEmpty()) {
-                    Toast.makeText(v.getContext(),R.string.answerTheQuestion,Toast.LENGTH_SHORT).show();
-                }
-                else {
+                    Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
+                } else {
                     layout.removeAllViews();
                     showQuestion(++currentQuestionID);
                     animateFullCircle(nextButton);
-
                 }
 
             }
@@ -186,7 +208,7 @@ public class QuestionnaireActivity extends AbstractActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),R.string.movingToPrevQuestion,Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), R.string.movingToPrevQuestion, Toast.LENGTH_SHORT).show();
                 animateFullCircle(prevButton);
                 layout.removeAllViews();
                 showQuestion(--currentQuestionID);
@@ -199,16 +221,16 @@ public class QuestionnaireActivity extends AbstractActivity {
     private void setLocationOfButtonInRelativeLayout(FloatingActionButton button, String nextOrPrev) {
         RelativeLayout.LayoutParams params = null;
         switch (nextOrPrev) {
-            case  "next":
+            case "next":
                 params = new RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10, Double.valueOf(getHeightOfScreen()*0.85).intValue(), 0, 0);
+                params.setMargins(10, Double.valueOf(getHeightOfScreen() * 0.85).intValue(), 0, 0);
                 button.setLayoutParams(params);
                 break;
             case "previous":
                 params = new RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(Double.valueOf(getWidthOfScreen()*0.85).intValue(), Double.valueOf(getHeightOfScreen()*0.85).intValue(), 0, 0);
+                params.setMargins(Double.valueOf(getWidthOfScreen() * 0.85).intValue(), Double.valueOf(getHeightOfScreen() * 0.85).intValue(), 0, 0);
                 button.setLayoutParams(params);
                 break;
         }
@@ -216,7 +238,7 @@ public class QuestionnaireActivity extends AbstractActivity {
 
     private void sendAnswersToServer() {
         AppController appController = AppController.getController(this);
-        appController.sendAnswersToServer(questionsAnswers,questionnaire.getQuestionaireID());
+        appController.sendAnswersToServer(questionsAnswers, questionnaire.getQuestionaireID());
     }
 
     private static int safeLongToInt(long l) {
@@ -226,6 +248,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         }
         return (int) l;
     }
+
     private void BuildQuestionByType(Question.Type type, int i) {
         if (type.equals(Question.Type.MULTI))
             buildMultiQuestion(i);
@@ -233,15 +256,48 @@ public class QuestionnaireActivity extends AbstractActivity {
             buildSingleQuestion(i);
         else if (type.equals(Question.Type.VAS))
             buildVAS_Question(i);
+        else if (type.equals(Question.Type.EQ5))
+            buildEQ5Question(i);
         else
             System.out.println("please check type of Question");
     }
 
+    @SuppressLint("SetTextI18n")
+    private void buildEQ5Question(int i) {
+        LinearLayout layout = findViewById(R.id.lin_layout);
+        float sizeBestWorst = 15;
+        float subtextSize = 20;
+        String worst = this.questionnaire.getQuestions().get(i).getWorst();
+        String best = this.questionnaire.getQuestions().get(i).getBest();
+        String subtext = getString(R.string.betweenZeroTo100);
+        EditText answer_editText = new EditText(this);
+        answer_editText.setPadding(0, getHeightOfScreen() / 6, 0, 0);
+        answer_editText.setGravity(Gravity.CENTER);
+        answer_editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        answer_editText.setFilters(new InputFilter[]{new InputFilterMinMax("0", "100")});
+        int width = getWidthOfScreen() / 6;
+        int height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+        answer_editText.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        TextView bestTV = new TextView(this);
+        bestTV.setText(worst + " " + best);
+        bestTV.setTextSize(sizeBestWorst);
+        bestTV.setGravity(Gravity.CENTER);
+        bestTV.setPadding(0, 5, 0, 0);
+        TextView subtextTV = new TextView(this);
+        subtextTV.setText(subtext);
+        subtextTV.setGravity(Gravity.CENTER);
+        subtextTV.setTextSize(subtextSize);
+        subtextTV.setPadding(0, 5, 0, 0);
+
+        answerEQ5TF = answer_editText;
+        layout.addView(subtextTV);
+        layout.addView(bestTV);
+        layout.addView(answerEQ5TF);
+    }
+
     private void buildVAS_Question(final int i) {
-        LinearLayout  layout =  findViewById(R.id.lin_layout);
+        LinearLayout layout = findViewById(R.id.lin_layout);
         final Map<Long, Integer> VAS_Colors = getColorsOfVAS();
-
-
 
         TextView best = new TextView(this);
         best.setText(questionnaire.getQuestions().get(i).getBest());
@@ -253,7 +309,7 @@ public class QuestionnaireActivity extends AbstractActivity {
             String text = ans.getAnswerText();
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
-            ans_Button.setPadding(0,0,0,0);
+            ans_Button.setPadding(0, 0, 0, 0);
             ans_Button.setTextSize(20);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
@@ -267,74 +323,70 @@ public class QuestionnaireActivity extends AbstractActivity {
 
                 private void chose(long chosenAnswerID, long questionID) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(),R.color.colorChosenAnswer, null);
+                    int color = ResourcesCompat.getColor(getResources(), R.color.colorChosenAnswer, null);
 
                     if (!questionsAnswers.containsKey(questionID)) {
                         List<Long> tmp_list = new ArrayList<>();
                         tmp_list.add(chosenAnswerID);
-                        questionsAnswers.put(questionID,tmp_list);
+                        questionsAnswers.put(questionID, tmp_list);
                         answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
-                    }
-                    else { //user has changed his answer
+                    } else { //user has changed his answer
                         List<Long> prevAnsList = questionsAnswers.get(questionID);
                         long prevAnswer = prevAnsList.get(0);
                         if (prevAnswer != chosenAnswerID) {
                             prevAnsList.remove(0);
                             prevAnsList.add(chosenAnswerID);
-                            questionsAnswers.put(questionID,prevAnsList);
+                            questionsAnswers.put(questionID, prevAnsList);
                             answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(VAS_Colors.get(prevAnswer));
                             answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
                         }
                     }
                 }
             });
-            answersButtons.get(finalQuestionID).put(finalAnswerID,ans_Button);
+            answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
 
-        TextView worstTV= new TextView(this);
+        TextView worstTV = new TextView(this);
         worstTV.setText(questionnaire.getQuestions().get(i).getWorst());
         setLabelsOfBestWorstConfiguration(worstTV);
         layout.addView(worstTV);
 
 
-
-
     }
 
     /**
-     *
      * @return map of answerID and color of button as integer
      */
     private Map<Long, Integer> getColorsOfVAS() {
-        HashMap<Long,Integer> colors = new HashMap<>();
-        long i=0;
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS0, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS1, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS2, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS3, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS4, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS5, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS6, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS7, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS8, null));
-        colors.put(i++,ResourcesCompat.getColor(getResources(),R.color.colorVAS9, null));
-        colors.put(i,ResourcesCompat.getColor(getResources(),R.color.colorVAS10, null));
+        HashMap<Long, Integer> colors = new HashMap<>();
+        long i = 0;
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS0, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS1, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS2, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS3, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS4, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS5, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS6, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS7, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS8, null));
+        colors.put(i++, ResourcesCompat.getColor(getResources(), R.color.colorVAS9, null));
+        colors.put(i, ResourcesCompat.getColor(getResources(), R.color.colorVAS10, null));
         return colors;
     }
 
     private void buildSingleQuestion(int i) {
-        LinearLayout  layout =  findViewById(R.id.lin_layout);
+        LinearLayout layout = findViewById(R.id.lin_layout);
 
         for (Answer ans : this.questionnaire.getQuestions().get(i).getAnswers()) {
             String text = ans.getAnswerText();
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
-            ans_Button.setPadding(0,0,0,0);
+            ans_Button.setPadding(0, 0, 0, 0);
             ans_Button.setTextSize(20);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
-            final int reg_color = ResourcesCompat.getColor(getResources(),R.color.colorRegularAnswer, null);
+            final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);
             ans_Button.setBackgroundColor(reg_color);
             setButtonConfigurationForSingleAndMulti(ans_Button);
 
@@ -346,36 +398,35 @@ public class QuestionnaireActivity extends AbstractActivity {
 
                 private void chose(long chosenAnswerID, long questionID) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(),R.color.colorChosenAnswer, null);
+                    int color = ResourcesCompat.getColor(getResources(), R.color.colorChosenAnswer, null);
 
                     if (!questionsAnswers.containsKey(questionID)) {
                         List<Long> tmp_list = new ArrayList<>();
                         tmp_list.add(chosenAnswerID);
-                        questionsAnswers.put(questionID,tmp_list);
+                        questionsAnswers.put(questionID, tmp_list);
                         answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
-                    }
-                    else { //user has changed is answer
+                    } else { //user has changed is answer
                         List<Long> prevAnsList = questionsAnswers.get(questionID);
                         long prevAnswer = prevAnsList.get(0);
                         if (prevAnswer != chosenAnswerID) {
                             prevAnsList.remove(0);
                             prevAnsList.add(chosenAnswerID);
-                            questionsAnswers.put(questionID,prevAnsList);
+                            questionsAnswers.put(questionID, prevAnsList);
                             answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(reg_color);
                             answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
                         }
                     }
                 }
             });
-            answersButtons.get(finalQuestionID).put(finalAnswerID,ans_Button);
+            answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
     }
 
     private void buildMultiQuestion(final int i) {
-        LinearLayout  layout =  findViewById(R.id.lin_layout);
+        LinearLayout layout = findViewById(R.id.lin_layout);
 
-        TextView multipleTV= new TextView(this);
+        TextView multipleTV = new TextView(this);
         multipleTV.setText(R.string.multiple_choices);
         setLabelsOfBestWorstConfiguration(multipleTV);
         layout.addView(multipleTV);
@@ -384,11 +435,11 @@ public class QuestionnaireActivity extends AbstractActivity {
             String text = ans.getAnswerText();
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
-            ans_Button.setPadding(0,0,0,0);
+            ans_Button.setPadding(0, 0, 0, 0);
             ans_Button.setTextSize(20);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
-            final int reg_color = ResourcesCompat.getColor(getResources(),R.color.colorRegularAnswer, null);
+            final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);
             ans_Button.setBackgroundColor(reg_color);
             setButtonConfigurationForSingleAndMulti(ans_Button);
 
@@ -400,41 +451,38 @@ public class QuestionnaireActivity extends AbstractActivity {
 
                 private void chose(long chosenAnswerID, long questionID, View v) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(),R.color.colorChosenAnswer, null);
-                    List<Long> alone =  questionnaire.getQuestions().get(i).getAlone();
+                    int color = ResourcesCompat.getColor(getResources(), R.color.colorChosenAnswer, null);
+                    List<Long> alone = questionnaire.getQuestions().get(i).getAlone();
                     if (!questionsAnswers.containsKey(questionID)) { //first answer
                         List<Long> tmp_list = new ArrayList<>();
                         tmp_list.add(chosenAnswerID);
-                        questionsAnswers.put(questionID,tmp_list);
+                        questionsAnswers.put(questionID, tmp_list);
                         answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
-                    }
-                    else { //user has changed his answer or add new answer
+                    } else { //user has changed his answer or add new answer
                         List<Long> prevAnsList = questionsAnswers.get(questionID);
-                        int index_cancelledAnswer = sameAnswer(prevAnsList,chosenAnswerID);
+                        int index_cancelledAnswer = sameAnswer(prevAnsList, chosenAnswerID);
                         if (index_cancelledAnswer == -1) { //new answer
-                            if (AloneIsAlreadyChosen(alone,prevAnsList)) {
-                                Toast.makeText(v.getContext(),R.string.choose_else,Toast.LENGTH_SHORT).show();
+                            if (AloneIsAlreadyChosen(alone, prevAnsList)) {
+                                Toast.makeText(v.getContext(), R.string.choose_else, Toast.LENGTH_SHORT).show();
                                 return;
-                            }
-                            else if (alone.contains(chosenAnswerID)) { //this answer should be chosen only alone
+                            } else if (alone.contains(chosenAnswerID)) { //this answer should be chosen only alone
                                 //remove all the rest
                                 for (long prev : prevAnsList) {
                                     answersButtons.get(finalQuestionID).get(prev).setBackgroundColor(reg_color);
                                 }
                                 prevAnsList.clear();
-                                Toast.makeText(v.getContext(),R.string.this_alone,Toast.LENGTH_SHORT).show();
+                                Toast.makeText(v.getContext(), R.string.this_alone, Toast.LENGTH_SHORT).show();
 
                             }
                             prevAnsList.add(chosenAnswerID);
-                            questionsAnswers.put(questionID,prevAnsList);
+                            questionsAnswers.put(questionID, prevAnsList);
                             answersButtons.get(finalQuestionID).get(chosenAnswerID).setBackgroundColor(color);
-                        }
-                        else { //want to cancel exists answer
+                        } else { //want to cancel exists answer
                             long prevAnswer = prevAnsList.get(index_cancelledAnswer);
                             prevAnsList.remove((index_cancelledAnswer));
                             answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(reg_color);
                             if (prevAnsList.size() != 0) //there is still choices
-                                questionsAnswers.put(questionID,prevAnsList);
+                                questionsAnswers.put(questionID, prevAnsList);
                             else //empty list
                                 questionsAnswers.remove(questionID);
                         }
@@ -442,7 +490,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                     }
                 }
             });
-            answersButtons.get(finalQuestionID).put(finalAnswerID,ans_Button);
+            answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
 
@@ -457,7 +505,7 @@ public class QuestionnaireActivity extends AbstractActivity {
     }
 
     private int sameAnswer(List<Long> prevAnsList, long chosenAnswerID) {
-        for (int i=0; i<prevAnsList.size(); i++) {
+        for (int i = 0; i < prevAnsList.size(); i++) {
             long l = prevAnsList.get(i);
             if (chosenAnswerID == l)
                 return i;
@@ -472,7 +520,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         int px = getPxOfDP(125);
 
         params.width = px;
-        params.height = (int) (px*0.25);
+        params.height = (int) (px * 0.25);
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
     }
@@ -489,6 +537,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
     }
+
     private int getWidthOfScreen() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -507,7 +556,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
         t.setGravity(Gravity.CENTER);
-        t.setPadding(0,0,0,0);
+        t.setPadding(0, 0, 0, 0);
         t.setTextSize(15);
         t.setLayoutParams(params);
     }
@@ -518,6 +567,15 @@ public class QuestionnaireActivity extends AbstractActivity {
                 i,
                 getResources().getDisplayMetrics()
         );
+    }
+
+    private void openQuestionnaireActivity(String questionnaire_name, Long questionnaire_id) {
+        Log.i(TAG, "questionnaire " + questionnaire_name + " has been opened");
+        AppController appController = AppController.getController(this);
+        Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
+        Intent intent = new Intent(this, QuestionnaireActivity.class);
+        intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
+        startActivity(intent);
     }
 
 }

@@ -24,7 +24,7 @@ public class PeriodicNotification extends AbstractNotification{
                 continue;
             boolean answered = HasUserAnswered(questionnaireID.toString(), context);
             if (!answered) {
-                String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) +
+                String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) + " " +
                         Questionnaires.get(questionnaireID) + context.getString(R.string.periodic_questionnaire_notification_suffix);
                 int id = 100;
                 notify(MainActivity.class, context, notification_text, id);

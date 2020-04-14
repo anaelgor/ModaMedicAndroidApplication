@@ -8,7 +8,8 @@ public class Question implements Serializable {
     public enum Type {
         VAS,
         SINGLE,
-        MULTI
+        MULTI,
+        EQ5
     }
 
     private Type type;
@@ -47,6 +48,8 @@ public class Question implements Serializable {
                 return Type.MULTI;
             case("SINGLE"):
                 return Type.SINGLE;
+            case ("EQ5"):
+                return Type.EQ5;
         }
         return null;
     }

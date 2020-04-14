@@ -24,25 +24,34 @@ public abstract class AbstractNotification extends BroadcastReceiver {
    this method should send notifications to user
     */
     public void notify(Class activity_class, Context context, String notification_text, int id) {
-        Intent intent = new Intent(context, activity_class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        Notification notification = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setContentTitle(context.getString(R.string.app_name))
-                    .setContentText(context.getString(R.string.reminder))
-                    .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.sym_action_chat, context.getString(R.string.notification_action), pendingIntent)
-                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                    .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(notification_text))
-                    .build();
-        }
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(context, activity_class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_ONE_SHOT);
 
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-            notificationManager.notify(id, notification);
+                Notification notification = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setContentTitle(context.getString(R.string.app_name))
+                            .setContentText(context.getString(R.string.reminder))
+                            .setContentIntent(pendingIntent)
+                            .addAction(android.R.drawable.sym_action_chat, context.getString(R.string.notification_action), pendingIntent)
+                            .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(notification_text))
+                            .build();
+                }
+
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                notificationManager.notify(id, notification);
+            }
+        });
+
+        t.start();
+
 
     }
 
