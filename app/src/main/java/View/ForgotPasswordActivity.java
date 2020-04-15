@@ -1,20 +1,16 @@
 package View;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
 
 import Controller.AppController;
 import Model.Utils.Constants;
-
-import static Model.Utils.HttpRequests.getContext;
+import View.ViewUtils.BindingValues;
 
 public class ForgotPasswordActivity extends AbstractActivity {
 

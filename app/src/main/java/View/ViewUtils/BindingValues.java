@@ -1,4 +1,4 @@
-package View;
+package View.ViewUtils;
 
 public final class BindingValues {
 

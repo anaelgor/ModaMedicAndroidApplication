@@ -18,9 +18,9 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="318dp"
         android:layout_marginEnd="47dp"
-        android:background="@color/colorButtons"
+        android:background="@drawable/custom_system_button"
         android:backgroundTintMode="src_in"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:onClick="chooseDate"
         android:text="@string/choose_birthday_string"
         android:textAlignment="center"
@@ -36,9 +36,9 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="454dp"
         android:layout_marginEnd="47dp"
-        android:background="@color/colorButtons"
+        android:background="@drawable/custom_system_button"
         android:backgroundTintMode="src_in"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:onClick="answerQuestion"
         android:text="@string/send"
         android:textAlignment="center"
@@ -107,6 +107,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="69dp"
         android:layout_marginTop="277dp"
+        android:gravity="center"
         android:ems="10" />
 
 

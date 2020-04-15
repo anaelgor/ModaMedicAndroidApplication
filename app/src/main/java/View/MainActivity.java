@@ -1,17 +1,12 @@
 package View;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,13 +15,10 @@ import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
 
-import java.util.Calendar;
-
 import Controller.AppController;
-import Model.Notifications.DailyNotification;
-import Model.Notifications.PeriodicNotification;
 import Model.Users.Permissions;
 import Model.Utils.Constants;
+import View.ViewUtils.BindingValues;
 
 /*
 Home page screen
