@@ -1,6 +1,5 @@
 package View;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.annotation.SuppressLint;
@@ -33,6 +32,8 @@ import Controller.AppController;
 import Model.Questionnaires.Answer;
 import Model.Questionnaires.Question;
 import Model.Questionnaires.Questionnaire;
+import View.ViewUtils.BindingValues;
+import View.ViewUtils.InputFilterMinMax;
 
 public class QuestionnaireActivity extends AbstractActivity {
 
@@ -160,6 +161,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                         backButton.setText(R.string.back_to_home_page);
                         backButton.setWidth(20);
                         backButton.setHeight(10);
+                        backButton.setBackground(getDrawable(R.drawable.custom_system_button));
                         backButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -313,6 +315,7 @@ public class QuestionnaireActivity extends AbstractActivity {
             ans_Button.setTextSize(20);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
+            ans_Button.setBackground(getDrawable(R.drawable.custom_button));
             ans_Button.setBackgroundColor(VAS_Colors.get(finalAnswerID));
             setButtonConfiguration(ans_Button);
             ans_Button.setOnClickListener(new View.OnClickListener() {
@@ -323,13 +326,12 @@ public class QuestionnaireActivity extends AbstractActivity {
 
                 private void chose(long chosenAnswerID, long questionID) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(), R.color.colorChosenAnswer, null);
 
                     if (!questionsAnswers.containsKey(questionID)) {
                         List<Long> tmp_list = new ArrayList<>();
                         tmp_list.add(chosenAnswerID);
                         questionsAnswers.put(questionID, tmp_list);
-                        answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
+                        answersButtons.get(finalQuestionID).get(finalAnswerID).setBackground(getDrawable(R.drawable.custom_vas_chosen_button));
                     } else { //user has changed his answer
                         List<Long> prevAnsList = questionsAnswers.get(questionID);
                         long prevAnswer = prevAnsList.get(0);
@@ -338,7 +340,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                             prevAnsList.add(chosenAnswerID);
                             questionsAnswers.put(questionID, prevAnsList);
                             answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(VAS_Colors.get(prevAnswer));
-                            answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
+                            answersButtons.get(finalQuestionID).get(finalAnswerID).setBackground(getDrawable(R.drawable.custom_vas_chosen_button));
                         }
                     }
                 }
@@ -387,7 +389,6 @@ public class QuestionnaireActivity extends AbstractActivity {
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
             final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);
-            ans_Button.setBackgroundColor(reg_color);
             setButtonConfigurationForSingleAndMulti(ans_Button);
 
             ans_Button.setOnClickListener(new View.OnClickListener() {
@@ -398,13 +399,12 @@ public class QuestionnaireActivity extends AbstractActivity {
 
                 private void chose(long chosenAnswerID, long questionID) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(), R.color.colorChosenAnswer, null);
 
                     if (!questionsAnswers.containsKey(questionID)) {
                         List<Long> tmp_list = new ArrayList<>();
                         tmp_list.add(chosenAnswerID);
                         questionsAnswers.put(questionID, tmp_list);
-                        answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
+                        answersButtons.get(finalQuestionID).get(finalAnswerID).setBackground(getDrawable(R.drawable.custom_chosen_button));
                     } else { //user has changed is answer
                         List<Long> prevAnsList = questionsAnswers.get(questionID);
                         long prevAnswer = prevAnsList.get(0);
@@ -412,8 +412,8 @@ public class QuestionnaireActivity extends AbstractActivity {
                             prevAnsList.remove(0);
                             prevAnsList.add(chosenAnswerID);
                             questionsAnswers.put(questionID, prevAnsList);
-                            answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(reg_color);
-                            answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
+                            answersButtons.get(finalQuestionID).get(prevAnswer).setBackground(getDrawable(R.drawable.custom_button));
+                            answersButtons.get(finalQuestionID).get(finalAnswerID).setBackground(getDrawable(R.drawable.custom_chosen_button));
                         }
                     }
                 }
@@ -440,7 +440,6 @@ public class QuestionnaireActivity extends AbstractActivity {
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
             final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);
-            ans_Button.setBackgroundColor(reg_color);
             setButtonConfigurationForSingleAndMulti(ans_Button);
 
             ans_Button.setOnClickListener(new View.OnClickListener() {
@@ -457,7 +456,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                         List<Long> tmp_list = new ArrayList<>();
                         tmp_list.add(chosenAnswerID);
                         questionsAnswers.put(questionID, tmp_list);
-                        answersButtons.get(finalQuestionID).get(finalAnswerID).setBackgroundColor(color);
+                        answersButtons.get(finalQuestionID).get(finalAnswerID).setBackground(getDrawable(R.drawable.custom_chosen_button));
                     } else { //user has changed his answer or add new answer
                         List<Long> prevAnsList = questionsAnswers.get(questionID);
                         int index_cancelledAnswer = sameAnswer(prevAnsList, chosenAnswerID);
@@ -468,7 +467,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                             } else if (alone.contains(chosenAnswerID)) { //this answer should be chosen only alone
                                 //remove all the rest
                                 for (long prev : prevAnsList) {
-                                    answersButtons.get(finalQuestionID).get(prev).setBackgroundColor(reg_color);
+                                    answersButtons.get(finalQuestionID).get(prev).setBackground(getDrawable(R.drawable.custom_button));
                                 }
                                 prevAnsList.clear();
                                 Toast.makeText(v.getContext(), R.string.this_alone, Toast.LENGTH_SHORT).show();
@@ -476,11 +475,11 @@ public class QuestionnaireActivity extends AbstractActivity {
                             }
                             prevAnsList.add(chosenAnswerID);
                             questionsAnswers.put(questionID, prevAnsList);
-                            answersButtons.get(finalQuestionID).get(chosenAnswerID).setBackgroundColor(color);
+                            answersButtons.get(finalQuestionID).get(chosenAnswerID).setBackground(getDrawable(R.drawable.custom_chosen_button));
                         } else { //want to cancel exists answer
                             long prevAnswer = prevAnsList.get(index_cancelledAnswer);
                             prevAnsList.remove((index_cancelledAnswer));
-                            answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(reg_color);
+                            answersButtons.get(finalQuestionID).get(prevAnswer).setBackground(getDrawable(R.drawable.custom_button));
                             if (prevAnsList.size() != 0) //there is still choices
                                 questionsAnswers.put(questionID, prevAnsList);
                             else //empty list
@@ -495,6 +494,8 @@ public class QuestionnaireActivity extends AbstractActivity {
         }
 
     }
+
+
 
     private boolean AloneIsAlreadyChosen(List<Long> alone, List<Long> prevAnsList) {
         for (long a : alone) {
@@ -536,6 +537,8 @@ public class QuestionnaireActivity extends AbstractActivity {
         b.setWidth(width);
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
+        b.setBackground(getDrawable(R.drawable.custom_button));
+
     }
 
     private int getWidthOfScreen() {

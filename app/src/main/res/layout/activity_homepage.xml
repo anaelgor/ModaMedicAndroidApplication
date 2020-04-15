@@ -25,8 +25,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="87dp"
-        android:layout_marginBottom="53dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="122dp"
+        android:layout_marginBottom="17dp"
+        android:background="@drawable/custom_system_button"
+        android:gravity="center"
         android:onClick="changePasswordFunction"
         android:text="שינוי סיסמא" />
 
@@ -34,22 +37,22 @@
         android:id="@+id/bt_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/red_circle"
-        android:textColor="@color/colorWhite"
         android:layout_alignParentEnd="true"
-        android:gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="300dp"
-        android:layout_marginBottom="53dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/red_circle"
+        android:gravity="center"
         android:onClick="showBTInfo"
-        android:text="@string/short_watch_off"/>
+        android:text="@string/short_watch_off"
+        android:textColor="@color/colorWhite" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="392dp"
+        android:layout_height="420dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="106dp">
+        android:layout_marginBottom="78dp">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -62,7 +65,7 @@
             <LinearLayout
                 android:id="@+id/lin_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="-3dp"
                 android:layout_marginBottom="-8dp"
                 android:gravity="center"
@@ -78,8 +81,8 @@
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="97dp"
-            android:layout_marginEnd="-2dp"
+            android:layout_marginTop="92dp"
+            android:layout_marginEnd="-5dp"
             android:fontFamily="@font/acme"
             android:gravity="center"
             android:textSize="24sp" />

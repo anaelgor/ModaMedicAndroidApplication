@@ -3,7 +3,6 @@ package View;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import Controller.AppController;
 import Model.Questionnaires.Questionnaire;
 import Model.Utils.Constants;
+import View.ViewUtils.BindingValues;
 
 /*
 Home page screen
@@ -75,7 +75,7 @@ public class HomePageActivity extends AbstractActivity {
             throw new NullPointerException("can't find username");
         }
         TextView good_eve = findViewById(R.id.good_evening_textView);
-        good_eve.setText(String.format("%s %s", this.getString(R.string.hello), name));
+        good_eve.setText(String.format("%s %s, %s", this.getString(R.string.hello), name, getString(R.string.choose_questionnaire)));
         createAllButtons();
         updateBTState();
 
@@ -92,19 +92,6 @@ public class HomePageActivity extends AbstractActivity {
 
     private void createAllButtons() {
         LinearLayout  layout =  findViewById(R.id.lin_layout);
-
-//
-//
-//        Button daily_questionnaire_button = new Button(this);
-//        daily_questionnaire_button.setText(this.getString(R.string.daily_questionnaire));
-//        setButtonConfiguration(daily_questionnaire_button);
-//        daily_questionnaire_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openQuestionnaireActivity("daily");
-//            }
-//        });
-//        layout.addView(daily_questionnaire_button);
 
         Button[] questionnaire_buttons = new Button[questionnaires.size()];
         int i=0;
@@ -132,6 +119,7 @@ public class HomePageActivity extends AbstractActivity {
         params.setMargins(10,10, 10, 10);
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
+        b.setBackground(getDrawable(R.drawable.custom_button));
     }
 
     private void openQuestionnaireActivity(String questionnaire_name, Long questionnaire_id) {

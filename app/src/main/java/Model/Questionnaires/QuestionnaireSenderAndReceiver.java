@@ -62,6 +62,7 @@ public class QuestionnaireSenderAndReceiver {
         JSONObject jsonObject = getQuestionnaireFromDB(Urls.urlGetQuestionnaireByID+questionnaire_id, httpRequests);
 
         try {
+            assert jsonObject != null;
             Log.i(TAG, jsonObject.toString());
             jsonObject = (JSONObject) jsonObject.get("data");
         }

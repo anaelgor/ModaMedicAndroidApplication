@@ -1,4 +1,4 @@
-package View;
+package View.ViewUtils;
 
 import android.text.InputFilter;
 import android.text.Spanned;

@@ -15,7 +15,6 @@ public class LocationBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         Weather weather = new Weather(this.locationManager, context);

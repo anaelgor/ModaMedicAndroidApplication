@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +22,7 @@ import java.util.TimeZone;
 
 import Controller.AppController;
 import Model.Exceptions.WrongAnswerException;
+import View.ViewUtils.BindingValues;
 
 public class AnswerVerificationQuestionActivity extends AbstractActivity {
 
@@ -118,9 +120,25 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
                 android.R.style.Widget_Material,
                 mDateSetListener,
                 year,month,day);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
+        dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
+        dialog.getWindow().setLayout(getWidthOfScreen(),getHeightOfScreen());
         dialog.show();
     }
+
+    private int getWidthOfScreen() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        return width;
+    }
+
+    private int getHeightOfScreen() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
+    }
+
 
     private void ShowWrongEmailAlert(int message) {
         new AlertDialog.Builder(AnswerVerificationQuestionActivity.this)
