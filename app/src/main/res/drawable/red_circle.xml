@@ -5,6 +5,7 @@
             <solid android:color="@color/colorBToff" />
             <size android:width="50dp" android:height="50dp" />
         </shape>
+        <bitmap android:src="@drawable/watch" />
     </item>
 
 </selector>

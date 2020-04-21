@@ -17,7 +17,7 @@ public class DailyNotification extends AbstractNotification {
         if (!answered) {
             String notification_text = context.getString(R.string.daily_questionnaire_notification);
             int id = 101;
-            notify(MainActivity.class, context,notification_text,id);
+            notify(MainActivity.class, context,notification_text,id, 0);
             System.out.println("Daily Questionnaire notification");
         }
 

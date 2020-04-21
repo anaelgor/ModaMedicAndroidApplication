@@ -26,17 +26,31 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginEnd="122dp"
+        android:layout_marginEnd="148dp"
         android:layout_marginBottom="17dp"
         android:background="@drawable/custom_system_button"
         android:gravity="center"
         android:onClick="changePasswordFunction"
-        android:text="שינוי סיסמא" />
+        android:text="@string/change_password" />
 
-    <TextView
-        android:id="@+id/bt_state"
+    <Button
+        android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/custom_system_button"
+        android:gravity="center"
+        android:onClick="logoutFunction"
+        android:text="@string/logout" />
+
+    <ImageView
+        android:id="@+id/bt_state"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="300dp"
@@ -44,7 +58,7 @@
         android:background="@drawable/red_circle"
         android:gravity="center"
         android:onClick="showBTInfo"
-        android:text="@string/short_watch_off"
+        android:src="@drawable/watch"
         android:textColor="@color/colorWhite" />
 
     <RelativeLayout

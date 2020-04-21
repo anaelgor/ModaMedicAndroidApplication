@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,7 +99,7 @@ public class HomePageActivity extends AbstractActivity {
         for (Map.Entry<Long,String> entry : questionnaires.entrySet()) {
                 questionnaire_buttons[i] = new Button(this);
                 final Long QuestionnaireID = entry.getKey();
-                String text = entry.getValue();
+                String text = getString(R.string.questionnaire) + " " + entry.getValue();
                 questionnaire_buttons[i].setText(text);
                 questionnaire_buttons[i].setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -158,21 +159,31 @@ public class HomePageActivity extends AbstractActivity {
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                TextView bt_state = findViewById(R.id.bt_state);
+                ImageView bt_state = findViewById(R.id.bt_state);
                 if (BAND_CONNECTED) {
                     Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Connected");
                     bt_state.setBackgroundResource(R.drawable.green_circle);
-                    bt_state.setText(getString(R.string.short_watch_on));
                 }
                 else {
                     Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Disconnected");
 
                     bt_state.setBackgroundResource(R.drawable.red_circle);
-                    bt_state.setText(getString(R.string.short_watch_off));
-                }            }
+
+                }
+            }
         }, 0, 5, TimeUnit.SECONDS);
 
     }
 
 
+    public void logoutFunction(View view) {
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName, Context.MODE_PRIVATE);
+        sharedPref.edit().putBoolean(Constants.LOGGED_USER, false).apply();
+        openMainActivity();
+    }
+
+    private void openMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

@@ -11,10 +11,14 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.modamedicandroidapplication.R;
 
+import Controller.AppController;
 import Model.Questionnaires.AnswersManager;
+import Model.Questionnaires.Questionnaire;
 import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
 import Model.Utils.PropertiesManager;
+import View.QuestionnaireActivity;
+import View.ViewUtils.BindingValues;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
 
@@ -23,12 +27,12 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     /*
    this method should send notifications to user
     */
-    public void notify(Class activity_class, Context context, String notification_text, int id) {
+    public void notify(Class activity_class, Context context, String notification_text, int id, long questionnaire_id) {
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(context, activity_class);
+                Intent intent = setQuestionnaireActivity(questionnaire_id,context);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -58,6 +62,14 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     protected boolean HasUserAnswered(String questionnaire_id, Context context) {
         String days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
          return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
+    }
+
+    private Intent setQuestionnaireActivity(Long questionnaire_id, Context context) {
+        AppController appController = AppController.getController(null);
+        Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
+        Intent intent = new Intent(context, QuestionnaireActivity.class);
+        intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
+        return intent;
     }
 
 

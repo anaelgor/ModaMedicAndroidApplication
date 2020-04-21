@@ -52,6 +52,8 @@
     <string name="short_watch_off">OFF</string>
     <string name="betweenZeroTo100">דרג בין 0 ל-100</string>
     <string name="choose_questionnaire">בחר שאלון</string>
+    <string name="logout">התנתק</string>
+    <string name="change_password">שינוי סיסמה</string>
 
 
 </resources>
