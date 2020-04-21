@@ -33,10 +33,10 @@
         android:onClick="changePasswordFunction"
         android:text="שינוי סיסמא" />
 
-    <TextView
+    <ImageView
         android:id="@+id/bt_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="300dp"
@@ -44,7 +44,7 @@
         android:background="@drawable/red_circle"
         android:gravity="center"
         android:onClick="showBTInfo"
-        android:text="@string/short_watch_off"
+        android:src="@drawable/watch"
         android:textColor="@color/colorWhite" />
 
     <RelativeLayout

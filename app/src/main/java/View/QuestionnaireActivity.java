@@ -1,12 +1,10 @@
 package View;
 
-import androidx.core.content.res.ResourcesCompat;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -14,11 +12,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.modamedicandroidapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,7 +33,6 @@ import Model.Questionnaires.Answer;
 import Model.Questionnaires.Question;
 import Model.Questionnaires.Questionnaire;
 import View.ViewUtils.BindingValues;
-import View.ViewUtils.InputFilterMinMax;
 
 public class QuestionnaireActivity extends AbstractActivity {
 
@@ -42,7 +41,9 @@ public class QuestionnaireActivity extends AbstractActivity {
     long currentQuestionID;
     Map<Long, List<Long>> questionsAnswers; //key: questionID, value: list of answerID
     Map<Long, Map<Long, Button>> answersButtons; //key:: answerID, value: answer Button
-    private EditText answerEQ5TF;
+    private SeekBar answerEQ5TF = null;
+    private boolean eq5Answered = false;
+    private TextView eq5result = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,11 +125,12 @@ public class QuestionnaireActivity extends AbstractActivity {
                 boolean isEq5 = questionnaire.getQuestionaireID() == 6 && answerEQ5TF != null;
                 if (isEq5) {
                     //special section for EQ5 special question
-                    String answerNumber = answerEQ5TF.getText().toString();
-                    if (answerNumber.equals("")) {
+                    String answerNumber = String.valueOf(answerEQ5TF.getProgress());
+                    if (!eq5Answered) {
                         Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
                         return;
                     } else {
+                        eq5Answered = false;
                         List<Long> answer = new ArrayList<>();
                         answer.add(Long.parseLong(answerNumber));
                         questionsAnswers.put(Long.parseLong("0"), answer);
@@ -272,14 +274,37 @@ public class QuestionnaireActivity extends AbstractActivity {
         String worst = this.questionnaire.getQuestions().get(i).getWorst();
         String best = this.questionnaire.getQuestions().get(i).getBest();
         String subtext = getString(R.string.betweenZeroTo100);
-        EditText answer_editText = new EditText(this);
-        answer_editText.setPadding(0, getHeightOfScreen() / 6, 0, 0);
-        answer_editText.setGravity(Gravity.CENTER);
-        answer_editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        answer_editText.setFilters(new InputFilter[]{new InputFilterMinMax("0", "100")});
-        int width = getWidthOfScreen() / 6;
+        SeekBar seekBar = new SeekBar(this);
+        seekBar.setPadding(0, getHeightOfScreen() / 6, 0, 0);
+        seekBar.setMax(100);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            seekBar.setMin(0);
+        }
+        int width = (int) (0.75 * getWidthOfScreen());
         int height = RelativeLayout.LayoutParams.WRAP_CONTENT;
-        answer_editText.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        seekBar.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        seekBar.setProgress(1);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    func(progress);
+            }
+
+            private void func(int progress) {
+                eq5Answered = true;
+                eq5result.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //do nothing
+            }
+        });
         TextView bestTV = new TextView(this);
         bestTV.setText(worst + " " + best);
         bestTV.setTextSize(sizeBestWorst);
@@ -290,11 +315,32 @@ public class QuestionnaireActivity extends AbstractActivity {
         subtextTV.setGravity(Gravity.CENTER);
         subtextTV.setTextSize(subtextSize);
         subtextTV.setPadding(0, 5, 0, 0);
+        TextView max = new TextView(this);
+        max.setGravity(Gravity.END);
+        max.setText("100");
+        TextView min = new TextView(this);
+        min.setGravity(Gravity.START);
+        min.setText("0");
+        min.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.5));
+        max.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.5));
 
-        answerEQ5TF = answer_editText;
+        eq5result = new TextView(this);
+        eq5result.setGravity(Gravity.CENTER);
+        eq5result.setText("0");
+        eq5result.setPadding(0, 20, 0, 0);
+
+        answerEQ5TF = seekBar;
         layout.addView(subtextTV);
         layout.addView(bestTV);
         layout.addView(answerEQ5TF);
+        layout.addView(eq5result);
+        LinearLayout rl = new LinearLayout(this);
+        rl.setOrientation(LinearLayout.HORIZONTAL);
+        rl.addView(min);
+        rl.addView(max);
+        layout.addView(rl);
+
+
     }
 
     private void buildVAS_Question(final int i) {
