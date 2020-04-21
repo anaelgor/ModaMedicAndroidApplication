@@ -62,6 +62,8 @@ public class QuestionnaireActivity extends AbstractActivity {
         TextView title = findViewById(R.id.questionnaire_title);
         title.setText(this.getString(R.string.questionnaire) + " " + questionnaire.getTitle());
         title.setTextSize(20);
+        title.setBackground(getDrawable(R.drawable.custom_chosen_button));
+
     }
 
     private void showQuestion(final long ii) {

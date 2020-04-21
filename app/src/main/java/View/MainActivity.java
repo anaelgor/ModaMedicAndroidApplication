@@ -27,6 +27,7 @@ public class MainActivity extends AbstractActivity {
 
     private String username;
     private String password;
+    SharedPreferences sharedPref;
 
     public Activity getContext() {
         return this;
@@ -36,13 +37,24 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setHideKeyBoard();
-        askForPermissions();
-        EditText username_textfield = findViewById(R.id.username_textfield);
-        String username = getUserName();
-        if (!username.equals("not exists"))
-            username_textfield.setText(username);
+        sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName, Context.MODE_PRIVATE);
+        if (loggedUser()) {
+            openHomePage();
+        }
+        else {
+            sharedPref.edit().putBoolean(Constants.LOGGED_USER, false).apply();
+            setContentView(R.layout.activity_main);
+            setHideKeyBoard();
+            askForPermissions();
+            EditText username_textfield = findViewById(R.id.username_textfield);
+            String username = getUserName();
+            if (!username.equals("not exists"))
+                username_textfield.setText(username);
+        }
+    }
+
+    private boolean loggedUser() {
+        return sharedPref.getBoolean(Constants.LOGGED_USER,false);
     }
 
     private String getUserName() {
@@ -100,14 +112,19 @@ public class MainActivity extends AbstractActivity {
         AppController controller = AppController.getController(this);
         boolean logged = controller.login(username, password, this);
         if (logged) {
-            Intent intent = new Intent(this, HomePageActivity.class);
-            intent.putExtra(BindingValues.LOGGED_USERNAME, username);
-            startActivity(intent);
+            openHomePage();
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(Constants.LOGGED_USER,true).apply();
         } else {
             Log.i("Main Page", "wrong password or user name for username: " + username);
             WrongDetailsMessage();
-
         }
+    }
+
+    private void openHomePage() {
+        Intent intent = new Intent(this, HomePageActivity.class);
+        intent.putExtra(BindingValues.LOGGED_USERNAME, username);
+        startActivity(intent);
     }
 
     public void forgetPasswordFunction(View view) {

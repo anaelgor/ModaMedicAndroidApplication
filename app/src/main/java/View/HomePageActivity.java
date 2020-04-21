@@ -176,4 +176,14 @@ public class HomePageActivity extends AbstractActivity {
     }
 
 
+    public void logoutFunction(View view) {
+        SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName, Context.MODE_PRIVATE);
+        sharedPref.edit().putBoolean(Constants.LOGGED_USER, false).apply();
+        openMainActivity();
+    }
+
+    private void openMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

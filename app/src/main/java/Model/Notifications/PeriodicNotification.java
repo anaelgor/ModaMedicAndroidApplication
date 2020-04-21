@@ -27,7 +27,7 @@ public class PeriodicNotification extends AbstractNotification{
                 String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) + " " +
                         Questionnaires.get(questionnaireID) + context.getString(R.string.periodic_questionnaire_notification_suffix);
                 int id = 100;
-                notify(MainActivity.class, context, notification_text, id);
+                notify(MainActivity.class, context, notification_text, id,questionnaireID);
                 System.out.println("Periodically for questionnaire " + Questionnaires.get(questionnaireID));
                 try {
                     Thread.sleep(5000); //for avoid android block our app from posting notifications
