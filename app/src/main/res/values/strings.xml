@@ -57,7 +57,27 @@
     <string name="basicMedicine">לדוגמא ACAMOL, OPTALGIN, ARCOXIA, BREXIN, ETOPAN</string>
     <string name="advancedMedicine">לדוגמא ZALDIAR, TRAMADEX</string>
     <string name="narcoticMedicine">לדוגמא OXYCONTIN, PERCOCET, FENTANYL, קנביס רפואי</string>
-
+    <string name="register">הירשם</string>
+    <string name="register_title">הרשמה</string>
+    <string name="phoneNumber">מספר פלאפון</string>
+    <string name="radio_male">זכר</string>
+    <string name="radio_female">נקבה</string>
+    <string name="gender">מין</string>
+    <string name="radio_smoker">מעשן</string>
+    <string name="radio_nonSmoker">לא מעשן</string>
+    <string name="smoke">עישון</string>
+    <string name="radio_urgent_surgery">ניתוח דחוף</string>
+    <string name="radio_planned_surgery">ניתוח מתוכנן</string>
+    <string name="weight">משקל בקילוגרמים</string>
+    <string name="height">גובה בסנטימטרים</string>
+    <string-array name="education_spinner_choices">
+        <item>השכלה אקדמאית</item>
+        <item>השכלה תיכונית</item>
+        <item>10–12 שנות לימוד</item>
+        <item>6–9 שנות לימוד</item>
+        <item>5 שנות לימוד או פחות</item>
+        <item>לא מעוניין לענות</item>
+    </string-array>
 
 
 </resources>
