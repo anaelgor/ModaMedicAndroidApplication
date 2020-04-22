@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +48,7 @@ public class QuestionnaireActivity extends AbstractActivity {
     private SeekBar answerEQ5TF = null;
     private boolean eq5Answered = false;
     private TextView eq5result = null;
+    private Map<Long, String> medicineInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -480,11 +485,30 @@ public class QuestionnaireActivity extends AbstractActivity {
         layout.addView(multipleTV);
 
         for (Answer ans : this.questionnaire.getQuestions().get(i).getAnswers()) {
+
             String text = ans.getAnswerText();
             Button ans_Button = new Button(this);
-            ans_Button.setText(text);
+            if (this.questionnaire.getQuestionaireID()==0 && i==1 && ans.getAnswerID() != 0) { //medicine question on Daily Questionnaire and not first answer
+                if (medicineInfo == null) {
+                    medicineInfo = new HashMap<>();
+                    medicineInfo.put((long) 1,getString(R.string.basicMedicine));
+                    medicineInfo.put((long) 2,getString(R.string.advancedMedicine));
+                    medicineInfo.put((long) 3,getString(R.string.narcoticMedicine));
+                }
+                SpannableString ans_text = new SpannableString(text);
+                ans_text.setSpan(new AbsoluteSizeSpan(60),0,text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                String description = medicineInfo.get(ans.getAnswerID());
+                SpannableString description_text = new SpannableString(description);
+                description_text.setSpan(new AbsoluteSizeSpan(30),0,description.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                CharSequence finalText = TextUtils.concat(ans_text, " ", description_text);
+                ans_Button.setText(finalText);
+            }
+            else {
+                ans_Button.setText(text);
+                ans_Button.setTextSize(20);
+            }
             ans_Button.setPadding(0, 0, 0, 0);
-            ans_Button.setTextSize(20);
+
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
             final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);

@@ -54,6 +54,10 @@
     <string name="choose_questionnaire">בחר שאלון</string>
     <string name="logout">התנתק</string>
     <string name="change_password">שינוי סיסמה</string>
+    <string name="basicMedicine">לדוגמא ACAMOL, OPTALGIN, ARCOXIA, BREXIN, ETOPAN</string>
+    <string name="advancedMedicine">לדוגמא ZALDIAR, TRAMADEX</string>
+    <string name="narcoticMedicine">לדוגמא OXYCONTIN, PERCOCET, FENTANYL, קנביס רפואי</string>
+
 
 
 </resources>
