@@ -85,6 +85,11 @@ public class MainActivity extends AbstractActivity {
         password_textfield.setOnFocusChangeListener(ofcListener);
     }
 
+    public void registerFunction(View view) {
+        Intent intent = new Intent(this, RegisterNewUserActivity.class);
+        startActivity(intent);
+    }
+
     private class MyFocusChangeListener implements View.OnFocusChangeListener {
 
         public void onFocusChange(View v, boolean hasFocus) {

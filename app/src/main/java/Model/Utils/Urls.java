@@ -21,4 +21,7 @@ public final class Urls {
     public static final String urlOfCheckVerificationAnswer = "users/checkVerification";
     public static final String urlOfSetNewPassword = "users/passwordChangeCheck/changePassword";
     public static final String urlOfGetSpecialToken = "auth/usersAll/askChangePassword";
+    public static final String urlOfGetAllVerificationQuestions = "users/getVerifications";
+    public static final String urlOfGetAllQuestionnaires = "questionnaires/all";
+    public static final String urlOfRegister = "users/register";
 }

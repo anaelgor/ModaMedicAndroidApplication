@@ -20,7 +20,7 @@ public class SetNewPasswordForLoggedInUserActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.set_new_password_for_logged_in_user_activity);
+        setContentView(R.layout.activity_set_new_password_for_logged_in_user);
         appController = AppController.getController(this);
         boolean flag  = appController.askForChangePassword();
         if (!flag)

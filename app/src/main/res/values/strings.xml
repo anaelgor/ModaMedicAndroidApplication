@@ -24,7 +24,7 @@
     <string name="forgot_password">שכחתי סיסמא</string>
     <string name="reminder">תזכורת</string>
     <string name="back_to_home_page">חזור לדף הבית</string>
-    <string name="answer_verification_question">ענה על שאלת האימות</string>
+    <string name="answer_verification_question">תשובה לשאלת האימות</string>
     <string name="birthday_string">תאריך לידה</string>
     <string name="choose_birthday_string">בחר תאריך לידה</string>
     <string name="answer">הקלד כאן את תשובתך</string>
@@ -44,6 +44,7 @@
     <string name="succes">אישור</string>
     <string name="specialTokenInvalid">עברו חמש דקות, אז חזור אחורה, ענה על שאלה האימות ונסה פעם נוספת.</string>
     <string name="gohome">חזור לדף הבית</string>
+    <string name="movehome">עבור לדף הבית</string>
     <string name="old_password">סיסמא נוכחית</string>
     <string name="something_went_wrong_please_log_in">משהו בלתי צפוי קרה. התחבר למערכת מחדש ונסה שוב</string>
     <string name="watch_on">צמיד מחובר</string>
@@ -57,7 +58,54 @@
     <string name="basicMedicine">לדוגמא ACAMOL, OPTALGIN, ARCOXIA, BREXIN, ETOPAN</string>
     <string name="advancedMedicine">לדוגמא ZALDIAR, TRAMADEX</string>
     <string name="narcoticMedicine">לדוגמא OXYCONTIN, PERCOCET, FENTANYL, קנביס רפואי</string>
-
+    <string name="register">הירשם</string>
+    <string name="register_title">הרשמה</string>
+    <string name="phoneNumber">מספר פלאפון</string>
+    <string name="radio_male">זכר</string>
+    <string name="radio_female">נקבה</string>
+    <string name="gender">מין</string>
+    <string name="radio_smoker">מעשן</string>
+    <string name="radio_nonSmoker">לא מעשן</string>
+    <string name="smoke">עישון</string>
+    <string name="radio_urgent_surgery">ניתוח דחוף</string>
+    <string name="radio_planned_surgery">ניתוח מתוכנן</string>
+    <string name="weight">משקל בקילוגרמים</string>
+    <string name="height">גובה בסנטימטרים</string>
+    <string-array name="education_spinner_choices">
+        <item>השכלה אקדמאית</item>
+        <item>השכלה תיכונית</item>
+        <item>10–12 שנות לימוד</item>
+        <item>6–9 שנות לימוד</item>
+        <item>5 שנות לימוד או פחות</item>
+        <item>לא מעוניין לענות</item>
+    </string-array>
+    <string name="FixAndTryAgain">תקן ונסה שוב</string>
+    <string name="fill_email_fields">אנא מלא כתובת אימייל ונסה שוב</string>
+    <string name="fill_password">אנא מלא סיסמא ונסה שוב</string>
+    <string name="fill_weight">אנא מלא משקל ונסה שוב</string>
+    <string name="fill_height">אנא מלא גובה ונסה שוב</string>
+    <string name="fill_smoke">אנא בחר אפשרות בנוגע להרגלי עישון ונסה שוב</string>
+    <string name="fill_gender">אנא בחר מין ונסה שוב</string>
+    <string name="fill_surgery">אנא בחר אפשרות בנוגע לדחיפות הניתוח ונסה שוב</string>
+    <string name="fill_education">אנא בחר באפשרות בנוגע להשכלה ונסה שוב</string>
+    <string name="fill_date">אנא בחר תאריך לידה ונסה שוב</string>
+    <string name="fill_registrationCode">אנא מלא קוד הרשמה מבית החולים סורוקה. אם אין לך כזה, פנה לרופא שלך</string>
+    <string name="error_registrationCode">קוד הרשמה לא תקין, פנה לרופא שלך לצורך קבלת הקוד</string>
+    <string name="error_taken_email">כתובת אימייל זו כבר רשומה במערכת, האם אתה כבר רשום?</string>
+    <string name="fill_phone">אנא מלא מספר פלאפון ונסה שוב</string>
+    <string name="specialCode">קוד הרשמה מבית החולים סורוקה</string>
+    <string name="fill_verification_answer">אנא מלא תשובה לשאלת אימות</string>
+    <string name="choose_verification_question">בחר שאלת אימות</string>
+    <string name="choose_your_questionnaires">בחר שאלונים רפואיים </string>
+    <string name="choose_surgery_day_string">בחר תאריך ניתוח</string>
+    <string name="fill_surgery_date">אנא מלא תאריך ניתוח</string>
+    <string name="choose">בחר</string>
+    <string name="firstName">שם פרטי</string>
+    <string name="lastName">שם משפחה</string>
+    <string name="fill_firstName">אנא מלא שם פרטי</string>
+    <string name="fill_lastName">אנא מלא שם משפחה</string>
+    <string name="choose_at_least_one_questionnaire">אנא בחר לפחות שאלון רפואי אחד</string>
+    <string name="succesfull_registarion">ההרשמה בוצעה בהצלחה</string>
 
 
 </resources>

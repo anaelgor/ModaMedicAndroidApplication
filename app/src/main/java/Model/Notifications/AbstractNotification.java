@@ -27,7 +27,7 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     /*
    this method should send notifications to user
     */
-    public void notify(Class activity_class, Context context, String notification_text, int id, long questionnaire_id) {
+    public void notify(Context context, String notification_text, int id, long questionnaire_id) {
 
         Thread t = new Thread(new Runnable() {
             @Override
