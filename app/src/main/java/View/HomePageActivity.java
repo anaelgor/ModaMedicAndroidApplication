@@ -42,6 +42,7 @@ public class HomePageActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        saveLastLogin();
         super.onCreate(savedInstanceState);
         username = getUserName();
         setContentView(R.layout.activity_homepage);
@@ -79,6 +80,13 @@ public class HomePageActivity extends AbstractActivity {
         good_eve.setText(String.format("%s %s, %s", this.getString(R.string.hello), name, getString(R.string.choose_questionnaire)));
         createAllButtons();
         updateBTState();
+
+    }
+
+    private void saveLastLogin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        long lastLogin = System.currentTimeMillis();
+        sharedPreferences.edit().putLong("lastLogin",lastLogin).apply();
 
     }
 
@@ -171,7 +179,7 @@ public class HomePageActivity extends AbstractActivity {
 
                 }
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 60, TimeUnit.SECONDS);
 
     }
 

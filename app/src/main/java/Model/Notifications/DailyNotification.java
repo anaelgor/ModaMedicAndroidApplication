@@ -2,9 +2,13 @@ package Model.Notifications;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.example.modamedicandroidapplication.R;
 
+import java.util.Calendar;
+
+import Model.Utils.Constants;
 import View.MainActivity;
 
 public class DailyNotification extends AbstractNotification {
@@ -12,6 +16,13 @@ public class DailyNotification extends AbstractNotification {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        SharedPreferences sharedPref = context.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+        long lastLogin = sharedPref.getLong("lastLogin",0);
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        if (lastLogin > currentTime -(60 * 60 * 1000))
+            return;
+
+
         boolean answered = HasUserAnswered("0", context);
         if (!answered) {
             String notification_text = context.getString(R.string.daily_questionnaire_notification);

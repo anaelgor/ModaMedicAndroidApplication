@@ -2,12 +2,15 @@ package Model.Notifications;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.example.modamedicandroidapplication.R;
 
+import java.util.Calendar;
 import java.util.Map;
 
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
+import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
 import View.MainActivity;
 
@@ -17,6 +20,13 @@ public class PeriodicNotification extends AbstractNotification{
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        SharedPreferences sharedPref = context.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
+        long lastLogin = sharedPref.getLong("lastLogin",0);
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        if (lastLogin > currentTime -(60 * 60 * 1000))
+            return;
+
+
         Map<Long,String> Questionnaires = getAllQuestionairesOfUser(context);
         for (Long questionnaireID: Questionnaires.keySet()) {
             if (questionnaireID == 0)
