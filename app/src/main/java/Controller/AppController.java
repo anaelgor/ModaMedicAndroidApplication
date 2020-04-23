@@ -18,6 +18,8 @@ import Model.Notifications.NotificationsManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Users.Login;
+import Model.Users.Registration;
+import Model.Users.User;
 import Model.Utils.HttpRequests;
 
 public class AppController {
@@ -96,5 +98,13 @@ public class AppController {
 
     public boolean askForChangePassword() {
         return Login.askForChangePassword(httpRequests);
+    }
+
+    public String register(User user) {
+        return Registration.register(user,httpRequests);
+    }
+
+    public Map<Integer,String> getAllVerificationQuestions() {
+        return Registration.getAllVerificationQuestions(httpRequests);
     }
 }

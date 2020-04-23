@@ -1,20 +1,27 @@
 package Model.Users;
 
+import java.util.List;
+
 public class User {
 
     private String email;
     private String password;
     private String phoneNumber;
-    private Gender gender;
-    private boolean smoke;
+    private String gender;
+    private String smoke;
     private String surgeryType;
     private String education;
     private int weight;
     private int height;
     private String bmi;
     private long birthday;
+    private String code;
+    private int verificationQuestion;
+    private String verificationAnswer;
+    private long surgeryDate;
+    private List<String> questionnairesID;
 
-    public User(String email, String password, String phoneNumber, Gender gender, boolean smoke, String surgeryType, String education, int weight, int height, long birthday) {
+    public User(String email, String password, String phoneNumber, String gender, String smoke, String surgeryType, String education, int weight, int height, long birthday, String code, int verificationQuestion, String verificationAnswer, long surgeryDate, List<String> questionnairesIDS){
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
@@ -26,6 +33,11 @@ public class User {
         this.height = height;
         this.birthday = birthday;
         this.bmi = calculateBMI(height,weight);
+        this.code = code;
+        this.verificationAnswer = verificationAnswer;
+        this.verificationQuestion = verificationQuestion;
+        this.questionnairesID = questionnairesIDS;
+        this.surgeryDate = surgeryDate;
     }
 
     private String calculateBMI(int height, int weight) {
@@ -56,19 +68,19 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public boolean isSmoke() {
+    public String getSmoke() {
         return smoke;
     }
 
-    public void setSmoke(boolean smoke) {
+    public void setSmoke(String smoke) {
         this.smoke = smoke;
     }
 
@@ -114,6 +126,46 @@ public class User {
 
     public void setBirthday(long birthday) {
         this.birthday = birthday;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getVerificationQuestion() {
+        return verificationQuestion;
+    }
+
+    public void setVerificationQuestion(int verificationQuestion) {
+        this.verificationQuestion = verificationQuestion;
+    }
+
+    public String getVerificationAnswer() {
+        return verificationAnswer;
+    }
+
+    public void setVerificationAnswer(String verificationAnswer) {
+        this.verificationAnswer = verificationAnswer;
+    }
+
+    public long getSurgeryDate() {
+        return surgeryDate;
+    }
+
+    public void setSurgeryDate(long surgeryDate) {
+        this.surgeryDate = surgeryDate;
+    }
+
+    public List<String> getQuestionnairesID() {
+        return questionnairesID;
+    }
+
+    public void setQuestionnairesID(List<String> questionnairesID) {
+        this.questionnairesID = questionnairesID;
     }
 
 

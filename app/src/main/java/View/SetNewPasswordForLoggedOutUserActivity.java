@@ -13,8 +13,6 @@ import com.example.modamedicandroidapplication.R;
 import Controller.AppController;
 import Model.Exceptions.InvalidTokenException;
 
-import static Model.Utils.HttpRequests.getContext;
-
 public class SetNewPasswordForLoggedOutUserActivity extends AbstractActivity {
 
     AppController appController;
@@ -22,7 +20,7 @@ public class SetNewPasswordForLoggedOutUserActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.set_new_password_for_logged_out_user_activity);
+        setContentView(R.layout.activity_set_new_password_for_logged_out_user);
         appController = AppController.getController(this);
     }
 
