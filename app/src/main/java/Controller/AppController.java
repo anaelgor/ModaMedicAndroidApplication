@@ -107,4 +107,8 @@ public class AppController {
     public Map<Integer,String> getAllVerificationQuestions() {
         return Registration.getAllVerificationQuestions(httpRequests);
     }
+
+    public Map<Integer, String> getAllQuestionnairesInSystem() {
+        return QuestionnaireSenderAndReceiver.getAllQuestionnaires(httpRequests);
+    }
 }

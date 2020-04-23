@@ -44,6 +44,7 @@
     <string name="succes">אישור</string>
     <string name="specialTokenInvalid">עברו חמש דקות, אז חזור אחורה, ענה על שאלה האימות ונסה פעם נוספת.</string>
     <string name="gohome">חזור לדף הבית</string>
+    <string name="movehome">עבור לדף הבית</string>
     <string name="old_password">סיסמא נוכחית</string>
     <string name="something_went_wrong_please_log_in">משהו בלתי צפוי קרה. התחבר למערכת מחדש ונסה שוב</string>
     <string name="watch_on">צמיד מחובר</string>
@@ -98,6 +99,13 @@
     <string name="choose_your_questionnaires">בחר שאלונים רפואיים </string>
     <string name="choose_surgery_day_string">בחר תאריך ניתוח</string>
     <string name="fill_surgery_date">אנא מלא תאריך ניתוח</string>
+    <string name="choose">בחר</string>
+    <string name="firstName">שם פרטי</string>
+    <string name="lastName">שם משפחה</string>
+    <string name="fill_firstName">אנא מלא שם פרטי</string>
+    <string name="fill_lastName">אנא מלא שם משפחה</string>
+    <string name="choose_at_least_one_questionnaire">אנא בחר לפחות שאלון רפואי אחד</string>
+    <string name="succesfull_registarion">ההרשמה בוצעה בהצלחה</string>
 
 
 </resources>

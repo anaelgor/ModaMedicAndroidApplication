@@ -2,6 +2,8 @@ package Model.Users;
 
 import java.util.List;
 
+import Model.Questionnaires.Questionnaire;
+
 public class User {
 
     private String email;
@@ -19,9 +21,14 @@ public class User {
     private int verificationQuestion;
     private String verificationAnswer;
     private long surgeryDate;
-    private List<String> questionnairesID;
+    private List<Questionnaire> questionnaires;
+    private String firstName;
+    private String lastName;
 
-    public User(String email, String password, String phoneNumber, String gender, String smoke, String surgeryType, String education, int weight, int height, long birthday, String code, int verificationQuestion, String verificationAnswer, long surgeryDate, List<String> questionnairesIDS){
+    public User(String email, String password, String phoneNumber, String gender, String smoke,
+                String surgeryType, String education, int weight, int height, long birthday,
+                String code, int verificationQuestion, String verificationAnswer, long surgeryDate,
+                List<Questionnaire> questionnairesIDS, String first, String last){
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
@@ -36,12 +43,15 @@ public class User {
         this.code = code;
         this.verificationAnswer = verificationAnswer;
         this.verificationQuestion = verificationQuestion;
-        this.questionnairesID = questionnairesIDS;
+        this.questionnaires = questionnairesIDS;
         this.surgeryDate = surgeryDate;
+        this.firstName = first;
+        this.lastName = last;
     }
 
     private String calculateBMI(int height, int weight) {
-        return String.valueOf(height/Math.pow(weight,2));
+        double height_double = ((double)height / 100);
+        return String.valueOf(((double)weight/Math.pow(height_double,2)));
     }
 
     public String getEmail() {
@@ -160,12 +170,28 @@ public class User {
         this.surgeryDate = surgeryDate;
     }
 
-    public List<String> getQuestionnairesID() {
-        return questionnairesID;
+    public List<Questionnaire> getQuestionnaires() {
+        return questionnaires;
     }
 
-    public void setQuestionnairesID(List<String> questionnairesID) {
-        this.questionnairesID = questionnairesID;
+    public void setQuestionnaires(List<Questionnaire> questionnaires) {
+        this.questionnaires = questionnaires;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
 

@@ -2,6 +2,7 @@ package Model.Questionnaires;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class Questionnaire implements Serializable {
 
@@ -49,5 +50,19 @@ public class Questionnaire implements Serializable {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Questionnaire that = (Questionnaire) o;
+        return QuestionaireID == that.QuestionaireID &&
+                Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(QuestionaireID, title);
     }
 }

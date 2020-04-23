@@ -2,6 +2,8 @@ package View;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -16,15 +18,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import com.example.modamedicandroidapplication.R;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 import Controller.AppController;
+import Model.Questionnaires.Questionnaire;
 import Model.Users.User;
 import View.ViewUtils.InputFilterMinMax;
-import View.ViewUtils.MultiSelectionSpinner;
 
 public class RegisterNewUserActivity extends AbstractActivity {
 
@@ -47,7 +52,10 @@ public class RegisterNewUserActivity extends AbstractActivity {
     private Map<String, Integer> questionToIDS = null;
     private Spinner verificationQuestion = null;
     private EditText verificationAnswer = null;
-    private MultiSelectionSpinner questionnaires = null;
+    private Map<Integer, String> questionnaireIDtoText = null;
+    private List<Questionnaire> chosenQuestionnaires = null;
+    private EditText firstName = null;
+    private EditText lastName = null;
 
 
     @Override
@@ -57,13 +65,11 @@ public class RegisterNewUserActivity extends AbstractActivity {
         appController = AppController.getController(this);
         initializeAllFields();
         getVerificationQuestions();
-        getOptionalQuestionnaires();
         limitFields();
     }
 
     private void getOptionalQuestionnaires() {
-        List<String> items = appController.get
-        questionnaires.setItems(items,x,this);
+        questionnaireIDtoText = appController.getAllQuestionnairesInSystem();
     }
 
     private void getVerificationQuestions() {
@@ -101,7 +107,9 @@ public class RegisterNewUserActivity extends AbstractActivity {
         specialCode = findViewById(R.id.specialCodeRegistration);
         verificationQuestion = findViewById(R.id.verification_question_spinner);
         verificationAnswer = findViewById(R.id.verification_answer);
-        questionnaires = findViewById(R.id.questionnaires_spinner);
+        firstName = findViewById(R.id.firstName);
+        lastName = findViewById(R.id.lastName);
+        chosenQuestionnaires = new ArrayList<>();
 
     }
 
@@ -116,26 +124,46 @@ public class RegisterNewUserActivity extends AbstractActivity {
                     Integer.parseInt(height.getText().toString()),
                     chosenTime.getTimeInMillis(),specialCode.getText().toString(),
                     questionToIDS.get(verificationQuestion.getSelectedItem().toString()),
-                    verificationAnswer.getText().toString());
+                    verificationAnswer.getText().toString(),chosenSurgeryTime.getTimeInMillis(),
+                    chosenQuestionnaires, firstName.getText().toString(),
+                    lastName.getText().toString());
             String msg = appController.register(user);
             boolean flag2 = showWrongInfo(msg);
-            if (flag2) {
-                openSurgeryInfoActivity();
-            }
+            if (flag2)
+                success();
         }
     }
 
-    private void openSurgeryInfoActivity() {
-        //todo: implement
+    private void success() {
+            new AlertDialog.Builder(RegisterNewUserActivity.this)
+                    .setTitle(R.string.succes)
+                    .setMessage(R.string.succesfull_registarion)
+                    .setNegativeButton(R.string.movehome, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            openHomePage();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .show();
+        }
+    private void openHomePage() {
+        boolean flag = appController.login(email.getText().toString(),password.getText().toString(), RegisterNewUserActivity.this);
+        if (flag) {
+            Intent intent = new Intent(this, HomePageActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Log.e(TAG,"FATAL ERROR OCCURRED, can't log in with the registration details");
+        }
     }
 
     private boolean showWrongInfo(String msg) {
-        //todo: implement with OR
-        if (msg.equals("Taken Email")) {
+        if (msg!=null && msg.equals("Taken Email")) {
             showAlert(R.string.error_taken_email);
             return false;
         }
-        if (msg.equals("Wrong Code")) {
+        else if (msg!=null && msg.equals("Wrong Code")) {
             showAlert(R.string.error_registrationCode);
             return false;
         }
@@ -177,7 +205,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
             showAlert(R.string.fill_surgery);
             return false;
         }
-        if ( eduction.getSelectedItem() == null) {
+        if (eduction.getSelectedItem() == null) {
             showAlert(R.string.fill_education);
             return false;
         }
@@ -206,7 +234,18 @@ public class RegisterNewUserActivity extends AbstractActivity {
             showAlert(R.string.fill_verification_answer);
             return false;
         }
-
+        if (firstName.length() == 0) {
+            showAlert(R.string.fill_firstName);
+            return false;
+        }
+        if (lastName.length() == 0) {
+            showAlert(R.string.fill_lastName);
+            return false;
+        }
+        if (chosenQuestionnaires == null || chosenQuestionnaires.isEmpty()) {
+            showAlert(R.string.choose_at_least_one_questionnaire);
+            return false;
+        }
         if (!email.getText().toString().contains("@") || !email.getText().toString().contains(".")) {
             showAlert(R.string.wrongEmailAddress);
             return false;
@@ -310,6 +349,51 @@ public class RegisterNewUserActivity extends AbstractActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
         dialog.getWindow().setLayout(getWidthOfScreen(),getHeightOfScreen());
+        dialog.show();
+    }
+
+    public void chooseQuestionnaires(View view) {
+        getOptionalQuestionnaires();
+        // Set up the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.choose_your_questionnaires));
+
+// Add a checkbox list
+        String[] items = new String[questionnaireIDtoText.size()];
+        int[] itemsIndexes  = new int[questionnaireIDtoText.size()];
+
+        int i=0;
+        for (Map.Entry<Integer,String> entry : questionnaireIDtoText.entrySet()) {
+            items[i] = entry.getValue();
+            itemsIndexes[i] = entry.getKey();
+            i++;
+        }
+        boolean[] checkedItems = new boolean[items.length];
+
+
+        builder.setMultiChoiceItems(items, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                Questionnaire questionnaire = new Questionnaire();
+                questionnaire.setTitle(items[which]);
+                questionnaire.setQuestionaireID(itemsIndexes[which]);
+                if (isChecked)
+                    chosenQuestionnaires.add(questionnaire);
+                    else
+                        chosenQuestionnaires.remove(questionnaire);
+            }
+        });
+
+// Add OK and Cancel buttons
+        builder.setPositiveButton(getString(R.string.choose), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+
+// Create and show the alert dialog
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 }

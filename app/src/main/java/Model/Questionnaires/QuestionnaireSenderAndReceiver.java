@@ -81,4 +81,27 @@ public class QuestionnaireSenderAndReceiver {
         }
         return null;
     }
+
+    public static Map<Integer, String> getAllQuestionnaires(HttpRequests httpRequests) {
+        Map<Integer, String> result = new HashMap<>();
+        try {
+            JSONObject response = httpRequests.sendGetRequest(Urls.urlOfGetAllQuestionnaires);
+            JSONArray array = response.getJSONArray("data");
+            for (int i=0; i<array.length(); i++) {
+                JSONObject question = (JSONObject) array.get(i);
+                int id = question.getInt("QuestionnaireID");
+                if (id ==6 || id == 0) //daily and EQ5 special question should not be setted
+                    continue;
+                String text = question.getString("QuestionnaireText");
+                result.put(id,text);
+            }
+        } catch (ServerFalseException | JSONException e) {
+            Log.i(TAG,"error in getting all questionnaies:");
+            e.printStackTrace();
+            result=null;
+        }
+        return result;
+
+
+    }
 }
