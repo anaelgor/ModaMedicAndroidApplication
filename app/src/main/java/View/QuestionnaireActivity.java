@@ -651,6 +651,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
         Intent intent = new Intent(this, QuestionnaireActivity.class);
         intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
+        finish();
         startActivity(intent);
     }
 

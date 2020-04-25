@@ -3,6 +3,7 @@ package Model.Notifications;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.modamedicandroidapplication.R;
 
@@ -19,8 +20,10 @@ public class DailyNotification extends AbstractNotification {
         SharedPreferences sharedPref = context.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
         long lastLogin = sharedPref.getLong("lastLogin",0);
         long currentTime = Calendar.getInstance().getTimeInMillis();
-        if (lastLogin > currentTime -(60 * 60 * 1000))
+        if (lastLogin > currentTime -(10 * 60 * 1000)) {
+            Log.i("Daily","missing daily notification because I have been in the app in the last 10 min");
             return;
+        }
 
 
         boolean answered = HasUserAnswered("0", context);

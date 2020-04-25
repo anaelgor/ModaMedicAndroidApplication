@@ -42,7 +42,7 @@ public class HomePageActivity extends AbstractActivity {
     String username;
     AppController appController;
     BroadcastReceiver mReceiver = null;
-
+    ScheduledExecutorService execOfBT = null;
     public static boolean BAND_CONNECTED = false;
 
     @Override
@@ -91,12 +91,22 @@ public class HomePageActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        questionnaires = getAllQuestionnaires();
-        LinearLayout  layout =  findViewById(R.id.lin_layout);
-        layout.removeAllViews();
-        createAllButtons();
+        if (changedQuestionnaires()) {
+            questionnaires = getAllQuestionnaires();
+            LinearLayout  layout =  findViewById(R.id.lin_layout);
+            layout.removeAllViews();
+            createAllButtons();
+        }
         checkIfBandIsConnected();
         updateBTState();
+    }
+
+    private boolean changedQuestionnaires() {
+        boolean res;
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        res = sharedPreferences.getBoolean(Constants.CHANGED_QUESTIONNAIRES, false);
+        sharedPreferences.edit().putBoolean(Constants.CHANGED_QUESTIONNAIRES,false).apply();
+        return res;
     }
 
 //    @Override
@@ -109,7 +119,7 @@ public class HomePageActivity extends AbstractActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-            unregisterBluetoothReceiver();
+        unregisterBluetoothReceiver();
     }
 
     private void unregisterBluetoothReceiver() {
@@ -117,6 +127,9 @@ public class HomePageActivity extends AbstractActivity {
             if (mReceiver != null) {
                 getApplicationContext().unregisterReceiver(mReceiver);
                 mReceiver = null;
+            }
+            if (execOfBT != null) {
+                execOfBT.shutdown();
             }
         } catch (IllegalArgumentException e) {
             //do nothing
@@ -211,8 +224,8 @@ public class HomePageActivity extends AbstractActivity {
     }
 
     public void updateBTState() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
+        execOfBT = Executors.newSingleThreadScheduledExecutor();
+        execOfBT.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 ImageView bt_state = findViewById(R.id.bt_state);
