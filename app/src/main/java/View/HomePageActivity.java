@@ -1,7 +1,10 @@
 package View;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import Controller.AppController;
+import Model.ConnectedDevices;
 import Model.Questionnaires.Questionnaire;
 import Model.Utils.Constants;
 import View.ViewUtils.BindingValues;
@@ -37,7 +41,8 @@ public class HomePageActivity extends AbstractActivity {
     Map<Long,String> questionnaires; //key: questID, value: questionnaire Text
     String username;
     AppController appController;
-
+    BroadcastReceiver mReceiver = null;
+    ScheduledExecutorService execOfBT = null;
     public static boolean BAND_CONNECTED = false;
 
     @Override
@@ -81,6 +86,61 @@ public class HomePageActivity extends AbstractActivity {
         createAllButtons();
         updateBTState();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (changedQuestionnaires()) {
+            questionnaires = getAllQuestionnaires();
+            LinearLayout  layout =  findViewById(R.id.lin_layout);
+            layout.removeAllViews();
+            createAllButtons();
+        }
+        checkIfBandIsConnected();
+        updateBTState();
+    }
+
+    private boolean changedQuestionnaires() {
+        boolean res;
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        res = sharedPreferences.getBoolean(Constants.CHANGED_QUESTIONNAIRES, false);
+        sharedPreferences.edit().putBoolean(Constants.CHANGED_QUESTIONNAIRES,false).apply();
+        return res;
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterBluetoothReceiver();
+//    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterBluetoothReceiver();
+    }
+
+    private void unregisterBluetoothReceiver() {
+        try {
+            if (mReceiver != null) {
+                getApplicationContext().unregisterReceiver(mReceiver);
+                mReceiver = null;
+            }
+            if (execOfBT != null) {
+                execOfBT.shutdown();
+            }
+        } catch (IllegalArgumentException e) {
+            //do nothing
+            Log.d(TAG,"Unregistering Error again. ignoring");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterBluetoothReceiver();
     }
 
     private void saveLastLogin() {
@@ -152,10 +212,11 @@ public class HomePageActivity extends AbstractActivity {
 
 
     public void checkIfBandIsConnected(){
-        appController.checkIfBandIsConnected();
+        this.mReceiver = appController.checkIfBandIsConnected();
     }
 
     public void showBTInfo(View view) {
+        BAND_CONNECTED = ConnectedDevices.BAND_CONNECTED;
         if (BAND_CONNECTED)
             Toast.makeText(view.getContext(),R.string.watch_on , Toast.LENGTH_SHORT).show();
         else
@@ -163,11 +224,12 @@ public class HomePageActivity extends AbstractActivity {
     }
 
     public void updateBTState() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
+        execOfBT = Executors.newSingleThreadScheduledExecutor();
+        execOfBT.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 ImageView bt_state = findViewById(R.id.bt_state);
+                BAND_CONNECTED = ConnectedDevices.BAND_CONNECTED;
                 if (BAND_CONNECTED) {
                     Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Connected");
                     bt_state.setBackgroundResource(R.drawable.green_circle);
@@ -179,19 +241,26 @@ public class HomePageActivity extends AbstractActivity {
 
                 }
             }
-        }, 0, 60, TimeUnit.SECONDS);
+        }, 0, 15, TimeUnit.SECONDS);
 
     }
 
 
     public void logoutFunction(View view) {
         SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName, Context.MODE_PRIVATE);
-        sharedPref.edit().putBoolean(Constants.LOGGED_USER, false).apply();
+        sharedPref.edit().putBoolean(Constants.KEEP_USER_LOGGED, false).apply();
+
         openMainActivity();
     }
 
     private void openMainActivity() {
+        finish();
         Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void settingsFunction(View view) {
+        Intent intent = new Intent(this,SettingsActivity.class);
         startActivity(intent);
     }
 }

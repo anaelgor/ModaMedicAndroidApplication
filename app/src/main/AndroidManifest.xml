@@ -44,6 +44,7 @@
         <receiver android:name="Model.Notifications.DailyNotification"/>
         <receiver android:name="Model.Metrics.MetricsBroadcastReceiver"/>
         <receiver android:name="Model.Metrics.LocationBroadcastReceiver"/>
+        <receiver android:name="Model.BluetoothReceiver" />
         <receiver android:name="Model.RebootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -62,6 +63,7 @@
         <activity android:name="View.SetNewPasswordForLoggedOutUserActivity" />
         <activity android:name="View.SetNewPasswordForLoggedInUserActivity" />
         <activity android:name="View.RegisterNewUserActivity" />
+        <activity android:name="View.SettingsActivity" />
     </application>
 
 </manifest>
