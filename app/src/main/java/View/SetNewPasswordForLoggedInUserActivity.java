@@ -91,8 +91,9 @@ public class SetNewPasswordForLoggedInUserActivity extends AbstractActivity {
     }
 
     private void openMainActivity() {
-        Intent intent = new Intent(this, HomePageActivity.class);
-        startActivity(intent);
+        finish();
+//        Intent intent = new Intent(this, HomePageActivity.class);
+//        startActivity(intent);
     }
 
     private String checkPassword(String newPassword, String newPasswordAgain) {
@@ -100,5 +101,9 @@ public class SetNewPasswordForLoggedInUserActivity extends AbstractActivity {
             return "OK";
         else
             return "PasswordAreNotEqual";
+    }
+
+    public void goHomePage(View view) {
+        finish();
     }
 }

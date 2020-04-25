@@ -76,8 +76,9 @@ public class SetNewPasswordForLoggedOutUserActivity extends AbstractActivity {
     }
 
     private void openMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        finish();
+      //  Intent intent = new Intent(this, MainActivity.class);
+      //  startActivity(intent);
     }
 
     private String checkPassword(String newPassword, String newPasswordAgain) {
@@ -85,5 +86,9 @@ public class SetNewPasswordForLoggedOutUserActivity extends AbstractActivity {
             return "OK";
         else
             return "PasswordAreNotEqual";
+    }
+
+    public void goHomePage(View view) {
+        finish();
     }
 }

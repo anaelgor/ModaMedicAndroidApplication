@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import Controller.AppController;
 import Model.Questionnaires.Questionnaire;
 import Model.Users.User;
+import View.ViewUtils.DateUtils;
 import View.ViewUtils.InputFilterMinMax;
 
 public class RegisterNewUserActivity extends AbstractActivity {
@@ -122,9 +123,9 @@ public class RegisterNewUserActivity extends AbstractActivity {
                     eduction.getSelectedItem().toString(),
                     Integer.parseInt(weight.getText().toString()),
                     Integer.parseInt(height.getText().toString()),
-                    chosenTime.getTimeInMillis(),specialCode.getText().toString(),
+                    DateUtils.changeDateTo00AM(chosenTime.getTimeInMillis()),specialCode.getText().toString(),
                     questionToIDS.get(verificationQuestion.getSelectedItem().toString()),
-                    verificationAnswer.getText().toString(),chosenSurgeryTime.getTimeInMillis(),
+                    verificationAnswer.getText().toString(),DateUtils.changeDateTo00AM(chosenSurgeryTime.getTimeInMillis()),
                     chosenQuestionnaires, firstName.getText().toString(),
                     lastName.getText().toString());
             String msg = appController.register(user);
@@ -151,6 +152,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
         boolean flag = appController.login(email.getText().toString(),password.getText().toString(), RegisterNewUserActivity.this);
         if (flag) {
             Intent intent = new Intent(this, HomePageActivity.class);
+            finish();
             startActivity(intent);
         }
         else {

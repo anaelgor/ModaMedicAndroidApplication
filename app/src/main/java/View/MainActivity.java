@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.example.modamedicandroidapplication.R;
@@ -39,10 +41,10 @@ public class MainActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName, Context.MODE_PRIVATE);
         if (loggedUser()) {
-            openHomePage();
+            openHomePage(true);
         }
         else {
-            sharedPref.edit().putBoolean(Constants.LOGGED_USER, false).apply();
+            sharedPref.edit().putBoolean(Constants.KEEP_USER_LOGGED, false).apply();
             setContentView(R.layout.activity_main);
             setHideKeyBoard();
             askForPermissions();
@@ -54,7 +56,7 @@ public class MainActivity extends AbstractActivity {
     }
 
     private boolean loggedUser() {
-        return sharedPref.getBoolean(Constants.LOGGED_USER,false);
+        return sharedPref.getBoolean(Constants.KEEP_USER_LOGGED,false);
     }
 
     private String getUserName() {
@@ -117,18 +119,22 @@ public class MainActivity extends AbstractActivity {
         AppController controller = AppController.getController(this);
         boolean logged = controller.login(username, password, this);
         if (logged) {
-            openHomePage();
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
-            sharedPreferences.edit().putBoolean(Constants.LOGGED_USER,true).apply();
+            openHomePage(false);
         } else {
             Log.i("Main Page", "wrong password or user name for username: " + username);
             WrongDetailsMessage();
         }
     }
 
-    private void openHomePage() {
+    private void openHomePage(boolean logged) {
         Intent intent = new Intent(this, HomePageActivity.class);
         intent.putExtra(BindingValues.LOGGED_USERNAME, username);
+        if (!logged) {
+            CheckBox toSave = findViewById(R.id.RememberMeCheckBox);
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(Constants.KEEP_USER_LOGGED,toSave.isChecked()).apply();
+        }
+        finish();
         startActivity(intent);
     }
 

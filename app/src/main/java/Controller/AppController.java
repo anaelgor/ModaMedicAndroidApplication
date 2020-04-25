@@ -1,6 +1,7 @@
 package Controller;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -19,6 +20,7 @@ import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Users.Login;
 import Model.Users.Registration;
+import Model.Users.Settings;
 import Model.Users.User;
 import Model.Utils.HttpRequests;
 
@@ -67,8 +69,8 @@ public class AppController {
         return Login.login(username,password,activity, httpRequests);
     }
 
-    public void checkIfBandIsConnected(){
-        ConnectedDevices.checkIfBTIsOn(activity);
+    public BroadcastReceiver checkIfBandIsConnected(){
+        return ConnectedDevices.checkIfBTIsOn(activity);
     }
 
     public void setNotifications(Context context) {
@@ -111,4 +113,18 @@ public class AppController {
     public Map<Integer, String> getAllQuestionnairesInSystem() {
         return QuestionnaireSenderAndReceiver.getAllQuestionnaires(httpRequests);
     }
+
+    public long getSurgeryDate() {
+        return Settings.getSurgeryDate(httpRequests);
+    }
+
+    public boolean setSurgeryDate(long date) {
+        return Settings.setSurgeryDate(httpRequests,date);
+    }
+
+    public boolean setUserQuestionnaires(List<Questionnaire> questionnaires) {
+        return Settings.setUserQuestionnaires(httpRequests,questionnaires);
+    }
+
+
 }

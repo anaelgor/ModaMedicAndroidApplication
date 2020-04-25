@@ -27,7 +27,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="148dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/custom_system_button"
         android:gravity="center"
         android:onClick="changePasswordFunction"
@@ -41,7 +41,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="13dp"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/custom_system_button"
         android:gravity="center"
         android:onClick="logoutFunction"
@@ -101,5 +101,20 @@
             android:gravity="center"
             android:textSize="24sp" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/custom_system_button"
+        android:gravity="center"
+        android:onClick="settingsFunction"
+        android:text="@string/settings_title"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>

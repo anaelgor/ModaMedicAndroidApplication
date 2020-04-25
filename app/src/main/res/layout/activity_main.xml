@@ -13,7 +13,7 @@
         android:layout_width="242dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="360dp"
+        android:layout_marginTop="390dp"
         android:background="@drawable/custom_system_button"
         android:backgroundTintMode="src_in"
         android:onClick="loginFunction"
@@ -27,7 +27,7 @@
         android:layout_width="242dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="430dp"
+        android:layout_marginTop="460dp"
         android:background="@drawable/custom_system_button"
         android:backgroundTintMode="src_in"
         android:onClick="registerFunction"
@@ -43,7 +43,7 @@
         android:layout_marginTop="214dp"
         android:ems="10"
         android:hint="@string/id"
-        android:gravity="left|center_vertical"
+        android:gravity="center"
         android:inputType="textEmailAddress"
         android:shadowColor="@color/colorAccent"
         android:textColorHighlight="@color/colorAccent"
@@ -57,6 +57,7 @@
         android:layout_marginTop="277dp"
         android:ems="10"
         android:hint="@string/password"
+        android:gravity="center"
         android:inputType="textPassword"
         android:shadowColor="@color/colorAccent"
         android:textColorHighlight="@color/colorAccent"
@@ -83,5 +84,15 @@
         android:background="@drawable/custom_system_button"
         android:onClick="forgetPasswordFunction"
         android:text="@string/forgot_password" />
+
+    <CheckBox
+        android:id="@+id/RememberMeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="327dp"
+        android:gravity="center"
+        android:text="@string/remember_me"
+        android:checked="true"/>
 
 </RelativeLayout>

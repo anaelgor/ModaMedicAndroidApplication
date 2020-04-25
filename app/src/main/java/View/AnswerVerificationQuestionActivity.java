@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -23,6 +22,7 @@ import java.util.TimeZone;
 import Controller.AppController;
 import Model.Exceptions.WrongAnswerException;
 import View.ViewUtils.BindingValues;
+import View.ViewUtils.DateUtils;
 
 public class AnswerVerificationQuestionActivity extends AbstractActivity {
 
@@ -59,7 +59,7 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
     public void answerQuestion(View view) {
         EditText answer_edittext = findViewById(R.id.answer_textfield);
         String answer = answer_edittext.getText().toString();
-        long date = (chosenTime.getTimeInMillis() / 10000) * 10000;
+        long date = DateUtils.changeDateTo00AM(chosenTime.getTimeInMillis());
         boolean flag = false;
         try {
             flag = appController.checkVerificationOfAnswerToUserQuestion(username,answer,date);
@@ -84,6 +84,7 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
 
     private void openNewPasswordActivity() {
             Intent intent = new Intent(this, SetNewPasswordForLoggedOutUserActivity.class);
+            finish();
             startActivity(intent);
     }
 

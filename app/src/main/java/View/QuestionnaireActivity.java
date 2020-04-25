@@ -186,8 +186,9 @@ public class QuestionnaireActivity extends AbstractActivity {
     }
 
     private void backToHomePage(View v) {
-        Intent intent = new Intent(this, HomePageActivity.class);
-        startActivity(intent);
+        finish();
+    //    Intent intent = new Intent(this, HomePageActivity.class);
+        //startActivity(intent);
     }
 
     private void animateFullCircle(FloatingActionButton button) {

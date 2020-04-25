@@ -45,6 +45,7 @@ public class ForgotPasswordActivity extends AbstractActivity {
                 Intent intent = new Intent(this, AnswerVerificationQuestionActivity.class);
                 intent.putExtra(BindingValues.TRIED_TO_LOG_USERNAME, username);
                 intent.putExtra(BindingValues.QUESTION_TEXT,question);
+                finish();
                 startActivity(intent);
             }
 
