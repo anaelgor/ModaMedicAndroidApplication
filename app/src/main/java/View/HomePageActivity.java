@@ -228,7 +228,7 @@ public class HomePageActivity extends AbstractActivity {
 
                 }
             }
-        }, 0, 60, TimeUnit.SECONDS);
+        }, 0, 15, TimeUnit.SECONDS);
 
     }
 
