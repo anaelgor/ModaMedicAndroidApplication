@@ -37,15 +37,18 @@ public class NotificationsManager {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, daily_hour);
         calendar.set(Calendar.MINUTE, daily_minute);
+        long dailyTime = calendar.getTimeInMillis();
 
         //Periodic notification
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTimeInMillis(System.currentTimeMillis());
         calendar2.set(Calendar.HOUR_OF_DAY, periodic_hour);
         calendar2.set(Calendar.MINUTE, periodic_minute);
+        long periodicTime = calendar2.getTimeInMillis();
 
-        setRepeatingNotification(DailyNotification.class, calendar.getTimeInMillis() , AlarmManager.INTERVAL_DAY);
-        setRepeatingNotification(PeriodicNotification.class, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY);
+
+        setRepeatingNotification(DailyNotification.class, dailyTime , AlarmManager.INTERVAL_DAY);
+        setRepeatingNotification(PeriodicNotification.class, periodicTime, AlarmManager.INTERVAL_DAY);
     }
 
     private void setRepeatingNotification(Class notification_class, long time, long interval) {

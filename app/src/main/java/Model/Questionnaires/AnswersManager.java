@@ -48,9 +48,12 @@ public class AnswersManager {
         String url = Urls.urlHasBeenAnswered+Urls.getUrlHasBeenAnsweredDaysParam+days+Urls.getUrlHasBeenAnsweredQuestionnaireIDParam+questionnaire_id;
         try {
             JSONObject result = httpRequests.sendGetRequest(url, Login.getToken(HttpRequests.getContext()));
-            Log.i(TAG,"sent to server");
-            System.out.println(result.getString("data"));
-            return result.getString("data").equals("true");
+            boolean flag = result.getString("data").equals("true");
+            if (flag)
+                Log.i(TAG,String.format("user has been answered questionnaire %s",questionnaire_id));
+            else
+                Log.i(TAG,String.format("user has NOT been answered questionnaire %s",questionnaire_id));
+            return flag ;
         } catch (ServerFalseException serverFalseException) {
             serverFalseException.printStackTrace();
             Log.i(TAG,"problem in asking if user has been answered to server "+ serverFalseException.getLocalizedMessage());

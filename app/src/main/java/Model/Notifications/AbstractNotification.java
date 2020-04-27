@@ -23,6 +23,8 @@ import View.ViewUtils.BindingValues;
 public abstract class AbstractNotification extends BroadcastReceiver {
 
     String CHANNEL_ID = "MainChannel";
+    public static long ONE_MINUTE = 1 * 60 * 1000;
+
 
     /*
    this method should send notifications to user
@@ -60,8 +62,12 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     }
 
     protected boolean HasUserAnswered(String questionnaire_id, Context context) {
-        String days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
-         return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
+        String days;
+        if (questionnaire_id.equals("0")) // daily questionnaire
+            days = "1";
+        else
+            days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
+        return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
     }
 
     private Intent setQuestionnaireActivity(Long questionnaire_id, Context context) {

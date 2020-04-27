@@ -20,11 +20,12 @@ public class DailyNotification extends AbstractNotification {
         SharedPreferences sharedPref = context.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
         long lastLogin = sharedPref.getLong("lastLogin",0);
         long currentTime = Calendar.getInstance().getTimeInMillis();
-        if (lastLogin > currentTime -(10 * 60 * 1000)) {
+        long duration = currentTime - lastLogin;
+        if (duration < ONE_MINUTE) {
             Log.i("Daily","missing daily notification because I have been in the app in the last 10 min");
+            this.isOrderedBroadcast();
             return;
         }
-
 
         boolean answered = HasUserAnswered("0", context);
         if (!answered) {
@@ -32,6 +33,9 @@ public class DailyNotification extends AbstractNotification {
             int id = 101;
             notify(context,notification_text,id, 0);
             System.out.println("Daily Questionnaire notification");
+        }
+        else {
+            Log.i("Daily","missing daily notification because already answered today");
         }
 
     }
