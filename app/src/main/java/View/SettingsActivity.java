@@ -3,6 +3,7 @@ package View;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -21,6 +22,7 @@ import java.util.TimeZone;
 
 import Controller.AppController;
 import Model.Questionnaires.Questionnaire;
+import Model.Utils.Constants;
 import View.ViewUtils.DateUtils;
 
 public class SettingsActivity extends AbstractActivity {
@@ -144,6 +146,8 @@ public class SettingsActivity extends AbstractActivity {
                     boolean flag = appController.setUserQuestionnaires(chosenQuestionnaires);
                     if (flag) {
                         showInfo(R.string.questionnaires_has_been_changed);
+                        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+                        sharedPreferences.edit().putBoolean(Constants.CHANGED_QUESTIONNAIRES,true).apply();
                     }
                     else {
                         showAlert(R.string.error_on_server);

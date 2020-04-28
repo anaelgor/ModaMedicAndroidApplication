@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -18,7 +19,7 @@ public class NotificationsManager {
 
     AlarmManager alarmManager;
     Context context;
-
+    private static final String TAG = "NotificationsManager";
     public NotificationsManager(Context context) {
         this.context = context;
     }
@@ -49,6 +50,7 @@ public class NotificationsManager {
 
         setRepeatingNotification(DailyNotification.class, dailyTime , AlarmManager.INTERVAL_DAY);
         setRepeatingNotification(PeriodicNotification.class, periodicTime, AlarmManager.INTERVAL_DAY);
+        Log.i(TAG,"notifications has been set!");
     }
 
     private void setRepeatingNotification(Class notification_class, long time, long interval) {

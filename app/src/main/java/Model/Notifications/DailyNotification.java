@@ -21,13 +21,14 @@ public class DailyNotification extends AbstractNotification {
         long lastLogin = sharedPref.getLong("lastLogin",0);
         long currentTime = Calendar.getInstance().getTimeInMillis();
         long duration = currentTime - lastLogin;
+        duration = Long.MAX_VALUE;;
         if (duration < ONE_MINUTE) {
             Log.i("Daily","missing daily notification because I have been in the app in the last 10 min");
             this.isOrderedBroadcast();
             return;
         }
 
-        boolean answered = HasUserAnswered("0", context);
+        boolean answered = false; //HasUserAnswered("0", context);
         if (!answered) {
             String notification_text = context.getString(R.string.daily_questionnaire_notification);
             int id = 101;

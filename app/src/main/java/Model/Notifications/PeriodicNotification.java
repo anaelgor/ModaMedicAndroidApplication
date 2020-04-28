@@ -22,9 +22,10 @@ public class PeriodicNotification extends AbstractNotification{
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences sharedPref = context.getSharedPreferences(Constants.sharedPreferencesName,Context.MODE_PRIVATE);
-        long lastLogin = sharedPref.getLong("lastLogin",0);
+        long lastLogin = sharedPref.getLong(Constants.LAST_LOGIN,0);
         long currentTime = Calendar.getInstance().getTimeInMillis();
         long duration = currentTime - lastLogin;
+        duration = Long.MAX_VALUE;
         if (duration < ONE_MINUTE) {
             Log.i("Periodic","missing periodic notification because I have been in the app in the last 10 min");
             return;
@@ -35,7 +36,7 @@ public class PeriodicNotification extends AbstractNotification{
         for (Long questionnaireID: Questionnaires.keySet()) {
             if (questionnaireID == 0)
                 continue;
-            boolean answered = HasUserAnswered(questionnaireID.toString(), context);
+            boolean answered = false; //HasUserAnswered(questionnaireID.toString(), context);
             if (!answered) {
                 String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) + " " +
                         Questionnaires.get(questionnaireID) + context.getString(R.string.periodic_questionnaire_notification_suffix);

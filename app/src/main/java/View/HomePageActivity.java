@@ -101,12 +101,16 @@ public class HomePageActivity extends AbstractActivity {
         updateBTState();
     }
 
-    private boolean changedQuestionnaires() {
-        boolean res;
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
-        res = sharedPreferences.getBoolean(Constants.CHANGED_QUESTIONNAIRES, false);
-        sharedPreferences.edit().putBoolean(Constants.CHANGED_QUESTIONNAIRES,false).apply();
-        return res;
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterBluetoothReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterBluetoothReceiver();
     }
 
 //    @Override
@@ -115,12 +119,6 @@ public class HomePageActivity extends AbstractActivity {
 //        unregisterBluetoothReceiver();
 //    }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterBluetoothReceiver();
-    }
 
     private void unregisterBluetoothReceiver() {
         try {
@@ -137,16 +135,19 @@ public class HomePageActivity extends AbstractActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterBluetoothReceiver();
+    private boolean changedQuestionnaires() {
+        boolean res;
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        res = sharedPreferences.getBoolean(Constants.CHANGED_QUESTIONNAIRES, false);
+        sharedPreferences.edit().putBoolean(Constants.CHANGED_QUESTIONNAIRES,false).apply();
+        return res;
     }
+
 
     private void saveLastLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
         long lastLogin = System.currentTimeMillis();
-        sharedPreferences.edit().putLong("lastLogin",lastLogin).apply();
+        sharedPreferences.edit().putLong(Constants.LAST_LOGIN,lastLogin).apply();
 
     }
 
