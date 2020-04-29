@@ -17,19 +17,20 @@ import Model.Questionnaires.Questionnaire;
 import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
 import Model.Utils.PropertiesManager;
+import View.HomePageActivity;
 import View.QuestionnaireActivity;
 import View.ViewUtils.BindingValues;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
 
-    String CHANNEL_ID = "MainChannel";
+    protected static String CHANNEL_ID = "MainChannel";
     public static long ONE_MINUTE = 1 * 60 * 1000;
 
 
     /*
    this method should send notifications to user
     */
-    public void notify(Context context, String notification_text, int id, long questionnaire_id) {
+    public static void notifyUser(Context context, String notification_text, int id, long questionnaire_id) {
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -55,13 +56,13 @@ public abstract class AbstractNotification extends BroadcastReceiver {
                 notificationManager.notify(id, notification);
             }
         });
-
+        t.setPriority(Thread.MIN_PRIORITY);
         t.start();
 
 
     }
 
-    protected boolean HasUserAnswered(String questionnaire_id, Context context) {
+    protected static boolean HasUserAnswered(String questionnaire_id, Context context) {
         String days;
         if (questionnaire_id.equals("0")) // daily questionnaire
             days = "0";
@@ -70,14 +71,20 @@ public abstract class AbstractNotification extends BroadcastReceiver {
         return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
     }
 
-    private Intent setQuestionnaireActivity(Long questionnaire_id, Context context) {
+    private static Intent setQuestionnaireActivity(Long questionnaire_id, Context context) {
         AppController appController = AppController.getController(null);
         Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
-        Intent intent = new Intent(context, QuestionnaireActivity.class);
-        if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
-            intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
-
-        intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
+        Intent intent = null;
+        long zero = 0;
+        if (questionnaire_id.equals(zero)) {
+            intent = new Intent(context, QuestionnaireActivity.class);
+            if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
+                intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
+            intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
+        }
+        else {
+            intent = new Intent(context, HomePageActivity.class);
+        }
         return intent;
     }
 

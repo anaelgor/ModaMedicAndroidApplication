@@ -67,4 +67,7 @@ public class ForgotPasswordActivity extends AbstractActivity {
     }
 
 
+    public void goHomePage(View view) {
+        finish();
+    }
 }

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 import java.util.Calendar;
+import java.util.Random;
 
 import Model.Utils.Configurations;
 
@@ -38,25 +39,26 @@ public class NotificationsManager {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, daily_hour);
         calendar.set(Calendar.MINUTE, daily_minute);
-        long dailyTime = calendar.getTimeInMillis();
+        long dailyTime = calendar.getTimeInMillis() + randomTime();
+      //  dailyTime = Calendar.getInstance().getTimeInMillis() +20000;
 
         //Periodic notification
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTimeInMillis(System.currentTimeMillis());
         calendar2.set(Calendar.HOUR_OF_DAY, periodic_hour);
         calendar2.set(Calendar.MINUTE, periodic_minute);
-        long periodicTime = calendar2.getTimeInMillis();
-
+        long periodicTime = calendar2.getTimeInMillis() + randomTime();
+     //   periodicTime = Calendar.getInstance().getTimeInMillis() + 22000;
 
         setRepeatingNotification(DailyNotification.class, dailyTime , AlarmManager.INTERVAL_DAY);
         setRepeatingNotification(PeriodicNotification.class, periodicTime, AlarmManager.INTERVAL_DAY);
-        Log.i(TAG,"notifications has been set!");
     }
 
     private void setRepeatingNotification(Class notification_class, long time, long interval) {
         Intent intent = new Intent(context, notification_class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
+        Log.i(TAG,String.format("notification %s has been set to %s", notification_class.toString(), time));
     }
 
 
@@ -64,8 +66,8 @@ public class NotificationsManager {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "MainChanneel";
-            String description = "MainChanneel";
+            CharSequence name = "MainChannel";
+            String description = "MainChannel";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -74,6 +76,12 @@ public class NotificationsManager {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private long randomTime() {
+        long min = -600000;
+        long max = 600000;
+        return min + (long) (Math.random() * (max - min));
     }
 
 }

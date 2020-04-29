@@ -1,10 +1,8 @@
 package View;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -91,6 +89,7 @@ public class HomePageActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG,"OnResume has been called");
         if (changedQuestionnaires()) {
             questionnaires = getAllQuestionnaires();
             LinearLayout  layout =  findViewById(R.id.lin_layout);
@@ -104,20 +103,24 @@ public class HomePageActivity extends AbstractActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i(TAG,"onStop has been called");
+      //  appController.setNotifications(getApplicationContext());
         unregisterBluetoothReceiver();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i(TAG,"onDestroy has been called");
         unregisterBluetoothReceiver();
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        unregisterBluetoothReceiver();
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG,"onPause has been called");
+        unregisterBluetoothReceiver();
+    }
 
 
     private void unregisterBluetoothReceiver() {
@@ -128,6 +131,7 @@ public class HomePageActivity extends AbstractActivity {
             }
             if (execOfBT != null) {
                 execOfBT.shutdown();
+                execOfBT = null;
             }
         } catch (IllegalArgumentException e) {
             //do nothing
@@ -225,32 +229,31 @@ public class HomePageActivity extends AbstractActivity {
     }
 
     public void updateBTState() {
-        execOfBT = Executors.newSingleThreadScheduledExecutor();
-        execOfBT.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                ImageView bt_state = findViewById(R.id.bt_state);
-                BAND_CONNECTED = ConnectedDevices.BAND_CONNECTED;
-                if (BAND_CONNECTED) {
-                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Connected");
-                    bt_state.setBackgroundResource(R.drawable.green_circle);
+        if (execOfBT == null) {
+            execOfBT = Executors.newSingleThreadScheduledExecutor();
+            execOfBT.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    ImageView bt_state = findViewById(R.id.bt_state);
+                    BAND_CONNECTED = ConnectedDevices.BAND_CONNECTED;
+                    if (BAND_CONNECTED) {
+                        Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Connected");
+                        bt_state.setBackgroundResource(R.drawable.green_circle);
+                    }
+                    else {
+                        Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Disconnected");
+
+                        bt_state.setBackgroundResource(R.drawable.red_circle);
+                    }
                 }
-                else {
-                    Log.d(TAG,"Band is checked at " + Calendar.getInstance().getTime().toString() + " and is Disconnected");
-
-                    bt_state.setBackgroundResource(R.drawable.red_circle);
-
-                }
-            }
-        }, 0, 15, TimeUnit.SECONDS);
-
+            }, 0, 15, TimeUnit.SECONDS);
+        }
     }
 
 
     public void logoutFunction(View view) {
         SharedPreferences sharedPref = this.getSharedPreferences(Constants.sharedPreferencesName, Context.MODE_PRIVATE);
         sharedPref.edit().putBoolean(Constants.KEEP_USER_LOGGED, false).apply();
-
         openMainActivity();
     }
 

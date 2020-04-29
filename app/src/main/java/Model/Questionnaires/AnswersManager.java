@@ -50,9 +50,9 @@ public class AnswersManager {
             JSONObject result = httpRequests.sendGetRequest(url, Login.getToken(HttpRequests.getContext()));
             boolean flag = result.getString("data").equals("true");
             if (flag)
-                Log.i(TAG,String.format("user has been answered questionnaire %s",questionnaire_id));
+                Log.i(TAG,String.format("user has been answered questionnaire %s in the last %s days",questionnaire_id, days));
             else
-                Log.i(TAG,String.format("user has NOT been answered questionnaire %s",questionnaire_id));
+                Log.i(TAG,String.format("user has NOT been answered questionnaire %s in the last %s days",questionnaire_id, days));
             return flag ;
         } catch (ServerFalseException serverFalseException) {
             serverFalseException.printStackTrace();
