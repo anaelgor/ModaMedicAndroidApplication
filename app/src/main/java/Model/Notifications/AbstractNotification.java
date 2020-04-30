@@ -46,7 +46,7 @@ public abstract class AbstractNotification extends BroadcastReceiver {
                             .setContentText(context.getString(R.string.reminder))
                             .setContentIntent(pendingIntent)
                             .addAction(android.R.drawable.sym_action_chat, context.getString(R.string.notification_action), pendingIntent)
-                            .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                            .setSmallIcon(R.drawable.notif_icon)
                             .setStyle(new NotificationCompat.BigTextStyle()
                                     .bigText(notification_text))
                             .build();

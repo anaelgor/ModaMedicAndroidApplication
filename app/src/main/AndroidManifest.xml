@@ -38,16 +38,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="View.MainActivity" />
         </activity>
-        <service android:name="Model.RebootService" />
 
         <receiver android:name="Model.Notifications.PeriodicNotification"/>
         <receiver android:name="Model.Notifications.DailyNotification"/>
         <receiver android:name="Model.Metrics.MetricsBroadcastReceiver"/>
         <receiver android:name="Model.Metrics.LocationBroadcastReceiver"/>
         <receiver android:name="Model.BluetoothReceiver" />
-        <receiver android:name="Model.RebootReceiver">
+        <receiver android:name="Model.RebootReceiver"
+            android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
 

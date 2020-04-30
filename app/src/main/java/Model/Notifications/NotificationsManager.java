@@ -40,7 +40,7 @@ public class NotificationsManager {
         calendar.set(Calendar.HOUR_OF_DAY, daily_hour);
         calendar.set(Calendar.MINUTE, daily_minute);
         long dailyTime = calendar.getTimeInMillis() + randomTime();
-      //  dailyTime = Calendar.getInstance().getTimeInMillis() +20000;
+     //   dailyTime = Calendar.getInstance().getTimeInMillis() +20000;
 
         //Periodic notification
         Calendar calendar2 = Calendar.getInstance();

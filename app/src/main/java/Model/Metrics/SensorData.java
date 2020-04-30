@@ -71,17 +71,25 @@ public class SensorData {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void collectData(Activity activity){
+    public void collectData(Activity activity) {
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
-                        .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
-                        .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                        .addDataType(TYPE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
                         .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
                         .addDataType(TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                         .build();
 
-        if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)){
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)) {
+            GoogleSignIn.requestPermissions(
+                    activity, // your activity
+                    1,
+                    GoogleSignIn.getLastSignedInAccount(activity),
+                    fitnessOptions);
+        }
+
+        if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)) {
             Log.i(TAG, "collectData: sleep,activity,steps,calories,distance and weather");
             sleepGoogleFit.extractSleepData(activity);
             activitiesGoogleFit.extractActivityData(activity);
@@ -90,15 +98,7 @@ public class SensorData {
             distanceGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
             ((Weather) gpsLocationListener).extractDataForWeather();
         }
-        else{
-            GoogleSignIn.requestPermissions(
-                    activity, // your activity
-                    1,
-                    GoogleSignIn.getLastSignedInAccount(activity),
-                    fitnessOptions);
-        }
     }
-
     public void sendData(Context context){
         HttpRequests httpRequests = HttpRequests.getInstance(context);
 

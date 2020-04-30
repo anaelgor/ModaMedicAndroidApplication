@@ -41,15 +41,16 @@ public class Permissions {
                         .build();
 
         if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(app), fitnessOptions)) {
-            //todo: catch this GoogleSignIn object, pass this to thread with Datatype, Field and more.
             GoogleSignIn.requestPermissions(
                     app, // your activity
                     1,
                     GoogleSignIn.getLastSignedInAccount(app),
                     fitnessOptions);
         }
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(app), fitnessOptions))
+            System.out.println(true);
 
-        Log.i("PERMISSIONS", "************PERMISSIONS REQUESTED*************");
+            Log.i("PERMISSIONS", "************PERMISSIONS REQUESTED*************");
     }
 
 
