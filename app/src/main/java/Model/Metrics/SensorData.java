@@ -149,7 +149,8 @@ public class SensorData {
                         case "Sleep":
                             times = (JSONArray) jsonObject.get("Sleep");
                             for (int t = 0; t< times.length() ; t++){
-                                this.sleepGoogleFit.extractSleepDataByDate(context,(long)times.get(t),(long)times.get(t) + 86400000);
+                                //extract from 20:00 prev day to 20:00 day after
+                                this.sleepGoogleFit.extractSleepDataByDate(context,(long)times.get(t) - 14400000,(long)times.get(t) + 86400000 - 14400000);
                             }
                             break;
                         case "Accelerometer":
