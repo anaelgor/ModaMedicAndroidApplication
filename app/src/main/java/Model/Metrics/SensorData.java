@@ -102,25 +102,6 @@ public class SensorData {
     public void sendData(Context context){
         HttpRequests httpRequests = HttpRequests.getInstance(context);
 
-        //wait until we have all data (async tasks)
-        long startTime = System.currentTimeMillis();
-
-        while (sleepGoogleFit.getJson() == null || activitiesGoogleFit.getJson() == null
-                || !stepsGoogleFit.hadBeenCalc() || !caloriesGoogleFit.hadBeenCalc()
-                || !distanceGoogleFit.hadBeenCalc())
-        {
-            //fix time issue to avoid endless loop
-            long currTime = System.currentTimeMillis();
-            if (currTime - startTime >= 10000)
-                break;
-        }
-        // send data to server
-        Log.i(TAG, "******* Sending metrics to server ******");
-        stepsGoogleFit.sendDataToServer(httpRequests);
-        caloriesGoogleFit.sendDataToServer(httpRequests);
-        distanceGoogleFit.sendDataToServer(httpRequests);
-        sleepGoogleFit.sendDataToServer(httpRequests);
-        activitiesGoogleFit.sendDataToServer(httpRequests);
         ((Weather)gpsLocationListener).sendDataToServer(httpRequests);
     }
 

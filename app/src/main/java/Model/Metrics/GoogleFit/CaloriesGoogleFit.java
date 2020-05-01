@@ -80,10 +80,11 @@ public class CaloriesGoogleFit implements DataSender {
             }
 
             makeBodyJson(endTime);
+            Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
+            sendDataToServer(HttpRequests.getInstance(context));
 
             calculated = true;
 
-            Log.i("Total cal of the day:", "************ " + Float.toString(calories) + " *************");
         })
         .addOnFailureListener(response -> {
 
