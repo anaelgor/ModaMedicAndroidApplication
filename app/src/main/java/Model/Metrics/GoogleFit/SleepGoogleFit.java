@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -50,8 +51,14 @@ public class SleepGoogleFit implements DataSender {
 
         extractionCounter ++;
 
-        long endTime = System.currentTimeMillis();
-        long startTime = endTime - 86400000;
+        Calendar midnight = Calendar.getInstance();
+
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 0);
+        midnight.set(Calendar.MILLISECOND, 0);
+
+        long startTime = midnight.getTimeInMillis() - 14400000; //start from 20:00 of prev day
 
         // Note: The android.permission.ACTIVITY_RECOGNITION permission is
         // required to read DataType.TYPE_ACTIVITY_SEGMENT
@@ -84,9 +91,6 @@ public class SleepGoogleFit implements DataSender {
             extractionCounter = 0;
 
             for (Session session : sleepSessions) {
-                Log.d(TAG, String.format("Sleep between %d and %d",
-                        session.getStartTime(TimeUnit.MILLISECONDS),
-                        session.getEndTime(TimeUnit.MILLISECONDS)));
 
                 this.totalSleepTime = session.getEndTime(TimeUnit.MILLISECONDS) - session.getStartTime(TimeUnit.MILLISECONDS);
 
@@ -189,9 +193,6 @@ public class SleepGoogleFit implements DataSender {
                 extractionCounter = 0;
 
                 for (Session session : sleepSessions) {
-                    Log.d(TAG, String.format("Sleep between %d and %d",
-                            session.getStartTime(TimeUnit.MILLISECONDS),
-                            session.getEndTime(TimeUnit.MILLISECONDS)));
 
                     this.totalSleepTime = session.getEndTime(TimeUnit.MILLISECONDS) - session.getStartTime(TimeUnit.MILLISECONDS);
 

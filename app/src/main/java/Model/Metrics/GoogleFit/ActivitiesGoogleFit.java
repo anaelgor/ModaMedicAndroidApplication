@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -138,8 +139,14 @@ public class ActivitiesGoogleFit implements DataSender {
 
         extractionCounter++;
 
-        long endTime = System.currentTimeMillis();
-        long startTime = endTime - 86400000;
+        Calendar midnight = Calendar.getInstance();
+
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 0);
+        midnight.set(Calendar.MILLISECOND, 0);
+
+        long startTime = midnight.getTimeInMillis();
 
         // Note: The android.permission.ACTIVITY_RECOGNITION permission is
         // required to read DataType.TYPE_ACTIVITY_SEGMENT
@@ -170,10 +177,6 @@ public class ActivitiesGoogleFit implements DataSender {
             extractionCounter = 0;
 
             for (Session session : activitiesSessions) {
-                Log.d(TAG, String.format("Activities between %d and %d",
-                        session.getStartTime(TimeUnit.MILLISECONDS),
-                        session.getEndTime(TimeUnit.MILLISECONDS)));
-
 
                 // If the sleep session has finer granularity sub-components, extract them:
                 List<DataSet> dataSets = response.getDataSet(session);
@@ -182,11 +185,12 @@ public class ActivitiesGoogleFit implements DataSender {
                         String activity = point.getValue(Field.FIELD_ACTIVITY).asActivity();
                         long start = point.getStartTime(TimeUnit.MILLISECONDS);
                         long end = point.getEndTime(TimeUnit.MILLISECONDS);
-                        Log.d(TAG, String.format("\t* %s between %d and %d", activity, start, end));
 
                         //ignore sleeping data
                         if (activity.equals("sleep.deep") || activity.equals("sleep.light"))
                             continue;
+
+                        Log.d(TAG, String.format("\t* %s between %d and %d", activity, start, end));
 
                         JSONObject json = new JSONObject();
                         try {
