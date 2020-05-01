@@ -135,6 +135,7 @@ public class SleepGoogleFit implements DataSender {
             }
             // create a json for sending data to server
             makeBodyJson(System.currentTimeMillis());
+            sendDataToServer(HttpRequests.getInstance(context));
         })
                 .addOnFailureListener(response -> {
                     Log.e(TAG, "extractSleepData: failed to extract sleeping data");

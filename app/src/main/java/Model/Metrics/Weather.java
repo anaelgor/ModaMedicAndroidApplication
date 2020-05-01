@@ -143,6 +143,7 @@ public class Weather implements LocationListener, DataSender {
     @Override
     public void sendDataToServer(HttpRequests httpRequests){
         try {
+            Thread.sleep(20000);
             httpRequests.sendPostRequest(makeBodyJson(), Urls.urlPostWeather, Login.getToken(HttpRequests.getContext()));
         }
         catch (Exception e){

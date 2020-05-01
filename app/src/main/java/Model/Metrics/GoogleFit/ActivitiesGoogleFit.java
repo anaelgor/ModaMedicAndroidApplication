@@ -204,6 +204,7 @@ public class ActivitiesGoogleFit implements DataSender {
                 }
             }
             makeBodyJson(System.currentTimeMillis());
+            sendDataToServer(HttpRequests.getInstance(context));
         })
                 .addOnFailureListener(response -> {
                     Log.e(TAG, "extractActivityData: failed to extract activity data");

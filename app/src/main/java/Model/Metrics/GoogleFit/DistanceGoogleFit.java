@@ -80,10 +80,11 @@ public class DistanceGoogleFit implements DataSender {
             }
 
             makeBodyJson(endTime);
+            Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
+            sendDataToServer(HttpRequests.getInstance(context));
 
             calculated = true;
 
-            Log.i("Total dist of the day:", "************ " + Float.toString(dist) + " *************");
         })
                 .addOnFailureListener(response -> {
 

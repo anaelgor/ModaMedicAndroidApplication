@@ -79,10 +79,11 @@ public class StepsGoogleFit implements DataSender {
                 steps += datapoint.getValue(FIELD_STEPS).asInt();
             }
             makeBodyJson(endTime);
+            Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
+            sendDataToServer(HttpRequests.getInstance(context));
 
             calculated = true;
 
-            Log.i("Total steps of the day:", "************ " + Integer.toString(steps) + " *************");
         })
                 .addOnFailureListener(response -> {
 
