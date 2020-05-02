@@ -16,12 +16,12 @@ public class LocationBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
         Weather weather = new Weather(this.locationManager, context);
-
-        long start = System.currentTimeMillis();
-
-        while (System.currentTimeMillis() < start + 10000); //wait 10 seconds until location is updating
+        try {
+            Thread.sleep(2000);//wait 2 seconds until location is updating
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         Log.i(TAG,"Location tracker via broadcast");
 

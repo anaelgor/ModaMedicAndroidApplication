@@ -576,15 +576,16 @@ public class QuestionnaireActivity extends AbstractActivity {
                 ans_text.setSpan(new AbsoluteSizeSpan(60),0,text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 String description = medicineInfo.get(ans.getAnswerID());
                 SpannableString description_text = new SpannableString(description);
-                description_text.setSpan(new AbsoluteSizeSpan(30),0,description.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                CharSequence finalText = TextUtils.concat(ans_text, " ", description_text);
+                description_text.setSpan(new AbsoluteSizeSpan(40),0,description.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                CharSequence finalText = TextUtils.concat(ans_text, "\n", description_text);
                 ans_Button.setText(finalText);
             }
             else {
                 ans_Button.setText(text);
                 ans_Button.setTextSize(20);
             }
-            ans_Button.setPadding(0, 0, 0, 0);
+            ans_Button.setPadding(50, 0, 50, 0);
+           // ans_Button.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
 
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
