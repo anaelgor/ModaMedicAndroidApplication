@@ -115,6 +115,8 @@
     <string name="you_have_to_choose_at_least_one">עליך לבחור לפחות שאלון אחד</string>
     <string name="succesfull_date_change_to">תאריך הניתוח עודכן בהצלחה ל-</string>
     <string name="remember_me">השאר אותי מחובר</string>
+    <string name="consider_last_time">ענה על השאלה ביחס להרגשתך בשבועיים האחרונים</string>
+
 
 
 </resources>

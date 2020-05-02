@@ -2,7 +2,9 @@ package View;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -14,8 +16,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -48,6 +52,7 @@ public class QuestionnaireActivity extends AbstractActivity {
     private SeekBar answerEQ5TF = null;
     private boolean eq5Answered = false;
     private TextView eq5result = null;
+    private ImageView eq5face = null;
     private Map<Long, String> medicineInfo = null;
 
     @Override
@@ -79,14 +84,19 @@ public class QuestionnaireActivity extends AbstractActivity {
         String ques_TEXT = questionnaire.getQuestions().get(i).getQuestionText();
         TextView question_TV = new TextView(this);
         question_TV.setText(ques_TEXT);
-        question_TV.setTextSize(30);
+        question_TV.setTextSize(20);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
         question_TV.setGravity(Gravity.CENTER);
         question_TV.setLayoutParams(params);
         layout.addView(question_TV);
-        BuildQuestionByType(questionnaire.getQuestions().get(i).getType(), i);
+        Question.Type type = questionnaire.getQuestions().get(i).getType();
+        if (type.equals(Question.Type.SINGLE)) {
+            TextView twoWeeksTV = BuildTwoWeeks();
+            layout.addView(twoWeeksTV);
+        }
+        BuildQuestionByType(type, i);
 
         //next previous buttons
         FloatingActionButton nextButton = findViewById(R.id.nextButton);
@@ -116,6 +126,19 @@ public class QuestionnaireActivity extends AbstractActivity {
         }
 
 
+    }
+
+    private TextView BuildTwoWeeks() {
+        String two_weeks = getString(R.string.consider_last_time);
+        TextView twoWeeksTV = new TextView(this);
+        twoWeeksTV.setText(two_weeks);
+        twoWeeksTV.setTextSize(15);
+        LinearLayout.LayoutParams two_weeks_params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        two_weeks_params.setMargins(10, 10, 10, 10);
+        twoWeeksTV.setGravity(Gravity.CENTER);
+        twoWeeksTV.setLayoutParams(two_weeks_params);
+        return twoWeeksTV;
     }
 
     @SuppressLint("RestrictedApi")
@@ -160,16 +183,22 @@ public class QuestionnaireActivity extends AbstractActivity {
                         prevButton.setVisibility(View.INVISIBLE);
                         TextView thanksTV = new TextView(v.getContext());
                         thanksTV.setText(R.string.thanks);
-                        thanksTV.setTextSize(30);
+                        thanksTV.setTextSize(20);
+                        thanksTV.setGravity(Gravity.CENTER);
                         layout.addView(thanksTV);
                         TextView sentTV = new TextView(v.getContext());
                         sentTV.setText(R.string.sent_succesfully);
-                        sentTV.setTextSize(30);
+                        sentTV.setTextSize(20);
+                        sentTV.setGravity(Gravity.CENTER);
                         layout.addView(sentTV);
                         Button backButton = new Button(v.getContext());
                         backButton.setText(R.string.back_to_home_page);
                         backButton.setWidth(20);
                         backButton.setHeight(10);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(0,100,0,0);
+                        backButton.setLayoutParams(params);
+                        backButton.setGravity(Gravity.CENTER);
                         backButton.setBackground(getDrawable(R.drawable.custom_system_button));
                         backButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -301,6 +330,12 @@ public class QuestionnaireActivity extends AbstractActivity {
             private void func(int progress) {
                 eq5Answered = true;
                 eq5result.setText(String.valueOf(progress));
+                if (progress <= 33)
+                    eq5face.setImageResource(R.drawable.yellowsadface);
+                else if (progress < 67)
+                    eq5face.setImageResource(R.drawable.yellowneutralface);
+                else
+                    eq5face.setImageResource(R.drawable.yellowhappyface);
             }
 
             @Override
@@ -337,10 +372,16 @@ public class QuestionnaireActivity extends AbstractActivity {
         eq5result.setText("0");
         eq5result.setPadding(0, 20, 0, 0);
 
+        eq5face = new ImageView(this);
+        eq5face.setImageResource(R.drawable.whitesadface);
+        eq5face.setPadding(0, 5, 0, 0);
+        eq5face.setLayoutParams(new LinearLayout.LayoutParams(200,200));
+
         answerEQ5TF = seekBar;
         layout.addView(subtextTV);
         layout.addView(bestTV);
         layout.addView(answerEQ5TF);
+        layout.addView(eq5face);
         layout.addView(eq5result);
         LinearLayout rl = new LinearLayout(this);
         rl.setOrientation(LinearLayout.HORIZONTAL);
@@ -360,9 +401,9 @@ public class QuestionnaireActivity extends AbstractActivity {
         setLabelsOfBestWorstConfiguration(best);
         layout.addView(best);
 
-
+        int answersSize = this.questionnaire.getQuestions().get(i).getAnswers().size();
         for (Answer ans : this.questionnaire.getQuestions().get(i).getAnswers()) {
-            String text = ans.getAnswerText();
+            String text = ans.getAnswerText() + "   ";
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
             ans_Button.setPadding(0, 0, 0, 0);
@@ -370,8 +411,25 @@ public class QuestionnaireActivity extends AbstractActivity {
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
             ans_Button.setBackground(getDrawable(R.drawable.custom_button));
-            ans_Button.setBackgroundColor(VAS_Colors.get(finalAnswerID));
-            setButtonConfiguration(ans_Button);
+            boolean chosen = checkChosen(finalQuestionID,finalAnswerID, Question.Type.VAS);
+            if (chosen)
+                ans_Button.setBackground(getDrawable(R.drawable.custom_vas_chosen_button));
+            else
+                ans_Button.setBackgroundColor(VAS_Colors.get(finalAnswerID));
+            Drawable emoji = null;
+            if (ans.getAnswerID() < (answersSize/3))
+                emoji = getDrawable(R.drawable.happyface);
+            else if (ans.getAnswerID() < ((2 * answersSize )/ 3))
+                emoji = getDrawable(R.drawable.neutralface);
+            else
+                emoji = getDrawable(R.drawable.sadface);
+
+            Bitmap emoji_bitmap = ((BitmapDrawable) emoji).getBitmap();
+            Drawable emoji_drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(emoji_bitmap, 80, 80, true));
+            emoji_drawable.setBounds(0,0,80,80);
+            ans_Button.setCompoundDrawables(emoji_drawable,null,null,null);
+
+            setButtonConfigurationForVAS(ans_Button);
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -439,12 +497,11 @@ public class QuestionnaireActivity extends AbstractActivity {
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
             ans_Button.setPadding(0, 0, 0, 0);
-            ans_Button.setTextSize(20);
+            ans_Button.setTextSize(15);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
-            final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);
-            setButtonConfigurationForSingleAndMulti(ans_Button);
-
+            boolean chosen = checkChosen(finalQuestionID,finalAnswerID, Question.Type.SINGLE);
+            setButtonConfigurationForSingleAndMulti(ans_Button, chosen);
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -475,6 +532,25 @@ public class QuestionnaireActivity extends AbstractActivity {
             answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
+    }
+
+    private boolean checkChosen(long finalQuestionID, long finalAnswerID, Question.Type type) {
+        if (questionsAnswers.containsKey(finalQuestionID)) {
+            List<Long> prevAnsList = questionsAnswers.get(finalQuestionID);
+            if (type.equals(Question.Type.SINGLE) || type.equals(Question.Type.VAS)) {
+                long prevAnswer = prevAnsList.get(0);
+                return (prevAnswer == finalAnswerID);
+            }
+            else if (type.equals(Question.Type.MULTI)) {
+                for (int i=0; prevAnsList!=null && i<prevAnsList.size(); i++) {
+                    long prevAnswer = prevAnsList.get(i);
+                    if (prevAnswer == finalAnswerID)
+                        return true;
+                }
+            }
+
+        }
+        return  false;
     }
 
     private void buildMultiQuestion(final int i) {
@@ -512,8 +588,8 @@ public class QuestionnaireActivity extends AbstractActivity {
 
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
-            final int reg_color = ResourcesCompat.getColor(getResources(), R.color.colorRegularAnswer, null);
-            setButtonConfigurationForSingleAndMulti(ans_Button);
+            boolean chosen = checkChosen(finalQuestionID,finalAnswerID, Question.Type.MULTI);
+            setButtonConfigurationForSingleAndMulti(ans_Button, chosen);
 
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -587,7 +663,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         return -1;
     }
 
-    private void setButtonConfiguration(Button b) {
+    private void setButtonConfigurationForVAS(Button b) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
@@ -595,22 +671,25 @@ public class QuestionnaireActivity extends AbstractActivity {
 
         params.width = px;
         params.height = (int) (px * 0.25);
-        b.setGravity(Gravity.CENTER);
+        b.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         b.setLayoutParams(params);
     }
 
     /*
     now is implemented only by single, let's see later if we need it on multi
      */
-    private void setButtonConfigurationForSingleAndMulti(Button b) {
+    private void setButtonConfigurationForSingleAndMulti(Button b, boolean chosen) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(10, 10, 10, 10);
+        params.setMargins(10, 20, 10, 10);
         int width = getWidthOfScreen();
         b.setWidth(width);
         b.setGravity(Gravity.CENTER);
         b.setLayoutParams(params);
-        b.setBackground(getDrawable(R.drawable.custom_button));
+        if (chosen)
+            b.setBackground(getDrawable(R.drawable.custom_chosen_button));
+        else
+            b.setBackground(getDrawable(R.drawable.custom_button));
 
     }
 

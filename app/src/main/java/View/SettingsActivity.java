@@ -82,7 +82,7 @@ public class SettingsActivity extends AbstractActivity {
                 year,month,day);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
-        dialog.getWindow().setLayout(getWidthOfScreen(),getHeightOfScreen());
+        dialog.getWindow().setLayout(getWidthOfScreen(),4*getHeightOfScreen()/5);
         dialog.show();
     }
 
