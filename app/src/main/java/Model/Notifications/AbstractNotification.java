@@ -14,17 +14,14 @@ import com.example.modamedicandroidapplication.R;
 import Controller.AppController;
 import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
-import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
-import Model.Utils.PropertiesManager;
-import View.HomePageActivity;
 import View.QuestionnaireActivity;
 import View.ViewUtils.BindingValues;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
 
     protected static String CHANNEL_ID = "MainChannel";
-    public static long ONE_MINUTE = 1 * 60 * 1000;
+    public static long ONE_MINUTE = -1; // 1 * 60 * 1000;
 
 
     /*
@@ -56,18 +53,20 @@ public abstract class AbstractNotification extends BroadcastReceiver {
                 notificationManager.notify(id, notification);
             }
         });
-        t.setPriority(Thread.MIN_PRIORITY);
         t.start();
 
 
     }
 
     protected static boolean HasUserAnswered(String questionnaire_id, Context context) {
+        if (true)
+            return false;
         String days;
         if (questionnaire_id.equals("0")) // daily questionnaire
             days = "0";
         else
-            days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
+          days = "3";
+        //days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
         return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
     }
 
@@ -75,16 +74,10 @@ public abstract class AbstractNotification extends BroadcastReceiver {
         AppController appController = AppController.getController(null);
         Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
         Intent intent = null;
-        long zero = 0;
-        if (questionnaire_id.equals(zero)) {
-            intent = new Intent(context, QuestionnaireActivity.class);
-            if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
-                intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
-            intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
-        }
-        else {
-            intent = new Intent(context, HomePageActivity.class);
-        }
+        intent = new Intent(context, QuestionnaireActivity.class);
+        if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
+            intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
+        intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
         return intent;
     }
 

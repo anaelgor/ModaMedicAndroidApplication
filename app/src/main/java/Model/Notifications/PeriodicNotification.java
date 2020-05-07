@@ -13,7 +13,6 @@ import java.util.Map;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
-import View.MainActivity;
 
 public class PeriodicNotification extends AbstractNotification{
 
@@ -54,7 +53,6 @@ public class PeriodicNotification extends AbstractNotification{
                 }
             }
         });
-        t.setPriority(Thread.MIN_PRIORITY);
         t.run();
 
     }
