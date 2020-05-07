@@ -236,7 +236,13 @@ public class SettingsActivity extends AbstractActivity {
         TextView date_tv = findViewById(R.id.your_current_surgery_day);
         if (!update) {
             long currentDate = appController.getSurgeryDate();
-            date_tv.setText(String.format("%s %s", date_tv.getText(), getStringDate(currentDate)));
+            if (currentDate == 0){
+                String unknown = getString(R.string.unknown_surgery_day);
+                date_tv.setText(String.format("%s %s", date_tv.getText(), unknown));
+            }
+            else{
+                date_tv.setText(String.format("%s %s", date_tv.getText(), getStringDate(currentDate)));
+            }
         }
         else {
             date_tv.setText(String.format("%s %s", getString(R.string.your_current_surgery_day), date));

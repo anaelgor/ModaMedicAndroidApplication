@@ -182,8 +182,10 @@ public class SensorData {
     public void setMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
         Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
-        int hour = Configurations.getMetricsTaskHour(context);
-        int minute = Configurations.getMetricsTaskMinute(context);
+//        int hour = Configurations.getMetricsTaskHour(context);
+//        int minute = Configurations.getMetricsTaskMinute(context);
+        int hour = 23;
+        int minute = 45;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);

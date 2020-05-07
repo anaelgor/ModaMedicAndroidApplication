@@ -10,7 +10,6 @@ import com.example.modamedicandroidapplication.R;
 import java.util.Calendar;
 
 import Model.Utils.Constants;
-import View.MainActivity;
 
 public class DailyNotification extends AbstractNotification {
 
@@ -41,7 +40,6 @@ public class DailyNotification extends AbstractNotification {
                 }
             }
         });
-        t.setPriority(Thread.MIN_PRIORITY);
         t.run();
 
 

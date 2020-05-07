@@ -33,10 +33,15 @@ public class NotificationsManager {
         if (alarmManager == null)
             alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
 
-        int daily_minute = Configurations.getNotificationMinute(context,"daily");
-        int daily_hour = Configurations.getNotificationHour(context,"daily");
-        int periodic_minute = Configurations.getNotificationMinute(context,"periodic");
-        int periodic_hour =  Configurations.getNotificationHour(context,"periodic");
+//        int daily_minute = Configurations.getNotificationMinute(context,"daily");
+//        int daily_hour = Configurations.getNotificationHour(context,"daily");
+//        int periodic_minute = Configurations.getNotificationMinute(context,"periodic");
+//        int periodic_hour =  Configurations.getNotificationHour(context,"periodic");
+
+        int daily_minute = 0;
+        int periodic_minute = 30;
+        int daily_hour = 19;
+        int periodic_hour =  19;
 
         //Daily notification - one in 16:00 and one in 19:00
         Calendar daily_calendar = Calendar.getInstance();
@@ -79,6 +84,8 @@ public class NotificationsManager {
     }
 
     private long randomTime() {
+        if (true)
+            return 0;
         long min = -600000;
         long max = 600000;
         return min + (long) (Math.random() * (max - min));
