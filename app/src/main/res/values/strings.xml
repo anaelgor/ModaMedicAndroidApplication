@@ -111,7 +111,7 @@
     <string name="save">שמור</string>
     <string name="settings_title">הגדרות</string>
     <string name="your_current_surgery_day">תאריך הניתוח שלך</string>
-    <string name="change_surgery_day_string">עדכן תאריך ניתוח</string>
+    <string name="change_surgery_day_string">עדכון תאריך ניתוח</string>
     <string name="change_your_questionnaires">עדכן שאלונים רפואיים</string>
     <string name="questionnaires_has_been_changed">השאלונים עודכנו בהצלחה</string>
     <string name="you_have_to_choose_at_least_one">עליך לבחור לפחות שאלון אחד</string>
