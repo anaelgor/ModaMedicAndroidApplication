@@ -21,7 +21,7 @@ import View.ViewUtils.BindingValues;
 public abstract class AbstractNotification extends BroadcastReceiver {
 
     protected static String CHANNEL_ID = "MainChannel";
-    public static long ONE_MINUTE = -1; // 1 * 60 * 1000;
+    public static long ONE_MINUTE = 1 * 60 * 1000;
 
 
     /*
