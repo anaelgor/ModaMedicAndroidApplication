@@ -110,7 +110,7 @@
     <string name="succesfull_registarion">ההרשמה בוצעה בהצלחה</string>
     <string name="save">שמור</string>
     <string name="settings_title">הגדרות</string>
-    <string name="your_current_surgery_day">תאריך הניתוח שלך הוא</string>
+    <string name="your_current_surgery_day">תאריך הניתוח שלך</string>
     <string name="change_surgery_day_string">עדכן תאריך ניתוח</string>
     <string name="change_your_questionnaires">עדכן שאלונים רפואיים</string>
     <string name="questionnaires_has_been_changed">השאלונים עודכנו בהצלחה</string>
@@ -118,6 +118,7 @@
     <string name="succesfull_date_change_to">תאריך הניתוח עודכן בהצלחה ל-</string>
     <string name="remember_me">השאר אותי מחובר/ת</string>
     <string name="consider_last_time">ענה/י על השאלה ביחס להרגשתך בשבועיים האחרונים</string>
+    <string name="unknown_surgery_day">אינו ידוע</string>
 
 
 
