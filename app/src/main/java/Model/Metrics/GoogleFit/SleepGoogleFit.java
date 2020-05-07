@@ -129,7 +129,8 @@ public class SleepGoogleFit implements DataSender {
                             json.put("StartTime", start);
                             json.put("EndTime", end);
                             json.put("State", sleepStage);
-                            this.sleepDataArray.add(json);
+                            if (!this.sleepDataArray.contains(json))
+                                this.sleepDataArray.add(json);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -231,7 +232,8 @@ public class SleepGoogleFit implements DataSender {
                                 json.put("StartTime", start);
                                 json.put("EndTime", end);
                                 json.put("State", sleepStage);
-                                this.sleepDataArray.add(json);
+                                if (!this.sleepDataArray.contains(json))
+                                    this.sleepDataArray.add(json);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

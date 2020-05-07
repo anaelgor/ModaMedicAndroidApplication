@@ -104,8 +104,8 @@ public class ActivitiesGoogleFit implements DataSender {
                                 json.put("StartTime", start);
                                 json.put("EndTime", end);
                                 json.put("State", activity);
-
-                                activityArray.add(json);
+                                if (!activityArray.contains(json))
+                                    activityArray.add(json);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -198,7 +198,8 @@ public class ActivitiesGoogleFit implements DataSender {
                             json.put("EndTime", end);
                             json.put("State", activity);
 
-                            activityArray.add(json);
+                            if (!activityArray.contains(json))
+                                activityArray.add(json);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
