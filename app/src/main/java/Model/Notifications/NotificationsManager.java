@@ -36,10 +36,16 @@ public class NotificationsManager {
             alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
 
         try {
-            int periodic_minute = Configurations.getInt(context, Constants.PERIODIC_NOTIFICATIONS_MINUTES);
-            int periodic_hour =  Configurations.getInt(context, Constants.PERIODIC_NOTIFICATIONS_HOUR);
-            int daily_minute = Configurations.getInt(context,Constants.DAILY_NOTIFICATIONS_MINUTES);
-            int daily_hour = Configurations.getInt(context,Constants.DAILY_NOTIFICATIONS_HOUR);
+//            int periodic_minute = Configurations.getInt(context, Constants.PERIODIC_NOTIFICATIONS_MINUTES);
+//            int periodic_hour =  Configurations.getInt(context, Constants.PERIODIC_NOTIFICATIONS_HOUR);
+//            int daily_minute = Configurations.getInt(context,Constants.DAILY_NOTIFICATIONS_MINUTES);
+//            int daily_hour = Configurations.getInt(context,Constants.DAILY_NOTIFICATIONS_HOUR);
+
+
+            int periodic_minute =35;
+            int periodic_hour =  15;
+            int daily_minute = 35;
+            int daily_hour = 15;
             Calendar daily_calendar = Calendar.getInstance();
             daily_calendar.setTimeInMillis(System.currentTimeMillis());
             daily_calendar.set(Calendar.HOUR_OF_DAY, daily_hour);
@@ -53,7 +59,7 @@ public class NotificationsManager {
             setRepeatingNotification(DailyNotification.class, daily_calendar.getTimeInMillis() + randomTime(), AlarmManager.INTERVAL_DAY);
             //Periodic notification
             setRepeatingNotification(PeriodicNotification.class, periodic_calendar.getTimeInMillis() + randomTime(), AlarmManager.INTERVAL_DAY);
-
+            throw new KeyIsNotExistsException("log");
         } catch (KeyIsNotExistsException e) {
             Log.e(TAG,"Can't find keys of configuration. fatal error!");
             e.printStackTrace();

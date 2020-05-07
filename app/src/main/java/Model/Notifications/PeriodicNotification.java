@@ -54,7 +54,6 @@ public class PeriodicNotification extends AbstractNotification{
                 }
             }
         });
-        t.setPriority(Thread.MIN_PRIORITY);
         t.run();
 
     }

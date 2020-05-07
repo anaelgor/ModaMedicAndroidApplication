@@ -28,11 +28,9 @@ import static android.content.Context.MODE_PRIVATE;
 public abstract class AbstractNotification extends BroadcastReceiver {
 
     protected static String CHANNEL_ID = "MainChannel";
-    public static long ONE_MINUTE = 1 * 60 * 1000;
+    public static long ONE_MINUTE =-1;// 1 * 60 * 1000;
     public static long ONE_DAY = 1 * 60 * 1000 * 60 * 24;
     public static final String TAG = "AbstractNotification";
-
-
     /*
    this method should send notifications to user
     */
@@ -62,13 +60,14 @@ public abstract class AbstractNotification extends BroadcastReceiver {
                 notificationManager.notify(id, notification);
             }
         });
-        t.setPriority(Thread.MIN_PRIORITY);
         t.start();
 
 
     }
 
     protected static boolean HasUserAnswered(String questionnaire_id, Context context) {
+        if (true)
+            return false;
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
         long lastAnswered = sharedPreferences.getLong(Constants.LAST_TIME_ANSWERED_QUESTIONNAIRE+questionnaire_id, -1);
         long currentTime = System.currentTimeMillis();

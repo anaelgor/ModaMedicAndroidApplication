@@ -127,6 +127,7 @@ public class MainActivity extends AbstractActivity {
     }
 
     private void openHomePage(boolean logged) {
+        migrationForFirstTimeUsers();
         Intent intent = new Intent(this, HomePageActivity.class);
         intent.putExtra(BindingValues.LOGGED_USERNAME, username);
         if (!logged) {
@@ -159,5 +160,17 @@ public class MainActivity extends AbstractActivity {
                     }
                 })
                 .show();
+    }
+
+    private void migrationForFirstTimeUsers() {
+        long questionaireID = 0;
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        long currentTime = System.currentTimeMillis();
+        long ONE_DAY = 1 * 60 * 1000 * 60 * 24;
+        long ONE_MONTH = 30 * ONE_DAY;
+        for (int i=0; i<6; i++) {
+            questionaireID = i;
+            sharedPreferences.edit().putLong(Constants.LAST_TIME_ANSWERED_QUESTIONNAIRE+questionaireID,currentTime-ONE_MONTH).apply();
+        }
     }
 }

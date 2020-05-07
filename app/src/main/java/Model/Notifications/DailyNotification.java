@@ -41,7 +41,6 @@ public class DailyNotification extends AbstractNotification {
                 }
             }
         });
-        t.setPriority(Thread.MIN_PRIORITY);
         t.run();
 
 

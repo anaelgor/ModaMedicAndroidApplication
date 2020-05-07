@@ -216,7 +216,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         });
     }
 
-    private void persistLastAnsweredOnServer(long questionaireID) {
+    private void persistLastAnsweredOnDeviceStorage(long questionaireID) {
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
         long currentTime = System.currentTimeMillis();
         sharedPreferences.edit().putLong(Constants.LAST_TIME_ANSWERED_QUESTIONNAIRE+questionaireID,currentTime).apply();
@@ -288,7 +288,7 @@ public class QuestionnaireActivity extends AbstractActivity {
     private void sendAnswersToServer() {
         AppController appController = AppController.getController(this);
         appController.sendAnswersToServer(questionsAnswers, questionnaire.getQuestionaireID());
-        persistLastAnsweredOnServer(questionnaire.getQuestionaireID());
+        persistLastAnsweredOnDeviceStorage(questionnaire.getQuestionaireID());
 
     }
 
