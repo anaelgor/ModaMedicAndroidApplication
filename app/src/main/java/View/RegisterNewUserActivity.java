@@ -1,5 +1,6 @@
 package View;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -17,6 +18,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+
+import androidx.core.content.ContextCompat;
+
 import com.example.modamedicandroidapplication.R;
 
 import java.util.ArrayList;
@@ -123,10 +127,13 @@ public class RegisterNewUserActivity extends AbstractActivity {
                     eduction.getSelectedItem().toString(),
                     Integer.parseInt(weight.getText().toString()),
                     Integer.parseInt(height.getText().toString()),
-                    DateUtils.changeDateTo00AM(chosenTime.getTimeInMillis()),specialCode.getText().toString(),
+                    DateUtils.changeDateTo00AM(chosenTime.getTimeInMillis()),
+                    specialCode.getText().toString(),
                     questionToIDS.get(verificationQuestion.getSelectedItem().toString()),
-                    verificationAnswer.getText().toString(),DateUtils.changeDateTo00AM(chosenSurgeryTime.getTimeInMillis()),
-                    chosenQuestionnaires, firstName.getText().toString(),
+                    verificationAnswer.getText().toString(),
+                    (chosenSurgeryTime != null ? DateUtils.changeDateTo00AM(chosenSurgeryTime.getTimeInMillis()) : 0),
+                    chosenQuestionnaires,
+                    firstName.getText().toString(),
                     lastName.getText().toString());
             String msg = appController.register(user);
             boolean flag2 = showWrongInfo(msg);
@@ -178,6 +185,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
         return selectedButton.getText().toString();
     }
 
+    @SuppressLint("ResourceType")
     private boolean verifyInputs() {
         if (specialCode.length() == 0) {
             showAlert(R.string.fill_registrationCode);
@@ -223,7 +231,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
             showAlert(R.string.fill_date);
             return false;
         }
-        if (chosenSurgeryTime == null) {
+        if (chosenSurgeryTime == null && surgery.indexOfChild(findViewById(surgery.getCheckedRadioButtonId())) != 2) {
             showAlert(R.string.fill_surgery_date);
             return false;
         }
@@ -315,6 +323,19 @@ public class RegisterNewUserActivity extends AbstractActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
+    }
+
+    public void disableDatePickerForSurgery(View view){
+        Button chooseDateOfSurgery = findViewById(R.id.chooseDateOfSurgery);
+        chooseDateOfSurgery.setClickable(false);
+        chooseDateOfSurgery.setBackground(ContextCompat.getDrawable(view.getContext(),R.drawable.custom_unclickable_button));
+        chosenSurgeryTime = null;
+    }
+
+    public void enableDatePickerForSurgery(View view){
+        Button chooseDateOfSurgery = findViewById(R.id.chooseDateOfSurgery);
+        chooseDateOfSurgery.setClickable(true);
+        chooseDateOfSurgery.setBackground(ContextCompat.getDrawable(view.getContext(),R.drawable.custom_system_button));
     }
 
     public void chooseDateOfSurgery(View view) {

@@ -31,6 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/radio_urgent_surgery"
+                    android:onClick="enableDatePickerForSurgery"
                     android:textSize="20sp" />
 
                 <RadioButton
@@ -38,6 +39,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/radio_planned_surgery"
+                    android:onClick="enableDatePickerForSurgery"
+                    android:textSize="20sp" />
+
+                <RadioButton
+                    android:id="@+id/radioNoSurgery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_no_surgery"
+                    android:onClick="disableDatePickerForSurgery"
                     android:textSize="20sp" />
 
             </RadioGroup>
@@ -145,7 +155,7 @@
                 android:id="@+id/radioSmoke"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="715dp"
+                android:layout_marginTop="745dp"
                 android:layout_centerHorizontal="true">
 
                 <RadioButton
@@ -185,7 +195,7 @@
                 android:layout_width="242dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="1250dp"
+                android:layout_marginTop="1320dp"
                 android:layout_marginEnd="87dp"
                 android:background="@drawable/custom_system_button"
                 android:backgroundTintMode="src_in"
@@ -212,13 +222,23 @@
                 android:textColorHighlight="@color/colorAccent"
                 android:textColorLink="@color/colorAccent" />
 
+            <TextView
+                android:id="@+id/chooseEducationTitle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="820dp"
+                android:textSize="20dp"
+                android:gravity="center_horizontal"
+                android:text="@string/choose_education"
+                android:layout_height="wrap_content"
+                android:layout_width="270dp" />
+
             <Spinner
                 android:id="@+id/education_spinner"
                 android:entries="@array/education_spinner_choices"
                 android:layout_width="275dp"
                 android:layout_height="45dp"
                 android:background="@android:drawable/editbox_dropdown_dark_frame"
-                android:layout_marginTop="790dp"
+                android:layout_marginTop="855dp"
                 android:layout_centerHorizontal="true"
                 android:textAlignment="textStart"
                 android:spinnerMode="dropdown"/>
@@ -260,7 +280,7 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="242dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="845dp"
+                android:layout_marginTop="915dp"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/custom_system_button"
                 android:backgroundTintMode="src_in"
@@ -277,7 +297,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="64dp"
-                android:layout_marginTop="1180dp"
+                android:layout_marginTop="1250dp"
                 android:ems="10"
                 android:gravity="center_horizontal"
                 android:hint="@string/specialCode"
@@ -291,7 +311,7 @@
                 android:layout_width="275dp"
                 android:layout_height="45dp"
                 android:background="@android:drawable/editbox_dropdown_dark_frame"
-                android:layout_marginTop="1070dp"
+                android:layout_marginTop="1140dp"
                 android:layout_centerHorizontal="true"
                 android:textAlignment="textStart"
                 android:spinnerMode="dropdown"/>
@@ -302,7 +322,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="1120dp"
+                android:layout_marginTop="1190dp"
                 android:ems="10"
                 android:gravity="center_horizontal"
                 android:hint="@string/answer_verification_question"
@@ -314,7 +334,7 @@
             <TextView
                 android:id="@+id/chooseQuestionTitle"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="1030dp"
+                android:layout_marginTop="1100dp"
                 android:textSize="20dp"
                 android:gravity="center_horizontal"
                 android:text="@string/choose_verification_question"
@@ -326,7 +346,7 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="275dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="905dp"
+                android:layout_marginTop="975dp"
                 android:background="@drawable/custom_system_button"
                 android:backgroundTintMode="src_in"
                 android:gravity="center"
@@ -341,7 +361,7 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="242dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="970dp"
+                android:layout_marginTop="1040dp"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/custom_system_button"
                 android:backgroundTintMode="src_in"
