@@ -1,5 +1,6 @@
 package Model.Questionnaires;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -26,7 +27,6 @@ public class QuestionnaireSenderAndReceiver {
                 try {
                     httpRequests.sendPostRequest(request, Urls.urlPostAnswersOfQuestionnaireByID, Login.getToken(HttpRequests.getContext()));
                     Log.i(TAG,"sent to server");
-
                 } catch (ServerFalseException serverFalseException) {
                     serverFalseException.printStackTrace();
                     Log.i(TAG,"problem in sending questionaire to server "+ serverFalseException.getLocalizedMessage());

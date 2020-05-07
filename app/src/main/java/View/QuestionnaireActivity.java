@@ -2,6 +2,7 @@ package View;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -40,6 +41,7 @@ import Controller.AppController;
 import Model.Questionnaires.Answer;
 import Model.Questionnaires.Question;
 import Model.Questionnaires.Questionnaire;
+import Model.Utils.Constants;
 import View.ViewUtils.BindingValues;
 
 public class QuestionnaireActivity extends AbstractActivity {
@@ -214,6 +216,12 @@ public class QuestionnaireActivity extends AbstractActivity {
         });
     }
 
+    private void persistLastAnsweredOnServer(long questionaireID) {
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        long currentTime = System.currentTimeMillis();
+        sharedPreferences.edit().putLong(Constants.LAST_TIME_ANSWERED_QUESTIONNAIRE+questionaireID,currentTime).apply();
+    }
+
     private void backToHomePage(View v) {
         finish();
     //    Intent intent = new Intent(this, HomePageActivity.class);
@@ -280,6 +288,8 @@ public class QuestionnaireActivity extends AbstractActivity {
     private void sendAnswersToServer() {
         AppController appController = AppController.getController(this);
         appController.sendAnswersToServer(questionsAnswers, questionnaire.getQuestionaireID());
+        persistLastAnsweredOnServer(questionnaire.getQuestionaireID());
+
     }
 
     private static int safeLongToInt(long l) {

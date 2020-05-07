@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import Controller.AppController;
 import Model.ConnectedDevices;
 import Model.Questionnaires.Questionnaire;
+import Model.Utils.Configurations;
 import Model.Utils.Constants;
 import View.ViewUtils.BindingValues;
 
@@ -45,8 +46,9 @@ public class HomePageActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        saveLastLogin();
         super.onCreate(savedInstanceState);
+        saveLastLogin();
+        Configurations.persistConfigurationsInSharedPreferences(getApplicationContext());
         username = getUserName();
         setContentView(R.layout.activity_homepage);
         appController = AppController.getController(this);

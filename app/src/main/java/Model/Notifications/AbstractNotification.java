@@ -6,25 +6,31 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.example.modamedicandroidapplication.R;
 
 import Controller.AppController;
+import Model.Exceptions.KeyIsNotExistsException;
 import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Utils.Configurations;
+import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
-import Model.Utils.PropertiesManager;
-import View.HomePageActivity;
 import View.QuestionnaireActivity;
 import View.ViewUtils.BindingValues;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
 
     protected static String CHANNEL_ID = "MainChannel";
     public static long ONE_MINUTE = 1 * 60 * 1000;
+    public static long ONE_DAY = 1 * 60 * 1000 * 60 * 24;
+    public static final String TAG = "AbstractNotification";
 
 
     /*
@@ -63,28 +69,38 @@ public abstract class AbstractNotification extends BroadcastReceiver {
     }
 
     protected static boolean HasUserAnswered(String questionnaire_id, Context context) {
-        String days;
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.sharedPreferencesName,MODE_PRIVATE);
+        long lastAnswered = sharedPreferences.getLong(Constants.LAST_TIME_ANSWERED_QUESTIONNAIRE+questionnaire_id, -1);
+        long currentTime = System.currentTimeMillis();
+        String days = "0";
+
         if (questionnaire_id.equals("0")) // daily questionnaire
             days = "0";
-        else
-            days = PropertiesManager.getProperty(Configurations.daysWithoutAnsweringQuestionnaireBeforeSendingPeriodicNotification,context);
-        return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
+        else {
+            try {
+                days = Configurations.getString(context, Constants.DAYS_WITHOUT_ANSWERING_BEFORE_PUSH_NOTIFICATION);
+            } catch (KeyIsNotExistsException e) {
+                e.printStackTrace();
+                Log.e(TAG, "Fatal Error. can't find days configuration on your file, using 0 as days");
+            }
+        }
+        if (lastAnswered != -1) {
+            long daysLong = Long.parseLong(days);
+            return (((currentTime - lastAnswered)/ONE_DAY) <= daysLong );
+        }
+        else { //can't find it on storage. will take a rest request to the server
+            return AnswersManager.hasUserAnswered(questionnaire_id,days, HttpRequests.getInstance(context));
+        }
     }
 
     private static Intent setQuestionnaireActivity(Long questionnaire_id, Context context) {
         AppController appController = AppController.getController(null);
         Questionnaire questionnaire = appController.getQuestionnaire(questionnaire_id);
-        Intent intent = null;
-        long zero = 0;
-        if (questionnaire_id.equals(zero)) {
-            intent = new Intent(context, QuestionnaireActivity.class);
-            if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
-                intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
-            intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
-        }
-        else {
-            intent = new Intent(context, HomePageActivity.class);
-        }
+        Intent intent;
+        intent = new Intent(context, QuestionnaireActivity.class);
+        if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
+            intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
+        intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
         return intent;
     }
 

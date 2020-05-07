@@ -58,7 +58,7 @@ public class AppController {
     }
 
     public void sendAnswersToServer(Map<Long, List<Long>> questionsAndAnswers, Long questionnaireID) {
-        QuestionnaireSenderAndReceiver.sendAnswers(questionsAndAnswers,questionnaireID, httpRequests);
+         QuestionnaireSenderAndReceiver.sendAnswers(questionsAndAnswers,questionnaireID, httpRequests);
     }
 
     public Map<Long, String> getUserQuestionnaires() {

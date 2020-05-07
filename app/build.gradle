@@ -24,7 +24,7 @@ android {
 }
 
 configurations {
-    compile.exclude group: "junit", module: "junit"
+//    compile.exclude group: "junit", module: "junit"
 
 }
 
@@ -35,11 +35,17 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.android.gms:play-services-fitness:18.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation("com.squareup.okhttp3:okhttp:4.3.0")
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
 }

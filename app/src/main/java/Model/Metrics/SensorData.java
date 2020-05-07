@@ -24,12 +24,14 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.Iterator;
 
+import Model.Exceptions.KeyIsNotExistsException;
 import Model.Metrics.GoogleFit.ActivitiesGoogleFit;
 import Model.Metrics.GoogleFit.CaloriesGoogleFit;
 import Model.Metrics.GoogleFit.DistanceGoogleFit;
 import Model.Metrics.GoogleFit.SleepGoogleFit;
 import Model.Metrics.GoogleFit.StepsGoogleFit;
 import Model.Utils.Configurations;
+import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -182,8 +184,15 @@ public class SensorData {
     public void setMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
         Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
-        int hour = Configurations.getMetricsTaskHour(context);
-        int minute = Configurations.getMetricsTaskMinute(context);
+        int hour = 23;
+        int minute = 45;
+        try {
+            hour = Configurations.getInt(context, Constants.MISSING_METRICS_HOUR);
+            minute = Configurations.getInt(context, Constants.MISSING_METRICS_MINUTES);
+        } catch (KeyIsNotExistsException e) {
+            Log.e(TAG,"Can't get time configuration for missing metrics task. will use 23:45 as default");
+            e.printStackTrace();
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);
