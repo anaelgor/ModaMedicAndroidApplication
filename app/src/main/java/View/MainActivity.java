@@ -9,11 +9,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.modamedicandroidapplication.R;
 
@@ -30,6 +33,7 @@ public class MainActivity extends AbstractActivity {
     private String username;
     private String password;
     SharedPreferences sharedPref;
+    private boolean showPassowrd = false;
 
     public Activity getContext() {
         return this;
@@ -90,6 +94,20 @@ public class MainActivity extends AbstractActivity {
     public void registerFunction(View view) {
         Intent intent = new Intent(this, RegisterNewUserActivity.class);
         startActivity(intent);
+    }
+
+    public void changePasswordTF(View view) {
+        ImageButton show_pass_button = findViewById(R.id.passwordShow);
+        EditText passwordText = findViewById(R.id.password_textfield);
+        showPassowrd = (!showPassowrd);
+        if (showPassowrd) {
+            show_pass_button.setBackground(getDrawable(R.drawable.show_password));
+            passwordText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+        else {
+            show_pass_button.setBackground(getDrawable(R.drawable.dontshow_password));
+            passwordText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        }
     }
 
     private class MyFocusChangeListener implements View.OnFocusChangeListener {

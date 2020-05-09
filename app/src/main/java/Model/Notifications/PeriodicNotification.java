@@ -20,6 +20,7 @@ public class PeriodicNotification extends AbstractNotification{
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i("Periodic","OnReceive");
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -44,11 +45,11 @@ public class PeriodicNotification extends AbstractNotification{
                                 Questionnaires.get(questionnaireID) + context.getString(R.string.periodic_questionnaire_notification_suffix);
                         int id = 100;
                         notifyUser(context, notification_text, id,questionnaireID);
-                        Log.i("Periodically","sending notification for questionnaire " + Questionnaires.get(questionnaireID));
+                        Log.i("Periodic","sending notification for questionnaire " + Questionnaires.get(questionnaireID));
                         break;
                     }
                     else {
-                        Log.i("Daily",String.format("missing periodic %s notification because already answered in the last days",Questionnaires.get(questionnaireID)));
+                        Log.i("Periodic",String.format("missing periodic %s notification because already answered in the last days",Questionnaires.get(questionnaireID)));
                     }
                 }
             }

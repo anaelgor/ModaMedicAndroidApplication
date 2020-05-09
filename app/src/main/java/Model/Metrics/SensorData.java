@@ -175,9 +175,7 @@ public class SensorData {
                 e.printStackTrace();
             }
         }
-
     }
-
 
     public void setMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
