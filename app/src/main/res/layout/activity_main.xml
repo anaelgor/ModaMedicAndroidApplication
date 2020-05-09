@@ -35,33 +35,49 @@
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <EditText
-        android:id="@+id/username_textfield"
-        android:layout_width="275dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="214dp"
-        android:ems="10"
-        android:hint="@string/id"
-        android:gravity="center"
-        android:inputType="textEmailAddress"
-        android:shadowColor="@color/colorAccent"
-        android:textColorHighlight="@color/colorAccent"
-        android:textColorLink="@color/colorAccent" />
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/password_textfield"
-        android:layout_width="275dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="277dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:gravity="center"
-        android:inputType="textPassword"
-        android:shadowColor="@color/colorAccent"
-        android:textColorHighlight="@color/colorAccent"
-        android:textColorLink="@color/colorAccent" />
+        <EditText
+            android:id="@+id/username_textfield"
+            android:layout_width="275dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="214dp"
+            android:ems="10"
+            android:hint="@string/id"
+            android:gravity="center"
+            android:inputType="textEmailAddress"
+            android:shadowColor="@color/colorAccent"
+            android:textColorHighlight="@color/colorAccent"
+            android:textColorLink="@color/colorAccent" />
+
+        <EditText
+            android:id="@+id/password_textfield"
+            android:layout_width="275dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="277dp"
+            android:ems="10"
+            android:hint="@string/password"
+            android:gravity="center"
+            android:inputType="textPassword"
+            app:passwordToggleEnabled="true"
+            android:shadowColor="@color/colorAccent"
+            android:textColorHighlight="@color/colorAccent"
+            android:textColorLink="@color/colorAccent" />
+
+        <ImageButton
+            android:id="@+id/passwordShow"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignEnd="@+id/password_textfield"
+            android:layout_marginTop="285dp"
+            android:background="@drawable/show_password"
+            android:onClick="changePasswordTF"/>
+
+    </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/imageView"

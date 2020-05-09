@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import Model.Utils.Configurations;
 
+import static android.app.AlarmManager.INTERVAL_DAY;
 import static android.content.Context.ALARM_SERVICE;
 
 public class NotificationsManager {
@@ -33,15 +34,11 @@ public class NotificationsManager {
         if (alarmManager == null)
             alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
 
-//        int daily_minute = Configurations.getNotificationMinute(context,"daily");
-//        int daily_hour = Configurations.getNotificationHour(context,"daily");
-//        int periodic_minute = Configurations.getNotificationMinute(context,"periodic");
-//        int periodic_hour =  Configurations.getNotificationHour(context,"periodic");
+        int daily_minute = Configurations.getNotificationMinute(context,"daily");
+        int daily_hour = Configurations.getNotificationHour(context,"daily");
+        int periodic_minute = Configurations.getNotificationMinute(context,"periodic");
+        int periodic_hour =  Configurations.getNotificationHour(context,"periodic");
 
-        int daily_minute = 0;
-        int periodic_minute = 30;
-        int daily_hour = 19;
-        int periodic_hour =  19;
 
         //Daily notification - one in 16:00 and one in 19:00
         Calendar daily_calendar = Calendar.getInstance();
@@ -54,14 +51,14 @@ public class NotificationsManager {
         periodic_calendar.set(Calendar.HOUR_OF_DAY, periodic_hour);
         periodic_calendar.set(Calendar.MINUTE, periodic_minute);
 
-        setRepeatingNotification(DailyNotification.class, daily_calendar.getTimeInMillis() + randomTime(), AlarmManager.INTERVAL_DAY);
+        setRepeatingNotification(DailyNotification.class, daily_calendar.getTimeInMillis() + randomTime(),INTERVAL_DAY, 100);
         //Periodic notification
-        setRepeatingNotification(PeriodicNotification.class, periodic_calendar.getTimeInMillis() + randomTime(), AlarmManager.INTERVAL_DAY);
+        setRepeatingNotification(PeriodicNotification.class, periodic_calendar.getTimeInMillis() + randomTime(),INTERVAL_DAY,101);
     }
 
-    private void setRepeatingNotification(Class notification_class, long time, long interval) {
+    private void setRepeatingNotification(Class notification_class, long time, long interval, int requestCode) {
         Intent intent = new Intent(context, notification_class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent);
         Log.i(TAG,String.format("notification %s has been set to %s", notification_class.toString(), time));
     }
@@ -84,8 +81,6 @@ public class NotificationsManager {
     }
 
     private long randomTime() {
-        if (true)
-            return 0;
         long min = -600000;
         long max = 600000;
         return min + (long) (Math.random() * (max - min));
