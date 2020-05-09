@@ -34,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import Controller.AppController;
@@ -54,6 +55,7 @@ public class QuestionnaireActivity extends AbstractActivity {
     private TextView eq5result = null;
     private ImageView eq5face = null;
     private Map<Long, String> medicineInfo = null;
+    private Map<Long, Integer> VAS_Colors = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         questionsAnswers = new HashMap<>();
         answersButtons = new HashMap<>();
         Intent intent = getIntent();
+        long questionnaire_id = 0;
         questionnaire = (Questionnaire) intent.getSerializableExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
         showTitle();
         showQuestion(0);
@@ -303,7 +306,6 @@ public class QuestionnaireActivity extends AbstractActivity {
             System.out.println("please check type of Question");
     }
 
-    @SuppressLint("SetTextI18n")
     private void buildEQ5Question(int i) {
         LinearLayout layout = findViewById(R.id.lin_layout);
         float sizeBestWorst = 15;
@@ -364,8 +366,13 @@ public class QuestionnaireActivity extends AbstractActivity {
         TextView min = new TextView(this);
         min.setGravity(Gravity.START);
         min.setText("0");
-        min.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.5));
-        max.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.5));
+        TextView center = new TextView(this);
+        center.setGravity(Gravity.CENTER);
+        center.setText("50");
+        min.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
+        max.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
+        center.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
+
 
         eq5result = new TextView(this);
         eq5result.setGravity(Gravity.CENTER);
@@ -385,16 +392,20 @@ public class QuestionnaireActivity extends AbstractActivity {
         layout.addView(eq5result);
         LinearLayout rl = new LinearLayout(this);
         rl.setOrientation(LinearLayout.HORIZONTAL);
+        min.setTextSize(20);
+        max.setTextSize(20);
+        center.setTextSize(20);
         rl.addView(min);
         rl.addView(max);
+        rl.addView(center);
         layout.addView(rl);
 
 
     }
 
     private void buildVAS_Question(final int i) {
+        VAS_Colors = getColorsOfVAS();
         LinearLayout layout = findViewById(R.id.lin_layout);
-        final Map<Long, Integer> VAS_Colors = getColorsOfVAS();
 
         TextView best = new TextView(this);
         best.setText(questionnaire.getQuestions().get(i).getBest());
@@ -403,7 +414,7 @@ public class QuestionnaireActivity extends AbstractActivity {
 
         int answersSize = this.questionnaire.getQuestions().get(i).getAnswers().size();
         for (Answer ans : this.questionnaire.getQuestions().get(i).getAnswers()) {
-            String text = ans.getAnswerText() + "   ";
+            String text = BuildTextForVasQuestion(ans.getAnswerText());
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
             ans_Button.setPadding(0, 0, 0, 0);
@@ -415,8 +426,8 @@ public class QuestionnaireActivity extends AbstractActivity {
             if (chosen)
                 ans_Button.setBackground(getDrawable(R.drawable.custom_vas_chosen_button));
             else
-                ans_Button.setBackgroundColor(VAS_Colors.get(finalAnswerID));
-            Drawable emoji = null;
+                ans_Button.setBackgroundColor(GetVASAnswerColor(finalAnswerID, answersSize));
+            Drawable emoji;
             if (ans.getAnswerID() < (answersSize/3))
                 emoji = getDrawable(R.drawable.happyface);
             else if (ans.getAnswerID() < ((2 * answersSize )/ 3))
@@ -433,10 +444,10 @@ public class QuestionnaireActivity extends AbstractActivity {
             ans_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    chose(finalAnswerID, finalQuestionID);
+                    chose(finalAnswerID, finalQuestionID,answersSize );
                 }
 
-                private void chose(long chosenAnswerID, long questionID) {
+                private void chose(long chosenAnswerID, long questionID, int numberOfAnswers) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
 
                     if (!questionsAnswers.containsKey(questionID)) {
@@ -451,7 +462,7 @@ public class QuestionnaireActivity extends AbstractActivity {
                             prevAnsList.remove(0);
                             prevAnsList.add(chosenAnswerID);
                             questionsAnswers.put(questionID, prevAnsList);
-                            answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(VAS_Colors.get(prevAnswer));
+                            answersButtons.get(finalQuestionID).get(prevAnswer).setBackgroundColor(GetVASAnswerColor(prevAnswer,numberOfAnswers));
                             answersButtons.get(finalQuestionID).get(finalAnswerID).setBackground(getDrawable(R.drawable.custom_vas_chosen_button));
                         }
                     }
@@ -467,6 +478,20 @@ public class QuestionnaireActivity extends AbstractActivity {
         layout.addView(worstTV);
 
 
+    }
+
+    private int GetVASAnswerColor(long finalAnswerID, long numberOfAnswers) {
+        long size = VAS_Colors.size();
+        long index = (finalAnswerID)* (size/numberOfAnswers);
+        return VAS_Colors.get(index);
+    }
+
+    private String BuildTextForVasQuestion(String answerText) {
+        String language = Locale.getDefault().getDisplayLanguage();
+        if (language.toUpperCase().equals("ENGLISH"))
+            return answerText + "   ";
+        else
+            return "   " + answerText;
     }
 
     /**

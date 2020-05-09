@@ -68,8 +68,6 @@ public abstract class AbstractNotification extends BroadcastReceiver {
         Questionnaire questionnaire = QuestionnaireSenderAndReceiver.getUserQuestionnaireById(questionnaire_id, HttpRequests.getInstance(context));
         Intent intent;
         intent = new Intent(context, QuestionnaireActivity.class);
-        if (intent.hasExtra(BindingValues.REQUESTED_QUESTIONNAIRE))
-            intent.removeExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
         intent.putExtra(BindingValues.REQUESTED_QUESTIONNAIRE, questionnaire);
         return intent;
     }

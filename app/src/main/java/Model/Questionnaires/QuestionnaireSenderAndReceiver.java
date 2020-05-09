@@ -90,7 +90,7 @@ public class QuestionnaireSenderAndReceiver {
             for (int i=0; i<array.length(); i++) {
                 JSONObject question = (JSONObject) array.get(i);
                 int id = question.getInt("QuestionnaireID");
-                if (id ==6 || id == 0) //daily and EQ5 special question should not be setted
+                if (id == 5 || id ==6 || id == 0) //daily and EQ5 special question should not be setted
                     continue;
                 String text = question.getString("QuestionnaireText");
                 result.put(id,text);

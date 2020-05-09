@@ -119,7 +119,8 @@
     <string name="remember_me">השאר אותי מחובר/ת</string>
     <string name="consider_last_time">ענה/י על השאלה ביחס להרגשתך בשבועיים האחרונים</string>
     <string name="unknown_surgery_day">אינו ידוע</string>
-
+    <string name="NoSurgeryDate">תאריך לא ידוע</string>
+    <string name="your_current_surgery_day_full">תאריך הניתוח שלך אינו ידוע</string>
 
 
 </resources>
