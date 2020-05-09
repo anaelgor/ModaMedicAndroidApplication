@@ -5,8 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -29,7 +27,6 @@ import Model.Metrics.GoogleFit.CaloriesGoogleFit;
 import Model.Metrics.GoogleFit.DistanceGoogleFit;
 import Model.Metrics.GoogleFit.SleepGoogleFit;
 import Model.Metrics.GoogleFit.StepsGoogleFit;
-import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -45,8 +42,7 @@ public class SensorData {
     private CaloriesGoogleFit caloriesGoogleFit;
     private SleepGoogleFit sleepGoogleFit;
     private ActivitiesGoogleFit activitiesGoogleFit;
-    private LocationManager locationManager;
-    private LocationListener gpsLocationListener;
+    private Weather gpsLocationListener;
     private Activity activity;
 
     private static final String TAG = "SensorData";
@@ -58,8 +54,7 @@ public class SensorData {
         this.caloriesGoogleFit = new CaloriesGoogleFit();
         this.sleepGoogleFit = new SleepGoogleFit();
         this.activitiesGoogleFit = new ActivitiesGoogleFit();
-        this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        this.gpsLocationListener = new Weather(locationManager, activity);
+        this.gpsLocationListener = new Weather(activity);
     }
 
     public SensorData(){
@@ -96,13 +91,13 @@ public class SensorData {
             stepsGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
             caloriesGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
             distanceGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
-            ((Weather) gpsLocationListener).extractDataForWeather();
+            gpsLocationListener.extractDataForWeather();
         }
     }
     public void sendData(Context context){
         HttpRequests httpRequests = HttpRequests.getInstance(context);
 
-        ((Weather)gpsLocationListener).sendDataToServer(httpRequests);
+        gpsLocationListener.sendDataToServer(httpRequests);
     }
 
 

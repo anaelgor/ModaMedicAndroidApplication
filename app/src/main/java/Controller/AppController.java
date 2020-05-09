@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -50,7 +49,6 @@ public class AppController {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void SendSensorData(){
         sensorData.collectData(this.activity);
-        sensorData.sendData(activity.getApplicationContext());
     }
 
     public Questionnaire getQuestionnaire(Long questionnaire_id) {

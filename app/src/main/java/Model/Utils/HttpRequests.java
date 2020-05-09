@@ -163,7 +163,7 @@ class SendRequestHttp extends AsyncTask<String, Void, JSONObject> {
 
     public JSONObject PostRequest(String url,String json, String token) throws IOException, JSONException {
 
-        Log.i(TAG, MessageFormat.format("sending with token: {0} to: {1}   body: {2}", token, url, json));
+        Log.i(TAG, MessageFormat.format("sending to: {0}   body: {1}", url, json));
 
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
