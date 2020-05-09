@@ -31,7 +31,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                     Log.i(TAG, "onReceive: BT state is STATE_TURNING_OFF");
                     break;
                 case BluetoothAdapter.STATE_ON:
-                    ConnectedDevices.BAND_CONNECTED = checkIfBandIsConnectedByBT(context);
+                    ConnectedDevices.BAND_CONNECTED = true;
                     Log.i(TAG, "onReceive: BT state is STATE_ON");
                     Log.i(TAG, "onReceive: BAND_CONNECTED state is " + HomePageActivity.BAND_CONNECTED);
                     break;
