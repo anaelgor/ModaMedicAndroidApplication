@@ -89,13 +89,14 @@ public class QuestionnaireActivity extends AbstractActivity {
                 RelativeLayout .LayoutParams.WRAP_CONTENT, RelativeLayout .LayoutParams.WRAP_CONTENT);
         RelativeLayout.LayoutParams params2 = new RelativeLayout .LayoutParams(
                 RelativeLayout .LayoutParams.WRAP_CONTENT, RelativeLayout .LayoutParams.WRAP_CONTENT);
+        int height = getHeightOfScreen();
         if (!isEQ5) {
-            params.setMargins(10,getHeightOfScreen()/2 - 100, 0, 0);
-            params2.setMargins(10,getHeightOfScreen()/2 + 100, 0, 0);
+            params.setMargins(10, (int) (height/2 - 0.06*height), 0, 0);
+            params2.setMargins(10,(int) (height/2 + 0.06*height), 0, 0);
         }
         else {
-            params.setMargins(10,4*getHeightOfScreen()/5 - 100, 0, 0);
-            params2.setMargins(10,4*getHeightOfScreen()/5 + 100, 0, 0);
+            params.setMargins(10, (int) (4*height/5 - 0.06*height), 0, 0);
+            params2.setMargins(10, (int) (4*height/5 + 0.06*height), 0,  0);
         }
         params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
         params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);

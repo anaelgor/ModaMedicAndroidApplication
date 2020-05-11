@@ -82,7 +82,7 @@ public class SettingsActivity extends AbstractActivity {
                 year,month,day);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
-        dialog.getWindow().setLayout(getWidthOfScreen(),4*getHeightOfScreen()/5);
+        dialog.getWindow().setLayout((int) (0.9*getWidthOfScreen()),4*getHeightOfScreen()/5);
         dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.NoSurgeryDate), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
