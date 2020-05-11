@@ -1,17 +1,10 @@
 package Model;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
-
-import java.util.Set;
-
-import View.HomePageActivity;
 
 public class ConnectedDevices {
 
@@ -32,12 +25,12 @@ public class ConnectedDevices {
                 if (mBluetoothAdapter.isEnabled()) {
                     BAND_CONNECTED = BluetoothReceiver.checkIfBandIsConnectedByBT(context);
                     Log.i(TAG, "BT state is STATE_ON");
-                    Log.i(TAG, "BAND_CONNECTED state is " + HomePageActivity.BAND_CONNECTED);
+                    Log.i(TAG, "BAND_CONNECTED state is " + BAND_CONNECTED);
                 }
                 else {
                     BAND_CONNECTED = false;
                     Log.i(TAG, "BT state is STATE_OFF");
-                    Log.i(TAG, "BAND_CONNECTED state is " + HomePageActivity.BAND_CONNECTED);
+                    Log.i(TAG, "BAND_CONNECTED state is " + BAND_CONNECTED);
                 }
         }
 

@@ -7,9 +7,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,11 +25,8 @@ public class Weather implements DataSender {
     private static final String TAG = "Weather";
     private Context context;
 
-    private FusedLocationProviderClient fusedLocationClient;
-
     public Weather(Context context) {
         this.context = context;
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
     public String getHTML(String urlToRead) throws Exception {
@@ -78,9 +72,12 @@ public class Weather implements DataSender {
     }
     private void handleLocation(Location location){
         String lon, lat;
-        lat = Double.toString(location.getLatitude());
-        lon = Double.toString(location.getLongitude());
         try {
+            lat = Double.toString(location.getLatitude());
+            lon = Double.toString(location.getLongitude());
+
+            Log.i(TAG, "handleLocation: lon = " + lon + ", lat = " + lat);
+
             String start = "https://api.openweathermap.org/data/2.5/weather?";
             String params = "lat=" + lat + "&lon=" + lon + "&units=metric" + "&appid=";
             String api_key = "1386e5ee723d21215441dba004fea3de";
