@@ -109,8 +109,8 @@
     <string name="choose_at_least_one_questionnaire">אנא בחר/י לפחות שאלון רפואי אחד</string>
     <string name="succesfull_registarion">ההרשמה בוצעה בהצלחה</string>
     <string name="save">שמור</string>
-    <string name="settings_title">הגדרות</string>
-    <string name="your_current_surgery_day">תאריך הניתוח שלך</string>
+    <string name="settings_title">מידע אישי</string>
+    <string name="your_current_surgery_day">תאריך הניתוח שלך הוא</string>
     <string name="change_surgery_day_string">עדכון תאריך ניתוח</string>
     <string name="change_your_questionnaires">עדכן שאלונים רפואיים</string>
     <string name="questionnaires_has_been_changed">השאלונים עודכנו בהצלחה</string>
