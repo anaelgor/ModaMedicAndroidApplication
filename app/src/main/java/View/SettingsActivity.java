@@ -251,8 +251,8 @@ public class SettingsActivity extends AbstractActivity {
         if (!update) {
             long currentDate = appController.getSurgeryDate();
             if (currentDate == 0){
-                String unknown = getString(R.string.unknown_surgery_day);
-                date_tv.setText(String.format("%s %s", date_tv.getText(), unknown));
+                String msg = getString(R.string.your_current_surgery_day_full);
+                date_tv.setText(String.format("%s", msg));
             }
             else{
                 date_tv.setText(String.format("%s %s", date_tv.getText(), getStringDate(currentDate)));
@@ -260,11 +260,11 @@ public class SettingsActivity extends AbstractActivity {
         }
         else {
             if (date.equals("0")) {
-                String unknown = getString(R.string.unknown_surgery_day);
-                date_tv.setText(String.format("%s %s", date_tv.getText(), unknown));
+                String msg = getString(R.string.your_current_surgery_day_full);
+                date_tv.setText(String.format("%s", msg));
             }
             else
-                date_tv.setText(String.format("%s", getString(R.string.your_current_surgery_day_full), date));
+                date_tv.setText(String.format("%s %s", getString(R.string.your_current_surgery_day), date));
         }
     }
 

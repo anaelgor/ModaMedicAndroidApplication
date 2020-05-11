@@ -109,8 +109,8 @@
     <string name="choose_at_least_one_questionnaire">אנא בחר/י לפחות שאלון רפואי אחד</string>
     <string name="succesfull_registarion">ההרשמה בוצעה בהצלחה</string>
     <string name="save">שמור</string>
-    <string name="settings_title">הגדרות</string>
-    <string name="your_current_surgery_day">תאריך הניתוח שלך</string>
+    <string name="settings_title">מידע אישי</string>
+    <string name="your_current_surgery_day">תאריך הניתוח שלך הוא</string>
     <string name="change_surgery_day_string">עדכון תאריך ניתוח</string>
     <string name="change_your_questionnaires">עדכן שאלונים רפואיים</string>
     <string name="questionnaires_has_been_changed">השאלונים עודכנו בהצלחה</string>
@@ -121,6 +121,18 @@
     <string name="unknown_surgery_day">אינו ידוע</string>
     <string name="NoSurgeryDate">תאריך לא ידוע</string>
     <string name="your_current_surgery_day_full">תאריך הניתוח שלך אינו ידוע</string>
+    <string name="medicine_examples_basic_title">דוגמאות לתרופה בסיסית:</string>
+    <string name="medicine_examples_advanced_title">דוגמאות לתרופה מתקדמת:</string>
+    <string name="medicine_examples_narcotic_title">דוגמאות לתרופה נרקוטית:</string>
+    <string name="medicine_examples_basic_info">Paracetamol, Optalgin ‏(Dypiron), Indovis‏ (Indomethacin),‏ Xefo‏ (Lornoxicam),‏ Ibuprofen‏, Naproxen‏, Diclofenac‏, (Etopan) Etodolac ‏,( CELCOX)Celecoxib ,‏ Valdecoxib,‏ Nabuco ‏ (Nabumetone), Arcoxia‏ (Etonicoxib).
+</string>
+    <string name="medicine_examples_advanced_info">Tramadol, Codeine, Zaldiar, PERCOCET, CYMBALTA/Gabapentin/Lyrica‏.
+</string>
+    <string name="medicine_examples_narcotic_info">Oxycontin, OXYCODONE, TARGIN, Patch‏ Fentanyl, Butrans (Buprenorphine Matrix Patch), Cannabis,‏ MIR, MCR,
+MSP, AQTIC, Adolan‏ (Methadone),Tricyclic antidepressants, Elatrol‏ (Amitriptyline), Tofranil‏ (Imipramine),‏ Deprexan‏ (Desipramine).
+</string>
+    <string name="more_medicine_examples">דוגמאות נוספות לתרופות</string>
+    <string name="close">סגירה</string>
 
 
 </resources>

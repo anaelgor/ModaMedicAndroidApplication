@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rel_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,31 +10,59 @@
     tools:context="View.QuestionnaireActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/textPlus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:alpha="0.5"
+        android:background="@drawable/custom_system_button"
+        android:clickable="true"
+        android:layout_marginTop="240dp"
+        android:onClick="enlargeText"
+        android:focusable="true"
+        app:maxImageSize="50dp"
+        android:src="@drawable/plus" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/textMinus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textPlus"
+        android:layout_marginTop="10dp"
+        android:alpha="0.5"
+        android:background="@drawable/custom_system_button"
+        android:clickable="true"
+        android:focusable="true"
+        app:maxImageSize="50dp"
+        android:onClick="reduceText"
+        android:src="@drawable/minus" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/prevButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|bottom"
         android:alpha="0.8"
         android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:focusable="true"
-        android:src="?attr/actionModeCloseDrawable"
+        android:src="@drawable/prev"
+        app:maxImageSize="50dp"
         android:background="@drawable/custom_system_button"
         />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
         android:alpha="0.8"
         android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:focusable="true"
-        android:rotation="180"
-        android:src="?attr/actionModeCloseDrawable"
+        android:src="@drawable/next"
+        app:maxImageSize="50dp"
         android:background="@drawable/custom_system_button"
         />
 

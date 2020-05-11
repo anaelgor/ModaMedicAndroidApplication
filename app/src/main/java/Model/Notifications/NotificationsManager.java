@@ -40,11 +40,13 @@ public class NotificationsManager {
         int periodic_hour =  Configurations.getNotificationHour(context,"periodic");
 
 
-        //Daily notification - one in 16:00 and one in 19:00
+        //Daily notification
         Calendar daily_calendar = Calendar.getInstance();
         daily_calendar.setTimeInMillis(System.currentTimeMillis());
         daily_calendar.set(Calendar.HOUR_OF_DAY, daily_hour);
         daily_calendar.set(Calendar.MINUTE, daily_minute);
+
+        //Periodic notification
 
         Calendar periodic_calendar = Calendar.getInstance();
         periodic_calendar.setTimeInMillis(System.currentTimeMillis());

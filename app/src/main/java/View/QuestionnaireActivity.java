@@ -1,6 +1,8 @@
 package View;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -50,12 +52,16 @@ public class QuestionnaireActivity extends AbstractActivity {
     long currentQuestionID;
     Map<Long, List<Long>> questionsAnswers; //key: questionID, value: list of answerID
     Map<Long, Map<Long, Button>> answersButtons; //key:: answerID, value: answer Button
-    private SeekBar answerEQ5TF = null;
+    private SeekBar answerEQ5SeekBar = null;
     private boolean eq5Answered = false;
     private TextView eq5result = null;
     private ImageView eq5face = null;
     private Map<Long, String> medicineInfo = null;
     private Map<Long, Integer> VAS_Colors = null;
+    private float answersTextSize;
+    private float questionTextSize;
+    private float descriptionTextSize;
+    private long answerVasTextSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,18 +69,44 @@ public class QuestionnaireActivity extends AbstractActivity {
         setContentView(R.layout.activity_questionnaire);
         questionsAnswers = new HashMap<>();
         answersButtons = new HashMap<>();
+        answersTextSize = 15;
+        answerVasTextSize = 20;
+        questionTextSize = 20;
+        descriptionTextSize = 15;
         Intent intent = getIntent();
         long questionnaire_id = 0;
+        setLocationOfPlusMinusButtons(false);
         questionnaire = (Questionnaire) intent.getSerializableExtra(BindingValues.REQUESTED_QUESTIONNAIRE);
         showTitle();
         showQuestion(0);
 
     }
 
+    private void setLocationOfPlusMinusButtons(boolean isEQ5) {
+        FloatingActionButton plus = findViewById(R.id.textPlus);
+        FloatingActionButton minus = findViewById(R.id.textMinus);
+        RelativeLayout.LayoutParams params = new RelativeLayout .LayoutParams(
+                RelativeLayout .LayoutParams.WRAP_CONTENT, RelativeLayout .LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams params2 = new RelativeLayout .LayoutParams(
+                RelativeLayout .LayoutParams.WRAP_CONTENT, RelativeLayout .LayoutParams.WRAP_CONTENT);
+        if (!isEQ5) {
+            params.setMargins(10,getHeightOfScreen()/2 - 100, 0, 0);
+            params2.setMargins(10,getHeightOfScreen()/2 + 100, 0, 0);
+        }
+        else {
+            params.setMargins(10,4*getHeightOfScreen()/5 - 100, 0, 0);
+            params2.setMargins(10,4*getHeightOfScreen()/5 + 100, 0, 0);
+        }
+        params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        plus.setLayoutParams(params);
+        minus.setLayoutParams(params2);
+    }
+
     private void showTitle() {
         TextView title = findViewById(R.id.questionnaire_title);
         title.setText(this.getString(R.string.questionnaire) + " " + questionnaire.getTitle());
-        title.setTextSize(20);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
         title.setBackground(getDrawable(R.drawable.custom_chosen_button));
 
     }
@@ -87,7 +119,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         String ques_TEXT = questionnaire.getQuestions().get(i).getQuestionText();
         TextView question_TV = new TextView(this);
         question_TV.setText(ques_TEXT);
-        question_TV.setTextSize(20);
+        question_TV.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
@@ -135,7 +167,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         String two_weeks = getString(R.string.consider_last_time);
         TextView twoWeeksTV = new TextView(this);
         twoWeeksTV.setText(two_weeks);
-        twoWeeksTV.setTextSize(15);
+        twoWeeksTV.setTextSize(TypedValue.COMPLEX_UNIT_SP,descriptionTextSize);
         LinearLayout.LayoutParams two_weeks_params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         two_weeks_params.setMargins(10, 10, 10, 10);
@@ -155,10 +187,10 @@ public class QuestionnaireActivity extends AbstractActivity {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
-                boolean isEq5 = questionnaire.getQuestionaireID() == 6 && answerEQ5TF != null;
+                boolean isEq5 = questionnaire.getQuestionaireID() == 6 && answerEQ5SeekBar != null;
                 if (isEq5) {
                     //special section for EQ5 special question
-                    String answerNumber = String.valueOf(answerEQ5TF.getProgress());
+                    String answerNumber = String.valueOf(answerEQ5SeekBar.getProgress());
                     if (!eq5Answered) {
                         Toast.makeText(v.getContext(), R.string.answerTheQuestion, Toast.LENGTH_SHORT).show();
                         return;
@@ -186,12 +218,12 @@ public class QuestionnaireActivity extends AbstractActivity {
                         prevButton.setVisibility(View.INVISIBLE);
                         TextView thanksTV = new TextView(v.getContext());
                         thanksTV.setText(R.string.thanks);
-                        thanksTV.setTextSize(20);
+                        thanksTV.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
                         thanksTV.setGravity(Gravity.CENTER);
                         layout.addView(thanksTV);
                         TextView sentTV = new TextView(v.getContext());
                         sentTV.setText(R.string.sent_succesfully);
-                        sentTV.setTextSize(20);
+                        sentTV.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
                         sentTV.setGravity(Gravity.CENTER);
                         layout.addView(sentTV);
                         Button backButton = new Button(v.getContext());
@@ -200,6 +232,12 @@ public class QuestionnaireActivity extends AbstractActivity {
                         backButton.setHeight(10);
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         params.setMargins(0,100,0,0);
+
+                        FloatingActionButton plus = findViewById(R.id.textPlus);
+                        plus.setVisibility(View.INVISIBLE);
+                        FloatingActionButton minus = findViewById(R.id.textMinus);
+                        minus.setVisibility(View.INVISIBLE);
+
                         backButton.setLayoutParams(params);
                         backButton.setGravity(Gravity.CENTER);
                         backButton.setBackground(getDrawable(R.drawable.custom_system_button));
@@ -308,18 +346,18 @@ public class QuestionnaireActivity extends AbstractActivity {
 
     private void buildEQ5Question(int i) {
         LinearLayout layout = findViewById(R.id.lin_layout);
-        float sizeBestWorst = 15;
-        float subtextSize = 20;
+        float sizeBestWorst = descriptionTextSize;
+        float subtextSize = questionTextSize;
         String worst = this.questionnaire.getQuestions().get(i).getWorst();
         String best = this.questionnaire.getQuestions().get(i).getBest();
         String subtext = getString(R.string.betweenZeroTo100);
         SeekBar seekBar = new SeekBar(this);
-        seekBar.setPadding(0, getHeightOfScreen() / 6, 0, 0);
+   //     seekBar.setPadding(0, getHeightOfScreen() / 10, 0, 0);
         seekBar.setMax(100);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             seekBar.setMin(0);
         }
-        int width = (int) (0.75 * getWidthOfScreen());
+        int width = (int) (0.9 * getWidthOfScreen());
         int height = RelativeLayout.LayoutParams.WRAP_CONTENT;
         seekBar.setLayoutParams(new LinearLayout.LayoutParams(width, height));
         seekBar.setProgress(1);
@@ -352,52 +390,79 @@ public class QuestionnaireActivity extends AbstractActivity {
         });
         TextView bestTV = new TextView(this);
         bestTV.setText(worst + " " + best);
-        bestTV.setTextSize(sizeBestWorst);
+        bestTV.setTextSize(TypedValue.COMPLEX_UNIT_SP,sizeBestWorst);
         bestTV.setGravity(Gravity.CENTER);
         bestTV.setPadding(0, 5, 0, 0);
         TextView subtextTV = new TextView(this);
         subtextTV.setText(subtext);
         subtextTV.setGravity(Gravity.CENTER);
-        subtextTV.setTextSize(subtextSize);
+        subtextTV.setTextSize(TypedValue.COMPLEX_UNIT_SP,subtextSize);
         subtextTV.setPadding(0, 5, 0, 0);
+        
         TextView max = new TextView(this);
-        max.setGravity(Gravity.END);
-        max.setText("100");
         TextView min = new TextView(this);
-        min.setGravity(Gravity.START);
-        min.setText("0");
         TextView center = new TextView(this);
-        center.setGravity(Gravity.CENTER);
-        center.setText("50");
-        min.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
-        max.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
-        center.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
-
-
         eq5result = new TextView(this);
+        eq5face = new ImageView(this);
+        answerEQ5SeekBar = seekBar;
+        layout.addView(subtextTV);
+        layout.addView(bestTV);
+        LinearLayout rl = new LinearLayout(this);
+        setViewOfScalaInfo(min,max,center,eq5face,rl,eq5result, layout, width, height);
+        setLocationOfPlusMinusButtons(true);
+    }
+
+    private void setViewOfScalaInfo(TextView min, TextView max, TextView center, ImageView eq5face,
+                                    LinearLayout rl, TextView eq5result, LinearLayout layout,
+                                    int width, int height) {
+
+        //space
+        TextView space = new TextView(this);
+        space.setPadding(0,100,0,0);
+        space.setGravity(Gravity.CENTER);
+        space.setTextSize(20);
+        space.setText(" ");
+
+        //result
         eq5result.setGravity(Gravity.CENTER);
         eq5result.setText("0");
         eq5result.setPadding(0, 20, 0, 0);
+        eq5result.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
 
-        eq5face = new ImageView(this);
+        //emoji face
         eq5face.setImageResource(R.drawable.whitesadface);
         eq5face.setPadding(0, 5, 0, 0);
         eq5face.setLayoutParams(new LinearLayout.LayoutParams(200,200));
 
-        answerEQ5TF = seekBar;
-        layout.addView(subtextTV);
-        layout.addView(bestTV);
-        layout.addView(answerEQ5TF);
+        //min
+        min.setGravity(Gravity.START);
+        min.setPadding(getWidthOfScreen()-width,0,getWidthOfScreen()-width,0);
+        min.setText("0");
+        min.setTextSize(20);
+        min.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
+
+        //max
+        max.setTextSize(20);
+        max.setGravity(Gravity.END);
+        max.setText("100");
+        max.setPadding(getWidthOfScreen()-width,0,getWidthOfScreen()-width,0);
+        max.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
+
+        //center
+        center.setGravity(Gravity.CENTER);
+        center.setText("50");
+        center.setTextSize(20);
+        center.setLayoutParams(new LinearLayout.LayoutParams(width,height, (float) 0.33));
+
+        //relative layout
+        rl.setOrientation(LinearLayout.HORIZONTAL);
+        rl.addView(min);
+        rl.addView(center);
+        rl.addView(max);
+        layout.addView(space);
         layout.addView(eq5face);
         layout.addView(eq5result);
-        LinearLayout rl = new LinearLayout(this);
-        rl.setOrientation(LinearLayout.HORIZONTAL);
-        min.setTextSize(20);
-        max.setTextSize(20);
-        center.setTextSize(20);
-        rl.addView(min);
-        rl.addView(max);
-        rl.addView(center);
+        layout.addView(answerEQ5SeekBar);
         layout.addView(rl);
 
 
@@ -418,7 +483,7 @@ public class QuestionnaireActivity extends AbstractActivity {
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
             ans_Button.setPadding(0, 0, 0, 0);
-            ans_Button.setTextSize(20);
+            ans_Button.setTextSize(TypedValue.COMPLEX_UNIT_SP,answerVasTextSize);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
             ans_Button.setBackground(getDrawable(R.drawable.custom_button));
@@ -522,7 +587,7 @@ public class QuestionnaireActivity extends AbstractActivity {
             Button ans_Button = new Button(this);
             ans_Button.setText(text);
             ans_Button.setPadding(0, 0, 0, 0);
-            ans_Button.setTextSize(15);
+            ans_Button.setTextSize(TypedValue.COMPLEX_UNIT_SP,answersTextSize);
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
             boolean chosen = checkChosen(finalQuestionID,finalAnswerID, Question.Type.SINGLE);
@@ -667,9 +732,48 @@ public class QuestionnaireActivity extends AbstractActivity {
             answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
+        Button examples = addExamplesButton();
+        layout.addView(examples);
 
     }
 
+    private Button addExamplesButton() {
+        Button examples = new Button(this);
+        examples.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openExamples();
+            }
+        });
+
+        examples.setText(getString(R.string.more_medicine_examples));
+        examples.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
+        setButtonConfigurationForSingleAndMulti(examples, false);
+        LinearLayout.LayoutParams params = new LinearLayout .LayoutParams(
+                LinearLayout .LayoutParams.WRAP_CONTENT, LinearLayout .LayoutParams.WRAP_CONTENT);
+        params.setMargins(10,100, 10, 10);
+        examples.setBackground(getDrawable(R.drawable.custom_unclickable_button));
+        examples.setLayoutParams(params);
+        return examples;
+    }
+
+    private void openExamples() {
+        String msg = getString(R.string.medicine_examples_basic_title) + "\n" + getString(R.string.medicine_examples_basic_info) + "\n";
+        msg = msg + getString(R.string.medicine_examples_advanced_title) + "\n" + getString(R.string.medicine_examples_advanced_info) + "\n";
+        msg = msg + getString(R.string.medicine_examples_narcotic_title) + "\n" + getString(R.string.medicine_examples_narcotic_info);
+
+        new AlertDialog.Builder(QuestionnaireActivity.this)
+                .setTitle(R.string.more_medicine_examples)
+                .setMessage(msg)
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing
+                    }
+                })
+                .setIcon(R.drawable.notif_icon)
+                .show();
+    }
 
 
     private boolean AloneIsAlreadyChosen(List<Long> alone, List<Long> prevAnsList) {
@@ -760,4 +864,85 @@ public class QuestionnaireActivity extends AbstractActivity {
         startActivity(intent);
     }
 
+    public void enlargeText(View view) {
+        final float MAX_SIZE = 25;
+        LinearLayout layout = findViewById(R.id.lin_layout);
+        for (int i=0; i< layout.getChildCount(); i++) {
+            View tmp = layout.getChildAt(i);
+            if (tmp instanceof Button) {
+                Button button = (Button)tmp;
+                float currentSize = button.getTextSize();
+                float dp = getResources().getDisplayMetrics().scaledDensity;
+                float CurrentSizeInSP = currentSize/dp;
+                if (CurrentSizeInSP < MAX_SIZE) {
+                    CurrentSizeInSP = CurrentSizeInSP+1;
+                    answersTextSize = CurrentSizeInSP;
+                    button.setTextSize(TypedValue.COMPLEX_UNIT_SP,CurrentSizeInSP);
+                }
+            }
+            else if (tmp instanceof TextView) {
+                TextView textView = (TextView)tmp;
+                float currentSize = textView.getTextSize();
+                float dp = getResources().getDisplayMetrics().scaledDensity;
+                float CurrentSizeInSP = currentSize/dp;
+                if (CurrentSizeInSP < MAX_SIZE) {
+                    CurrentSizeInSP = CurrentSizeInSP+1;
+                    if (textView.getText().toString().contains(getString(R.string.questionnaire)))
+                        questionTextSize = CurrentSizeInSP;
+                    else
+                        descriptionTextSize = CurrentSizeInSP;
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,CurrentSizeInSP);
+                }
+            }
+        }
+    }
+
+    public void reduceText(View view) {
+        final float MIN_SIZE = 13;
+        LinearLayout layout = findViewById(R.id.lin_layout);
+        for (int i=0; i< layout.getChildCount(); i++) {
+            View tmp = layout.getChildAt(i);
+            if (tmp instanceof Button) {
+                Button button = (Button)tmp;
+                float currentSize = button.getTextSize();
+                float dp = getResources().getDisplayMetrics().scaledDensity;
+                float CurrentSizeInSP = currentSize/dp;
+                if (CurrentSizeInSP > MIN_SIZE) {
+                    CurrentSizeInSP = CurrentSizeInSP-1;
+                    if (isVasAnswer(button.getText().toString()))
+                        answerVasTextSize = currentQuestionID;
+                    else
+                        answersTextSize = CurrentSizeInSP;
+                    button.setTextSize(TypedValue.COMPLEX_UNIT_SP,CurrentSizeInSP);
+                }
+            }
+            else if (tmp instanceof TextView) {
+                TextView textView = (TextView)tmp;
+                float currentSize = textView.getTextSize();
+                float dp = getResources().getDisplayMetrics().scaledDensity;
+                float CurrentSizeInSP = currentSize/dp;
+                if (CurrentSizeInSP > MIN_SIZE) {
+                    CurrentSizeInSP = CurrentSizeInSP-1;
+                    if (textView.getText().toString().contains(getString(R.string.questionnaire)))
+                        questionTextSize = CurrentSizeInSP;
+                    else
+                        descriptionTextSize = CurrentSizeInSP;
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,CurrentSizeInSP);
+                }
+            }
+        }
+    }
+
+    private boolean isVasAnswer(String toString) {
+        return toString.equals("1") ||
+                toString.equals("2") ||
+                toString.equals("3") ||
+                toString.equals("4") ||
+                toString.equals("5") ||
+                toString.equals("6") ||
+                toString.equals("7") ||
+                toString.equals("8") ||
+                toString.equals("9") ||
+                toString.equals("10");
+    }
 }
