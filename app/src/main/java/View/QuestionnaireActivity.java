@@ -359,6 +359,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         }
         int width = (int) (0.9 * getWidthOfScreen());
         int height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+        seekBar.setThumb(getDrawable(R.drawable.custom_thumb));
         seekBar.setLayoutParams(new LinearLayout.LayoutParams(width, height));
         seekBar.setProgress(1);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
