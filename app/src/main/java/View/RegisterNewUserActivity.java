@@ -61,6 +61,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
     private List<Questionnaire> chosenQuestionnaires = null;
     private EditText firstName = null;
     private EditText lastName = null;
+    private boolean surgeryUnknown;
 
 
     @Override
@@ -231,7 +232,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
             showAlert(R.string.fill_date);
             return false;
         }
-        if (chosenSurgeryTime == null && surgery.indexOfChild(findViewById(surgery.getCheckedRadioButtonId())) != 2) {
+        if (chosenSurgeryTime == null && surgery.indexOfChild(findViewById(surgery.getCheckedRadioButtonId())) != 2 && !surgeryUnknown) {
             showAlert(R.string.fill_surgery_date);
             return false;
         }
@@ -304,12 +305,12 @@ public class RegisterNewUserActivity extends AbstractActivity {
 
         DatePickerDialog dialog = new DatePickerDialog(
                 RegisterNewUserActivity.this,
-                android.R.style.Widget_Material,
+                android.R.style.Widget_DeviceDefault,
                 mDateSetListener,
                 year,month,day);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
-        dialog.getWindow().setLayout(getWidthOfScreen(),getHeightOfScreen());
+        dialog.getWindow().setLayout(getWidthOfScreen(),4*getHeightOfScreen()/5);
         dialog.show();
     }
 
@@ -372,6 +373,15 @@ public class RegisterNewUserActivity extends AbstractActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
         dialog.getWindow().setLayout(getWidthOfScreen(),4*getHeightOfScreen()/5);
+        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.NoSurgeryDate), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                chosenSurgeryTime = null;
+                Button mDisplayDate = findViewById(R.id.chooseDateOfSurgery);
+                mDisplayDate.setText(getString(R.string.NoSurgeryDate));
+                surgeryUnknown = true;
+            }
+        });
         dialog.show();
     }
 
