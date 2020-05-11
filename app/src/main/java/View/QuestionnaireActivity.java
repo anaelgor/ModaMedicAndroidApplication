@@ -1,6 +1,8 @@
 package View;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -730,9 +732,48 @@ public class QuestionnaireActivity extends AbstractActivity {
             answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
+        Button examples = addExamplesButton();
+        layout.addView(examples);
 
     }
 
+    private Button addExamplesButton() {
+        Button examples = new Button(this);
+        examples.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openExamples();
+            }
+        });
+
+        examples.setText(getString(R.string.more_medicine_examples));
+        examples.setTextSize(TypedValue.COMPLEX_UNIT_SP,questionTextSize);
+        setButtonConfigurationForSingleAndMulti(examples, false);
+        LinearLayout.LayoutParams params = new LinearLayout .LayoutParams(
+                LinearLayout .LayoutParams.WRAP_CONTENT, LinearLayout .LayoutParams.WRAP_CONTENT);
+        params.setMargins(10,100, 10, 10);
+        examples.setBackground(getDrawable(R.drawable.custom_unclickable_button));
+        examples.setLayoutParams(params);
+        return examples;
+    }
+
+    private void openExamples() {
+        String msg = getString(R.string.medicine_examples_basic_title) + "\n" + getString(R.string.medicine_examples_basic_info) + "\n";
+        msg = msg + getString(R.string.medicine_examples_advanced_title) + "\n" + getString(R.string.medicine_examples_advanced_info) + "\n";
+        msg = msg + getString(R.string.medicine_examples_narcotic_title) + "\n" + getString(R.string.medicine_examples_narcotic_info);
+
+        new AlertDialog.Builder(QuestionnaireActivity.this)
+                .setTitle(R.string.more_medicine_examples)
+                .setMessage(msg)
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing
+                    }
+                })
+                .setIcon(R.drawable.notif_icon)
+                .show();
+    }
 
 
     private boolean AloneIsAlreadyChosen(List<Long> alone, List<Long> prevAnsList) {
