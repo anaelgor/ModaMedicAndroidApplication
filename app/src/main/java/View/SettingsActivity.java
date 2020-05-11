@@ -83,6 +83,20 @@ public class SettingsActivity extends AbstractActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
         dialog.getWindow().setLayout(getWidthOfScreen(),4*getHeightOfScreen()/5);
+        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.NoSurgeryDate), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                boolean flag = appController.setSurgeryDate(0);
+                if (flag) {
+                    ShowCurrentDateOfSurgery(true,"0");
+                    String msg = getString(R.string.succesfull_date_change_to) + " " + getString(R.string.unknown_surgery_day);
+                    showInfo(msg);
+                }
+                else {
+                    showAlert(R.string.error_on_server);
+                }
+            }
+        });
         dialog.show();
     }
 
@@ -245,7 +259,12 @@ public class SettingsActivity extends AbstractActivity {
             }
         }
         else {
-            date_tv.setText(String.format("%s %s", getString(R.string.your_current_surgery_day), date));
+            if (date.equals("0")) {
+                String unknown = getString(R.string.unknown_surgery_day);
+                date_tv.setText(String.format("%s %s", date_tv.getText(), unknown));
+            }
+            else
+                date_tv.setText(String.format("%s", getString(R.string.your_current_surgery_day_full), date));
         }
     }
 
