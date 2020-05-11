@@ -732,9 +732,11 @@ public class QuestionnaireActivity extends AbstractActivity {
             answersButtons.get(finalQuestionID).put(finalAnswerID, ans_Button);
             layout.addView(ans_Button);
         }
-        Button examples = addExamplesButton();
-        layout.addView(examples);
-
+        //add info on medicines for daily 2nd question
+        if (this.questionnaire.getQuestionaireID()==0 && i==1) { //medicine question on Daily Questionnaire
+            Button examples = addExamplesButton();
+            layout.addView(examples);
+        }
     }
 
     private Button addExamplesButton() {
