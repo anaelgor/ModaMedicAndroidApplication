@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import Model.Utils.Configurations;
 
+import Model.Utils.TimeUtils;
 import static android.app.AlarmManager.INTERVAL_DAY;
 import static android.content.Context.ALARM_SERVICE;
 
@@ -53,9 +54,9 @@ public class NotificationsManager {
         periodic_calendar.set(Calendar.HOUR_OF_DAY, periodic_hour);
         periodic_calendar.set(Calendar.MINUTE, periodic_minute);
 
-        setRepeatingNotification(DailyNotification.class, daily_calendar.getTimeInMillis() + randomTime(),INTERVAL_DAY, 100);
+        setRepeatingNotification(DailyNotification.class, daily_calendar.getTimeInMillis() + TimeUtils.randomTime(),INTERVAL_DAY, 100);
         //Periodic notification
-        setRepeatingNotification(PeriodicNotification.class, periodic_calendar.getTimeInMillis() + randomTime(),INTERVAL_DAY,101);
+        setRepeatingNotification(PeriodicNotification.class, periodic_calendar.getTimeInMillis() + TimeUtils.randomTime(),INTERVAL_DAY,101);
     }
 
     private void setRepeatingNotification(Class notification_class, long time, long interval, int requestCode) {
@@ -80,12 +81,6 @@ public class NotificationsManager {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-    }
-
-    private long randomTime() {
-        long min = -600000;
-        long max = 600000;
-        return min + (long) (Math.random() * (max - min));
     }
 
 }

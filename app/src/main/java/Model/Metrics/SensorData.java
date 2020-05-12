@@ -27,7 +27,9 @@ import Model.Metrics.GoogleFit.CaloriesGoogleFit;
 import Model.Metrics.GoogleFit.DistanceGoogleFit;
 import Model.Metrics.GoogleFit.SleepGoogleFit;
 import Model.Metrics.GoogleFit.StepsGoogleFit;
+import Model.Utils.Configurations;
 import Model.Utils.HttpRequests;
+import Model.Utils.TimeUtils;
 
 import static android.content.Context.ALARM_SERVICE;
 import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT;
@@ -175,17 +177,16 @@ public class SensorData {
     public void setMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
         Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
-//        int hour = Configurations.getMetricsTaskHour(context);
-//        int minute = Configurations.getMetricsTaskMinute(context);
-        int hour = 23;
-        int minute = 45;
+        int hour = Configurations.getMetricsTaskHour(context);
+        int minute = Configurations.getMetricsTaskMinute(context);
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 102, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         assert alarmManager != null;
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+ TimeUtils.randomTime(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     public void setLocationTrackerTask(Context context) {
