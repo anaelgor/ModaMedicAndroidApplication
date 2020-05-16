@@ -258,7 +258,7 @@ public class QuestionnaireActivity extends AbstractActivity {
 
     private void backToHomePage(View v) {
         finish();
-    //    Intent intent = new Intent(this, HomePageActivity.class);
+        //    Intent intent = new Intent(this, HomePageActivity.class);
         //startActivity(intent);
     }
 
@@ -353,7 +353,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         String best = this.questionnaire.getQuestions().get(i).getBest();
         String subtext = getString(R.string.betweenZeroTo100);
         SeekBar seekBar = new SeekBar(this);
-   //     seekBar.setPadding(0, getHeightOfScreen() / 10, 0, 0);
+        //     seekBar.setPadding(0, getHeightOfScreen() / 10, 0, 0);
         seekBar.setMax(100);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             seekBar.setMin(0);
@@ -366,7 +366,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    func(progress);
+                func(progress);
             }
 
             private void func(int progress) {
@@ -400,7 +400,7 @@ public class QuestionnaireActivity extends AbstractActivity {
         subtextTV.setGravity(Gravity.CENTER);
         subtextTV.setTextSize(TypedValue.COMPLEX_UNIT_SP,subtextSize);
         subtextTV.setPadding(0, 5, 0, 0);
-        
+
         TextView max = new TextView(this);
         TextView min = new TextView(this);
         TextView center = new TextView(this);
@@ -664,20 +664,16 @@ public class QuestionnaireActivity extends AbstractActivity {
                     medicineInfo.put((long) 2,getString(R.string.advancedMedicine));
                     medicineInfo.put((long) 3,getString(R.string.narcoticMedicine));
                 }
-                SpannableString ans_text = new SpannableString(text);
-                ans_text.setSpan(new AbsoluteSizeSpan(60),0,text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 String description = medicineInfo.get(ans.getAnswerID());
-                SpannableString description_text = new SpannableString(description);
-                description_text.setSpan(new AbsoluteSizeSpan(40),0,description.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                CharSequence finalText = TextUtils.concat(ans_text, "\n", description_text);
+                CharSequence finalText = TextUtils.concat(text, "\n", description);
                 ans_Button.setText(finalText);
             }
             else {
                 ans_Button.setText(text);
-                ans_Button.setTextSize(20);
             }
+            ans_Button.setTextSize(answersTextSize);
             ans_Button.setPadding(50, 0, 50, 0);
-           // ans_Button.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            // ans_Button.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
 
             final long finalAnswerID = ans.getAnswerID();
             final long finalQuestionID = currentQuestionID;
@@ -692,7 +688,6 @@ public class QuestionnaireActivity extends AbstractActivity {
 
                 private void chose(long chosenAnswerID, long questionID, View v) {
                     System.out.println("question id: " + questionID + " , chosen answer id: " + chosenAnswerID);
-                    int color = ResourcesCompat.getColor(getResources(), R.color.colorChosenAnswer, null);
                     List<Long> alone = questionnaire.getQuestions().get(i).getAlone();
                     if (!questionsAnswers.containsKey(questionID)) { //first answer
                         List<Long> tmp_list = new ArrayList<>();

@@ -190,12 +190,20 @@
                 android:textColorHighlight="@color/colorAccent"
                 android:textColorLink="@color/colorAccent" />
 
+            <CheckBox
+                android:id="@+id/agree_terms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/terms_info"
+                android:layout_centerHorizontal="true"
+                android:onClick="openTerms"
+                android:layout_marginTop="1320dp" />
             <Button
                 android:id="@+id/send"
                 android:layout_width="242dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="1320dp"
+                android:layout_marginTop="1360dp"
                 android:layout_marginEnd="87dp"
                 android:background="@drawable/custom_system_button"
                 android:backgroundTintMode="src_in"

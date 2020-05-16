@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -428,5 +429,24 @@ public class RegisterNewUserActivity extends AbstractActivity {
 // Create and show the alert dialog
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public void openTerms(View view) {
+        CheckBox checkBox = (CheckBox)view;
+        if (checkBox.isChecked()) {
+            String msg = getString(R.string.full_terms_and_conditions);
+            new AlertDialog.Builder(RegisterNewUserActivity.this)
+                    .setTitle(R.string.termsAndConditions)
+                    .setMessage(msg)
+                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(R.drawable.notif_icon)
+                    .show();
+        }
+
     }
 }
