@@ -16,6 +16,7 @@ import Model.Questionnaires.AnswersManager;
 import Model.Questionnaires.Questionnaire;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Utils.Configurations;
+import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
 import Model.Utils.PropertiesManager;
 import View.QuestionnaireActivity;
@@ -23,7 +24,6 @@ import View.ViewUtils.BindingValues;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
 
-    protected static String CHANNEL_ID = "MainChannel";
     public static long ONE_MINUTE =-1;// 1 * 60 * 1000;
     private final static String TAG = "Notification";
 
@@ -37,8 +37,7 @@ public abstract class AbstractNotification extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_ONE_SHOT);
 
         Notification notification = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+            notification = new NotificationCompat.Builder(context, Constants.CHANNEL_ID)
                     .setContentTitle(context.getString(R.string.app_name))
                     .setContentText(context.getString(R.string.reminder))
                     .setContentIntent(pendingIntent)
@@ -47,7 +46,6 @@ public abstract class AbstractNotification extends BroadcastReceiver {
                     .setStyle(new NotificationCompat.BigTextStyle()
                             .bigText(notification_text))
                     .build();
-        }
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, notification);

@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import Model.Utils.Configurations;
 
+import Model.Utils.Constants;
 import Model.Utils.TimeUtils;
 import static android.app.AlarmManager.INTERVAL_DAY;
 import static android.content.Context.ALARM_SERVICE;
@@ -31,7 +32,7 @@ public class NotificationsManager {
     //todo: maybe this should be written only after HomePageActivity, because only there we have the logged in user.
     //todo: also, add an option to configure the time by a configurations file
     public void setNotifications() {
-        createNotificationChannel("Questionnaire Reminder");
+        createNotificationChannel(Constants.CHANNEL_ID);
         if (alarmManager == null)
             alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
 
