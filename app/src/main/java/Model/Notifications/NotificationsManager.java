@@ -31,7 +31,7 @@ public class NotificationsManager {
     //todo: maybe this should be written only after HomePageActivity, because only there we have the logged in user.
     //todo: also, add an option to configure the time by a configurations file
     public void setNotifications() {
-        createNotificationChannel("MainChannel");
+        createNotificationChannel("Questionnaire Reminder");
         if (alarmManager == null)
             alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
 
@@ -71,8 +71,8 @@ public class NotificationsManager {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "MainChanneel";
-            String description = "MainChanneel";
+            CharSequence name = CHANNEL_ID;
+            String description = "שליחת נוטיפיקציות מדי יום עבור תזכורת למענה על שאלונים יומיים או תקופתיים";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
