@@ -100,7 +100,6 @@ public class Weather implements DataSender {
             sendDataToServer(HttpRequests.getInstance(context));
 
         } catch (Exception e) {
-            e.printStackTrace();
             Log.e("Location unavailable", "***********CANT FIND LOCATION**********");
         }
 
