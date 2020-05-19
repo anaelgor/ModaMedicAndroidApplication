@@ -63,6 +63,7 @@ public class RegisterNewUserActivity extends AbstractActivity {
     private EditText firstName = null;
     private EditText lastName = null;
     private boolean surgeryUnknown;
+    private CheckBox termsNconditions;
 
 
     @Override
@@ -116,8 +117,8 @@ public class RegisterNewUserActivity extends AbstractActivity {
         verificationAnswer = findViewById(R.id.verification_answer);
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
+        termsNconditions = findViewById(R.id.agree_terms);
         chosenQuestionnaires = new ArrayList<>();
-
     }
 
     public void register(View view) {
@@ -264,6 +265,10 @@ public class RegisterNewUserActivity extends AbstractActivity {
         }
         if (!password.getText().toString().equals(passwordAgain.getText().toString())) {
             showAlert(R.string.password_are_not_equal);
+            return false;
+        }
+        if (!termsNconditions.isChecked()) {
+            showAlert(R.string.fill_terms);
             return false;
         }
         return true;

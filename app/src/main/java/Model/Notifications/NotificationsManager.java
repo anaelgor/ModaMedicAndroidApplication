@@ -49,7 +49,6 @@ public class NotificationsManager {
         daily_calendar.set(Calendar.MINUTE, daily_minute);
 
         //Periodic notification
-
         Calendar periodic_calendar = Calendar.getInstance();
         periodic_calendar.setTimeInMillis(System.currentTimeMillis());
         periodic_calendar.set(Calendar.HOUR_OF_DAY, periodic_hour);

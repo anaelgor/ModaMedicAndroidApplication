@@ -13,6 +13,7 @@ import java.util.Map;
 import Model.Questionnaires.QuestionnaireSenderAndReceiver;
 import Model.Utils.Constants;
 import Model.Utils.HttpRequests;
+import Model.Utils.TimeUtils;
 
 public class PeriodicNotification extends AbstractNotification{
 
@@ -29,7 +30,7 @@ public class PeriodicNotification extends AbstractNotification{
                 long lastLogin = sharedPref.getLong(Constants.LAST_LOGIN,0);
                 long currentTime = Calendar.getInstance().getTimeInMillis();
                 long duration = currentTime - lastLogin;
-                if (duration < ONE_MINUTE) {
+                if (duration < TimeUtils.ONE_MINUTE) {
                     Log.i("Periodic","missing periodic notification because I have been in the app in the last 1 min");
                     return;
                 }
@@ -43,7 +44,7 @@ public class PeriodicNotification extends AbstractNotification{
                     if (!answered) {
                         String notification_text = context.getString(R.string.periodic_questionnaire_notification_pref) + " " +
                                 Questionnaires.get(questionnaireID) + context.getString(R.string.periodic_questionnaire_notification_suffix);
-                        int id = 100;
+                        int id = 101;
                         notifyUser(context, notification_text, id,questionnaireID);
                         Log.i("Periodic","sending notification for questionnaire " + Questionnaires.get(questionnaireID));
                         break;

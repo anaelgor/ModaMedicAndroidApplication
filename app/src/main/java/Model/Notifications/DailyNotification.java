@@ -10,6 +10,7 @@ import com.example.modamedicandroidapplication.R;
 import java.util.Calendar;
 
 import Model.Utils.Constants;
+import Model.Utils.TimeUtils;
 
 public class DailyNotification extends AbstractNotification {
 
@@ -26,7 +27,7 @@ public class DailyNotification extends AbstractNotification {
                 long lastLogin = sharedPref.getLong(Constants.LAST_LOGIN, 0);
                 long currentTime = Calendar.getInstance().getTimeInMillis();
                 long duration = currentTime - lastLogin;
-                if (duration < ONE_MINUTE) {
+                if (duration < TimeUtils.ONE_MINUTE) {
                     Log.i("Daily", "missing daily notification because I have been in the app in the last 1 min");
                     return;
                 }
@@ -34,7 +35,7 @@ public class DailyNotification extends AbstractNotification {
                 boolean answered = HasUserAnswered("0", context);
                 if (!answered) {
                     String notification_text = context.getString(R.string.daily_questionnaire_notification);
-                    int id = 101;
+                    int id = 100;
                     notifyUser(context, notification_text, id, 0);
                     System.out.println("Daily Questionnaire notification");
                 } else {

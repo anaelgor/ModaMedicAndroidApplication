@@ -24,7 +24,6 @@ import View.ViewUtils.BindingValues;
 
 public abstract class AbstractNotification extends BroadcastReceiver {
 
-    public static long ONE_MINUTE = 1 * 60 * 1000;
     private final static String TAG = "Notification";
 
     /*
