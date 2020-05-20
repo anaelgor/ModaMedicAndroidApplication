@@ -17,8 +17,8 @@ public class RebootReceiver extends BroadcastReceiver {
             NotificationsManager notificationsManager = new NotificationsManager(context);
             notificationsManager.setNotifications();
             AppController appController = AppController.getController(null);
+            appController.setMissingMetricsTask(context);
             appController.setMetricsTask(context);
-            appController.setLocationTrackerTask(context);
             Log.i(TAG,"started after reboot. all of tasks has been set!");
         }
 

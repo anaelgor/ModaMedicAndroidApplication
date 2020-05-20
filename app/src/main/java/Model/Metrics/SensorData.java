@@ -68,7 +68,7 @@ public class SensorData {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void collectData(Activity activity) {
+    public void collectData(Context context) {
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
@@ -78,23 +78,21 @@ public class SensorData {
                         .addDataType(TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                         .build();
 
-        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)) {
-            GoogleSignIn.requestPermissions(
-                    activity, // your activity
-                    1,
-                    GoogleSignIn.getLastSignedInAccount(activity),
-                    fitnessOptions);
+        try {
+
+            if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), fitnessOptions)) {
+                Log.i(TAG, "collectData: sleep,activity,steps,calories,distance and weather");
+                sleepGoogleFit.extractSleepData(context);
+                activitiesGoogleFit.extractActivityData(context);
+                stepsGoogleFit.getDataFromPrevDay(context, fitnessOptions);
+                caloriesGoogleFit.getDataFromPrevDay(context, fitnessOptions);
+                distanceGoogleFit.getDataFromPrevDay(context, fitnessOptions);
+                gpsLocationListener.extractDataForWeather();
+            }
+        }catch (Exception e){
+            Log.e(TAG, "collectData: could not extract data from GoogleFitAPI");
         }
 
-        if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)) {
-            Log.i(TAG, "collectData: sleep,activity,steps,calories,distance and weather");
-            sleepGoogleFit.extractSleepData(activity);
-            activitiesGoogleFit.extractActivityData(activity);
-            stepsGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
-            caloriesGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
-            distanceGoogleFit.getDataFromPrevDay(activity, fitnessOptions);
-            gpsLocationListener.extractDataForWeather();
-        }
     }
     public void sendData(Context context){
         HttpRequests httpRequests = HttpRequests.getInstance(context);
@@ -174,9 +172,9 @@ public class SensorData {
         }
     }
 
-    public void setMetricsTask(Context context) {
+    public void setMissingMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
-        Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
+        Intent intent = new Intent(context, MissingMetricsBroadcastReceiver.class);
         int hour = Configurations.getMetricsTaskHour(context);
         int minute = Configurations.getMetricsTaskMinute(context);
 
@@ -184,21 +182,28 @@ public class SensorData {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
+
+        Log.i(TAG, "setMissingMetricsTask: set setMissingMetricsTask to " + hour + ":" + minute);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 102, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         assert alarmManager != null;
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+ TimeUtils.randomTime(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+ TimeUtils.randomTime(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public void setLocationTrackerTask(Context context) {
+    public void setMetricsTask(Context context) {
         AlarmManager alarmManager = (AlarmManager) (context.getSystemService(ALARM_SERVICE));
-        Intent intent = new Intent(context, LocationBroadcastReceiver.class);
+        Intent intent = new Intent(context, MetricsBroadcastReceiver.class);
+        int hour = 23;
+        int minute = 40;
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 7);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+
+        Log.i(TAG, "setMissingMetricsTask: set setMetricsTask to " + hour + ":" + minute);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 103, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         assert alarmManager != null;
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+ TimeUtils.randomTime(), AlarmManager.INTERVAL_HOUR, pendingIntent);
 
     }
 }

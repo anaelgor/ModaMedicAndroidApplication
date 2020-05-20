@@ -54,8 +54,8 @@ public class HomePageActivity extends AbstractActivity {
             @Override
             public void run() {
                 appController.setNotifications(getApplicationContext());
+                appController.setMissingMetricsTask(getApplicationContext());
                 appController.setMetricsTask(getApplicationContext());
-                appController.setLocationTrackerTask(getApplicationContext());
             }
         });
         t_backgroundTasks.start();

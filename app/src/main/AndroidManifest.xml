@@ -41,8 +41,8 @@
 
         <receiver android:name="Model.Notifications.PeriodicNotification"/>
         <receiver android:name="Model.Notifications.DailyNotification"/>
+        <receiver android:name="Model.Metrics.MissingMetricsBroadcastReceiver"/>
         <receiver android:name="Model.Metrics.MetricsBroadcastReceiver"/>
-        <receiver android:name="Model.Metrics.LocationBroadcastReceiver"/>
         <receiver android:name="Model.BluetoothReceiver" />
         <receiver android:name="Model.RebootReceiver"
             android:enabled="true">

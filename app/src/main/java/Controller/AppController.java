@@ -76,12 +76,12 @@ public class AppController {
         notificationsManager.setNotifications();
     }
 
-    public void setMetricsTask(Context context) {
-        sensorData.setMetricsTask(context);
+    public void setMissingMetricsTask(Context context) {
+        sensorData.setMissingMetricsTask(context);
     }
 
-    public void setLocationTrackerTask(Context context) {
-        sensorData.setLocationTrackerTask(context);
+    public void setMetricsTask(Context context) {
+        sensorData.setMetricsTask(context);
     }
 
     public String getVerificationQuestion(String username) {
