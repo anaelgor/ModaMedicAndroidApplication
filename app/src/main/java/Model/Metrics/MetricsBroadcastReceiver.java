@@ -8,7 +8,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 public class MetricsBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = "MissingMetricsBroadcast";
+    private static final String TAG = "MetricsBroadcast";
     private SensorData sensorData;
 
 
