@@ -317,6 +317,13 @@ public class RegisterNewUserActivity extends AbstractActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
         dialog.getWindow().setLayout((int) (getWidthOfScreen()*0.9),4*getHeightOfScreen()/5);
+        dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(getColor(R.color.white));            }
+        });
         dialog.show();
     }
 
@@ -388,6 +395,16 @@ public class RegisterNewUserActivity extends AbstractActivity {
                 surgeryUnknown = true;
             }
         });
+        dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(getColor(R.color.white));            }
+        });
+
+
+
         dialog.show();
     }
 

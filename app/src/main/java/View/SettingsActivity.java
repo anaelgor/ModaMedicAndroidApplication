@@ -97,6 +97,13 @@ public class SettingsActivity extends AbstractActivity {
                 }
             }
         });
+        dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(getColor(R.color.white));            }
+        });
         dialog.show();
     }
 

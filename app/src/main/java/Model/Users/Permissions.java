@@ -48,8 +48,6 @@ public class Permissions {
                     fitnessOptions);
         }
         if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(app), fitnessOptions))
-            System.out.println(true);
-
             Log.i("PERMISSIONS", "************PERMISSIONS REQUESTED*************");
     }
 

@@ -3,6 +3,7 @@ package View;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -59,8 +60,16 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
     public void answerQuestion(View view) {
         EditText answer_edittext = findViewById(R.id.answer_textfield);
         String answer = answer_edittext.getText().toString();
+        if (answer.isEmpty()) {
+            ShowWrongEmailAlert(R.string.fill_verification_answer);
+            return;
+        }
+        if (chosenTime == null) {
+            ShowWrongEmailAlert(R.string.fill_date);
+            return;
+        }
         long date = DateUtils.changeDateTo00AM(chosenTime.getTimeInMillis());
-        boolean flag = false;
+        boolean flag;
         try {
             flag = appController.checkVerificationOfAnswerToUserQuestion(username,answer,date);
             if (!flag) {
@@ -123,7 +132,14 @@ public class AnswerVerificationQuestionActivity extends AbstractActivity {
                 year,month,day);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
         dialog.getWindow().setNavigationBarColor((getColor(R.color.colorAccent)));
-        dialog.getWindow().setLayout(getWidthOfScreen(),getHeightOfScreen());
+        dialog.getWindow().setLayout((int) (getWidthOfScreen()*0.9),4*getHeightOfScreen()/5);
+        dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setBackgroundColor(getColor(R.color.white));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(getColor(R.color.white));            }
+        });
         dialog.show();
     }
 
