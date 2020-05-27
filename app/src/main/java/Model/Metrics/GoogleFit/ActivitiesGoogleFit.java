@@ -240,6 +240,7 @@ public class ActivitiesGoogleFit implements DataSender {
     }
 
     public void clearJson() {
+        this.activityArray = new ArrayList();
         this.json = null;
     }
 
