@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import Model.Utils.HttpRequests;
-import Model.Users.Login;
 import Model.Metrics.DataSender;
+import Model.Users.Login;
+import Model.Utils.HttpRequests;
 import Model.Utils.Urls;
 
 public class SleepGoogleFit implements DataSender {
@@ -283,6 +283,7 @@ public class SleepGoogleFit implements DataSender {
     }
 
     public void clearJson() {
+        this.sleepDataArray = new ArrayList();
         this.json = null;
     }
 
