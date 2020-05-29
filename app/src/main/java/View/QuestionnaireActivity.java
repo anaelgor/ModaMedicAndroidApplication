@@ -43,7 +43,9 @@ import Controller.AppController;
 import Model.Questionnaires.Answer;
 import Model.Questionnaires.Question;
 import Model.Questionnaires.Questionnaire;
+import Model.Utils.NetworkUtils;
 import View.ViewUtils.BindingValues;
+import View.ViewUtils.MessageUtils;
 
 public class QuestionnaireActivity extends AbstractActivity {
 
@@ -67,6 +69,10 @@ public class QuestionnaireActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questionnaire);
+        if (!NetworkUtils.hasInternetConnection(QuestionnaireActivity.this)) {
+            MessageUtils.showAlert(QuestionnaireActivity.this,getString(R.string.no_internet_connection));
+            return;
+        }
         questionsAnswers = new HashMap<>();
         answersButtons = new HashMap<>();
         answersTextSize = 15;

@@ -29,7 +29,9 @@ import Controller.AppController;
 import Model.ConnectedDevices;
 import Model.Questionnaires.Questionnaire;
 import Model.Utils.Constants;
+import Model.Utils.NetworkUtils;
 import View.ViewUtils.BindingValues;
+import View.ViewUtils.MessageUtils;
 
 /*
 Home page screen
@@ -83,6 +85,10 @@ public class HomePageActivity extends AbstractActivity {
         good_eve.setText(String.format("%s %s, %s", this.getString(R.string.hello), name, getString(R.string.choose_questionnaire)));
         createAllButtons();
         updateBTState();
+        if (!NetworkUtils.hasInternetConnection(HomePageActivity.this)) {
+            MessageUtils.showAlert(HomePageActivity.this,getString(R.string.no_internet_connection));
+            return;
+        }
 
     }
 

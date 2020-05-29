@@ -23,7 +23,9 @@ import com.example.modamedicandroidapplication.R;
 import Controller.AppController;
 import Model.Users.Permissions;
 import Model.Utils.Constants;
+import Model.Utils.NetworkUtils;
 import View.ViewUtils.BindingValues;
+import View.ViewUtils.MessageUtils;
 
 /*
 Home page screen
@@ -50,6 +52,10 @@ public class MainActivity extends AbstractActivity {
         else {
             sharedPref.edit().putBoolean(Constants.KEEP_USER_LOGGED, false).apply();
             setContentView(R.layout.activity_main);
+            if (!NetworkUtils.hasInternetConnection(MainActivity.this)) {
+                MessageUtils.showAlert(MainActivity.this,getString(R.string.no_internet_connection));
+                return;
+            }
             setHideKeyBoard();
             askForPermissions();
             EditText username_textfield = findViewById(R.id.username_textfield);
