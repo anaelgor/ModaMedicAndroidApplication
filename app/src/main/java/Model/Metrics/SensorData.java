@@ -11,9 +11,9 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.FitnessOptions;
-import com.google.android.gms.fitness.data.DataType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +36,7 @@ import static com.google.android.gms.fitness.data.DataType.TYPE_ACTIVITY_SEGMENT
 import static com.google.android.gms.fitness.data.DataType.TYPE_CALORIES_EXPENDED;
 import static com.google.android.gms.fitness.data.DataType.TYPE_DISTANCE_DELTA;
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
+
 
 public class SensorData {
 
@@ -69,18 +70,22 @@ public class SensorData {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void collectData(Context context) {
+
+        Log.i(TAG, "collectData: start collecting data from GoogleFit");
+        
         GoogleSignInOptionsExtension fitnessOptions =
                 FitnessOptions.builder()
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
-                        .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
+                        //.addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
                         .addDataType(TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                         .build();
 
         try {
 
-            if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), fitnessOptions)) {
+            GoogleSignInAccount googleSignInAccount =GoogleSignIn.getLastSignedInAccount(context);
+            if (GoogleSignIn.hasPermissions(googleSignInAccount, fitnessOptions)) {
                 Log.i(TAG, "collectData: sleep,activity,steps,calories,distance and weather");
                 sleepGoogleFit.extractSleepData(context);
                 activitiesGoogleFit.extractActivityData(context);
@@ -88,6 +93,9 @@ public class SensorData {
                 caloriesGoogleFit.getDataFromPrevDay(context, fitnessOptions);
                 distanceGoogleFit.getDataFromPrevDay(context, fitnessOptions);
                 gpsLocationListener.extractDataForWeather();
+            }
+            else{
+                Log.w(TAG, "collectData: user has no permission to collect data");
             }
         }catch (Exception e){
             Log.e(TAG, "collectData: could not extract data from GoogleFitAPI");
@@ -109,7 +117,7 @@ public class SensorData {
                         .addDataType(TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_STEP_COUNT_DELTA,FitnessOptions.ACCESS_READ)
                         .addDataType(TYPE_CALORIES_EXPENDED,FitnessOptions.ACCESS_READ)
-                        .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
+                        //.addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_WRITE)
                         .addDataType(TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                         .build();
 
