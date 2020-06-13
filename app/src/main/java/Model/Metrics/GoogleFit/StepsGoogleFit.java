@@ -158,6 +158,7 @@ public class StepsGoogleFit implements DataSender {
         try {
             toSend.put("ValidTime", time);
             toSend.put("Data", this.steps);
+            this.steps = 0;
         } catch (JSONException e) {
             e.printStackTrace();
         }

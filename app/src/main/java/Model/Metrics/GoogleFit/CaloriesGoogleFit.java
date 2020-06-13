@@ -159,6 +159,7 @@ public class CaloriesGoogleFit implements DataSender {
         try {
             toSend.put("ValidTime", time);
             toSend.put("Data", this.calories);
+            this.calories = 0;
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -158,6 +158,7 @@ public class DistanceGoogleFit implements DataSender {
         try {
             toSend.put("ValidTime", time);
             toSend.put("Data", this.dist);
+            this.dist = 0;
         } catch (JSONException e) {
             e.printStackTrace();
         }
